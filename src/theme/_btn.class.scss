@@ -1,0 +1,16 @@
+@use './variables/button.variables';
+
+.icon:hover {
+  background-color: var(--btn-default-bg-hover);
+  border-radius: 30rem;
+}
+
+.btn-default {
+  background-color: var(--btn-default-bg);
+  border-color: var(--btn-default-border);
+  border-style: solid;
+  border-width: 0.3px;
+    &:hover {
+      background-color: var(--btn-default-bg-hover);
+    }
+}

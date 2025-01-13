@@ -1,0 +1,23 @@
+<header class="bg-layer-2 flex justify-between items-center h-16 px-4">
+  <div class="flex gap-24">
+    <div id="imgContainer">
+      <img src="" alt="logo">
+    </div>
+    <div id="currentSpace" class="primary-text">
+      <span> Espace {{ eSpaceTitle[currentSpace] }} </span>
+    </div>
+  </div>
+
+  <nav class="flex justify-around min-w-1 mr-6 light-text">
+    @if (!isloggedIn) {
+        <ul class="flex gap-4 [&>*]:p-2">
+          <button class="icon">
+            <li>Créer un compte</li>
+          </button>
+          <button class="icon">
+            <li>Se connecter</li>
+          </button>
+        </ul>
+    }
+  </nav>
+</header>

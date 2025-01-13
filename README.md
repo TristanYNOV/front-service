@@ -1,10 +1,18 @@
 # FrontService
 
 # TODO: 
+## CI/CD
 Add .yml to test build and run lint
+Add git ignore --> VSCFILE, .env, ...
+
+## CODE : 
+Set space title dynamic with URL
+Create main component
+Insert Main component within route
+Add 3-4 components into Home routes for the main component and playground
 
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.4.
+
 
 ## Development server
 

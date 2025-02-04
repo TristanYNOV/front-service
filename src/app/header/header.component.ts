@@ -1,5 +1,7 @@
-import { Component, Input } from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import {eSpaceTitle} from '../utils/enum';
+import {MatDialog} from '@angular/material/dialog';
+import {AuthModalComponent} from '../shared/modals/auth/auth-modal.component';
 
 
 
@@ -7,10 +9,16 @@ import {eSpaceTitle} from '../utils/enum';
   selector: 'app-header',
   templateUrl: './header.component.html',
   standalone: true,
-  styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
   @Input({required: true}) currentSpace!: eSpaceTitle;
   protected readonly eSpaceTitle = eSpaceTitle;
   protected readonly isloggedIn: boolean = false;
+  readonly dialog = inject(MatDialog);
+
+  openAuthModal(type: 'login' | 'register'): void {
+    this.dialog.open(AuthModalComponent, {
+      data: { type }
+    });
+  }
 }

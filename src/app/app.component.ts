@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {eSpaceTitle} from './utils/enum';
+import {eSpaceTitle} from './core/utils/enum';
 import {HeaderComponent} from './header/header.component';
 import {RouterOutlet} from '@angular/router';
 

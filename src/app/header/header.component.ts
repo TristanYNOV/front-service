@@ -1,7 +1,7 @@
 import {Component, inject, Input} from '@angular/core';
-import {eSpaceTitle} from '../utils/enum';
+import {eSpaceTitle} from '../core/utils/enum';
 import {MatDialog} from '@angular/material/dialog';
-import {AuthModalComponent} from '../shared/modals/auth/auth-modal.component';
+import {AuthModalComponent} from '../core/shared/modals/auth/auth-modal.component';
 
 
 

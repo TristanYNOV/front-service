@@ -1,6 +1,8 @@
 @use './theme/global.class';
 @use './theme/btn.class';
 
+@use './theme/override/material-override';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

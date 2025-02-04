@@ -1,0 +1,47 @@
+<div class="max-h-[85vh] w-[500px] h-[600px] bg-layer-2 rounded-lg light-text pt-8 p-4 overflow-hidden">
+  <h4 class="text-center font-bold text-3xl"> {{ this.modalType === 'login' ? 'Connexion' : "S'inscrire" }} </h4>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 mt-12">
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+          <input
+            formControlName="email"
+            matInput
+            placeholder="analyse@sport.fr"
+            required
+          />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Mot de passe</mat-label>
+        <input
+          [type]=" hidePassword ? 'password' : 'text'"
+          formControlName="password"
+          matInput
+          required
+        />
+      </mat-form-field>
+    @if (showPasswordHint()) {
+      <div class="flex flex-col">
+        @if (form.controls['password'].hasError('minLength')) {
+          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins 8 caractères.</span></mat-error>
+        }
+        @if (form.controls['password'].hasError('lowercaseMissing')) {
+          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins une lettre minuscule.</span></mat-error>
+        }
+        @if (form.controls['password'].hasError('uppercaseMissing')) {
+          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins une lettre majuscule.</span></mat-error>
+        }
+        @if (form.controls['password'].hasError('digitMissing')) {
+          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins un chiffre.</span></mat-error>
+        }
+        @if (form.controls['password'].hasError('specialCharMissing')) {
+          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins un caractère spécial.</span></mat-error>
+        }
+      </div>
+    }
+
+    <div class="flex justify-around mt-8">
+      <button class="btn-accent p-2" type="submit">{{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}</button>
+      <button (click)="closeModal()" class="btn-accent p-2">Cancel</button>
+    </div>
+  </form>
+</div>

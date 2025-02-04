@@ -9,8 +9,22 @@
   background-color: var(--btn-default-bg);
   border-color: var(--btn-default-border);
   border-style: solid;
-  border-width: 0.3px;
+  border-width: var(--border-width);
+  border-radius: var(--border-radius);
     &:hover {
       background-color: var(--btn-default-bg-hover);
     }
+}
+
+.btn-accent {
+  background-color: var(--btn-accent-bg);
+  border-color: var(--btn-accent-border);
+  border-style: solid;
+  border-width: var(--border-width);
+  border-radius: var(--border-radius);
+  color: var(--btn-accent-color);
+  &:hover {
+    background-color: var(--btn-accent-hover-bg);
+  }
+
 }

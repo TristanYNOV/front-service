@@ -11,10 +11,10 @@
   <nav class="flex justify-around min-w-1 mr-6 light-text">
     @if (!isloggedIn) {
         <ul class="flex gap-4 [&>*]:p-2">
-          <button class="icon">
+          <button class="icon" (click)="openAuthModal('register')">
             <li>Créer un compte</li>
           </button>
-          <button class="icon">
+          <button class="icon" (click)="openAuthModal('login')">
             <li>Se connecter</li>
           </button>
         </ul>

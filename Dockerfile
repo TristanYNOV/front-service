@@ -1,5 +1,5 @@
 # Étape 1 : Construction de l'application Angular
-FROM node:18 AS builder
+FROM node:20 AS builder
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Compilation Angular en mode production
-RUN npm run build --prod
+RUN npm run build
 
 # Étape 2 : Serveur NGINX pour exécuter l’application
 FROM nginx:latest AS runner

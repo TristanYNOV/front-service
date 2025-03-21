@@ -1,0 +1,30 @@
+# Étape 1 : Construction de l'application Angular
+FROM node:22 AS builder
+
+WORKDIR /usr/src/app
+
+# Copie des fichiers package.json et package-lock.json pour installer les dépendances
+COPY package.json package-lock.json ./
+
+RUN npm install --legacy-peer-deps
+
+# Copie du reste du code source
+COPY . .
+
+# Compilation Angular en mode production
+RUN npm run build
+
+# Étape 2 : Serveur NGINX pour exécuter l’application
+FROM nginx:latest AS runner
+
+# Copie des fichiers Angular compilés vers le dossier NGINX
+COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
+
+# Copie d'un fichier de configuration NGINX personnalisé
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Exposition du port HTTP
+EXPOSE 80
+
+# Démarrage de NGINX
+CMD ["nginx", "-g", "daemon off;"]

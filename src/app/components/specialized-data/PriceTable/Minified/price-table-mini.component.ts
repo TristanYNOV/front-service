@@ -7,5 +7,5 @@ import {PriceTableData} from '../../../../interfaces/dataItem.interface';
   templateUrl: './price-table-mini.component.html',
 })
 export class PriceTableMiniComponent {
-  @Input() item!: PriceTableData; // ou AnyDataItems selon ce que tu passes
+  @Input() item!: PriceTableData;
 }

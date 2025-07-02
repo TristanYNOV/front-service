@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
 import { CommonModule } from '@angular/common';
 import {PriceTableComponent} from '../specialized-data/PriceTable/price-table.component';
+import {Store} from '@ngrx/store';
+import {removeFromDisplay, saveFromDisplay} from '../../store/Data/dataState.actions';
 
 @Component({
   selector: 'app-data-item-container',
@@ -11,6 +13,8 @@ import {PriceTableComponent} from '../specialized-data/PriceTable/price-table.co
 })
 export class DataItemContainerComponent {
   @Input() item!: AnyDataItems;
+
+  constructor(private readonly store: Store) {}
 
   get componentType() {
     switch (this.item.type) {
@@ -22,10 +26,12 @@ export class DataItemContainerComponent {
   }
 
   onDelete() {
-    // Future action: delete item
+    console.log(this.item);
+    this.store.dispatch(removeFromDisplay(this.item))
   }
 
   onSave() {
-    // Future action: save item
+    console.log(this.item);
+    this.store.dispatch(saveFromDisplay(this.item))
   }
 }

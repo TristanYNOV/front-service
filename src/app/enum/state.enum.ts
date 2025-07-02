@@ -3,3 +3,7 @@ export enum DataItemState {
   Displayed = 'displayed',
   Saved = 'saved',
 }
+
+export enum DataItemType {
+  Price = 'price',
+}

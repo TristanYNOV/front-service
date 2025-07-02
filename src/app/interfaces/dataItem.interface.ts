@@ -1,6 +1,5 @@
-import {DataItemState} from '../enum/state.enum';
+import {DataItemState, DataItemType} from '../enum/state.enum';
 
-export type DataItemType = 'price';
 
 export type AnyDataItems = PriceTableData;
 
@@ -14,12 +13,12 @@ export interface DataItemBase {
 export interface PriceOption {
   name: string;
   features: string[];
-  videoRetention: string; // "12h", "1 semaine"
+  videoRetention: string;
   price: number; // en euros
 }
 
 // Specialized Data Item
 export interface PriceTableData extends DataItemBase {
-  type: 'price';
+  type: DataItemType.Price;
   plans: PriceOption[];
 }

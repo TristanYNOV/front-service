@@ -1,5 +1,7 @@
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
-import {createReducer} from '@ngrx/store';
+import {createReducer, on} from '@ngrx/store';
+import {addToIdle, displayFromIdle, removeFromIdle} from './dataState.actions';
+import {DataItemState} from '../../enum/state.enum';
 
 export interface DataState {
   idle: AnyDataItems[];
@@ -11,7 +13,7 @@ export interface DataState {
 const appPrice: AnyDataItems = {
   id: 'price-table-default',
   type: 'price',
-  state: 'displayed',
+  state: DataItemState.Displayed,
   plans: [
     {
       name: 'Indépendant',
@@ -46,12 +48,41 @@ const appPrice: AnyDataItems = {
   ],
 };
 
+const idleAppPrice = {
+  ...appPrice,
+  state: DataItemState.Idle,
+}
+
 export const initialDataState: DataState = {
-  idle: [],
+  idle: [idleAppPrice],
   displayed: [appPrice],
   saved: [],
 };
 
 export const dataStateReducer = createReducer(
-  initialDataState
+  initialDataState,
+
+  // Ajouter un élément aux idle
+  on(addToIdle, (state, { item }) => ({
+    ...state,
+    idle: [...state.idle, item],
+  })),
+
+  // Supprimer un élément des idle
+  on(removeFromIdle, (state, { id }) => ({
+    ...state,
+    idle: state.idle.filter(item => item.id !== id),
+  })),
+
+  // Afficher un item depuis idle : le déplacer dans displayed
+  on(displayFromIdle, (state, { id }) => {
+    const item = state.idle.find(el => el.id === id);
+    if (!item) return state;
+
+    return {
+      ...state,
+      idle: state.idle.filter(el => el.id !== id),
+      displayed: [...state.displayed, { ...item, state: DataItemState.Displayed }],
+    };
+  }),
 );

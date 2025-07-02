@@ -1,5 +1,4 @@
 import {Component, inject, Input} from '@angular/core';
-import {eSpaceTitle} from '../core/utils/enum';
 import {MatDialog} from '@angular/material/dialog';
 import {AuthModalComponent} from '../core/shared/modals/auth/auth-modal.component';
 
@@ -11,8 +10,7 @@ import {AuthModalComponent} from '../core/shared/modals/auth/auth-modal.componen
   standalone: true,
 })
 export class HeaderComponent {
-  @Input({required: true}) currentSpace!: eSpaceTitle;
-  protected readonly eSpaceTitle = eSpaceTitle;
+  @Input({required: true}) currentSpace!: string;
   protected readonly isloggedIn: boolean = false;
   readonly dialog = inject(MatDialog);
 

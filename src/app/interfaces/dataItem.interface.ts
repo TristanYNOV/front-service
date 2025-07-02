@@ -1,4 +1,5 @@
-export type DataItemState = 'idle' | 'displayed' | 'saved';
+import {DataItemState} from '../enum/state.enum';
+
 export type DataItemType = 'price';
 
 export type AnyDataItems = PriceTableData;

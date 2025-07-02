@@ -5,8 +5,7 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {provideStore} from '@ngrx/store';
-import {displayedDataReducer} from './store/displayedData/displayedData.reducers';
-import {savedDataReducer} from './store/savedData/savedData.reducers';
+import {dataStateReducer} from './store/Data/dataState.reducers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,8 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideAnimations(),
     provideStore({
-      displayedData: displayedDataReducer,
-      savedData: savedDataReducer,
-    }),
+      dataState: dataStateReducer
+    })
   ]
 };

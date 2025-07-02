@@ -1,6 +1,23 @@
 <div class="w-dvw h-dvh flex flex-col">
-  <app-header [currentSpace]="eSpaceTitle.accueil"></app-header>
-  <main class="h-full flex justify-center">
-    <router-outlet></router-outlet>
+  <app-header [currentSpace]="eSpaceTitle.accueil" />
+
+  <main class="flex flex-1 overflow-hidden">
+    <!-- Sidebar gauche : Idle + Saved -->
+    <section class="w-[20%] min-w-[200px] max-w-[300px] bg-gray-100 border-r border-gray-300 p-2 flex flex-col gap-4 overflow-y-auto">
+      <div id="idle-section" class="bg-white rounded-xl shadow p-2 min-h-[100px]">
+        <h2 class="text-sm font-semibold mb-2">🟡 Données en attente</h2>
+        <!-- Placeholder pour idle -->
+      </div>
+
+      <div id="saved-section" class="bg-white rounded-xl shadow p-2 min-h-[100px]">
+        <h2 class="text-sm font-semibold mb-2">💾 Données sauvegardées</h2>
+        <!-- Placeholder pour saved -->
+      </div>
+    </section>
+
+    <!-- Affichage principal : données affichées -->
+    <section class="flex-1 p-4 overflow-y-auto">
+      <router-outlet />
+    </section>
   </main>
 </div>

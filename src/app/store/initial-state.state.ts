@@ -1,7 +1,9 @@
-import {DisplayedDataState} from './displayedData/displayedData.reducers';
-import {SavedDataState} from './savedData/savedData.reducers';
+import {DataState, initialDataState} from './Data/dataState.reducers';
 
 export interface AppState {
-  displayedData: DisplayedDataState;
-  savedData: SavedDataState;
+  dataState: DataState;
 }
+
+export const initialAppState: AppState = {
+  dataState: initialDataState,
+};

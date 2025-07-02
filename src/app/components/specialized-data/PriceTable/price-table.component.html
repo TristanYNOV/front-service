@@ -1,0 +1,14 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  @for (plan of data.plans; track plan.name) {
+    <div class="bg-gray-50 rounded-xl p-4 border">
+      <h2 class="text-xl font-semibold mb-2">{{ plan.name }}</h2>
+      <ul class="text-sm mb-2 list-disc list-inside text-gray-700">
+        @for (f of plan.features; track f) {
+          <li>{{ f }}</li>
+        }
+      </ul>
+      <p class="text-sm text-gray-800">Rétention : <strong>{{ plan.videoRetention }}</strong></p>
+      <p class="mt-2 text-lg font-bold text-indigo-600">{{ plan.price }} €/mois</p>
+    </div>
+  }
+</div>

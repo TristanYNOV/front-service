@@ -3,6 +3,7 @@ import { createReducer, on } from '@ngrx/store';
 import {
   addToIdle,
   displayFromIdle,
+  displayFromSaved,
   removeFromDisplay,
   removeFromIdle,
   saveFromDisplay,
@@ -145,6 +146,19 @@ export const dataStateReducer = createReducer(
       ...state,
       displayed: state.displayed.filter(el => el.id !== id),
       saved: [...state.saved, { ...item, state: DataItemState.Saved }],
+    };
+  }),
+
+  // SAVED PART
+  on(displayFromSaved, (state, { id }) => {
+    const item = state.saved.find(el => el.id === id);
+    // Ne rien faire si l'élément n'existe pas ou est déjà affiché
+    if (!item || state.displayed.some(el => el.id === id)) {
+      return state;
+    }
+    return {
+      ...state,
+      displayed: [...state.displayed, { ...item, state: DataItemState.Displayed }],
     };
   }),
 );

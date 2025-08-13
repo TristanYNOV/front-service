@@ -25,4 +25,3 @@ export interface PriceTableData extends DataItemBase {
   type: DataItemType.Price;
   plans: PriceOption[];
 }
-

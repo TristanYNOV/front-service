@@ -8,5 +8,8 @@
     @case (DataItemType.Price) {
       <app-price-table-mini [item]="item"/>
     }
+    @case (DataItemType.Text) {
+      <app-text-block-mini [item]="item"/>
+    }
   }
 </div>

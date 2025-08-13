@@ -30,5 +30,11 @@ export const saveFromDisplay = createAction(
   props<{ id: string }>()
 );
 
+// SAVED ACTIONS
+export const displayFromSaved = createAction(
+  '[DataState] Display from saved',
+  props<{ id: string }>()
+);
+
 
 

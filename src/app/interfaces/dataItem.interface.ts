@@ -1,7 +1,7 @@
 import {DataItemState, DataItemType} from '../enum/state.enum';
 
 
-export type AnyDataItems = PriceTableData;
+export type AnyDataItems = PriceTableData | TextBlockData;
 
 export interface DataItemBase {
   id: string;
@@ -21,4 +21,11 @@ export interface PriceOption {
 export interface PriceTableData extends DataItemBase {
   type: DataItemType.Price;
   plans: PriceOption[];
+}
+
+// Text Block Item
+export interface TextBlockData extends DataItemBase {
+  type: DataItemType.Text;
+  title: string;
+  content: string;
 }

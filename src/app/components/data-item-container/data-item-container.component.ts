@@ -17,17 +17,6 @@ export class DataItemContainerComponent {
 
   constructor(private readonly store: Store) {}
 
-  get componentType() {
-    switch (this.item.type) {
-      case 'price':
-        return 'price';
-      case 'text':
-        return 'text';
-      default:
-        return null;
-    }
-  }
-
   onDelete() {
     console.log(this.item);
     this.store.dispatch(removeFromDisplay(this.item))

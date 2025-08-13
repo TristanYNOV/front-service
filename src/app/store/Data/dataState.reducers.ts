@@ -114,7 +114,6 @@ export const dataStateReducer = createReducer(
     }
     return {
       ...state,
-      idle: state.idle.filter(el => el.id !== id),
       displayed: [...state.displayed, { ...item, state: DataItemState.Displayed }],
     };
   }),
@@ -126,7 +125,6 @@ export const dataStateReducer = createReducer(
     }
     return {
       ...state,
-      idle: state.idle.filter(el => el.id !== id),
       saved: [...state.saved, { ...item, state: DataItemState.Saved }],
     };
   }),
@@ -158,6 +156,7 @@ export const dataStateReducer = createReducer(
     }
     return {
       ...state,
+      saved: state.saved.filter(el => el.id !== id),
       displayed: [...state.displayed, { ...item, state: DataItemState.Displayed }],
     };
   }),

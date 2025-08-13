@@ -1,5 +1,14 @@
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
-import {createReducer} from '@ngrx/store';
+import {createReducer, on} from '@ngrx/store';
+import {
+  addToIdle,
+  displayFromIdle,
+  removeFromDisplay,
+  removeFromIdle,
+  saveFromDisplay,
+  saveFromIdle
+} from './dataState.actions';
+import {DataItemState, DataItemType} from '../../enum/state.enum';
 
 export interface DataState {
   idle: AnyDataItems[];
@@ -10,8 +19,8 @@ export interface DataState {
 // TODO: Store it in special service
 const appPrice: AnyDataItems = {
   id: 'price-table-default',
-  type: 'price',
-  state: 'displayed',
+  type: DataItemType.Price,
+  state: DataItemState.Displayed,
   plans: [
     {
       name: 'Indépendant',
@@ -46,12 +55,61 @@ const appPrice: AnyDataItems = {
   ],
 };
 
+const idleAppPrice = {
+  ...appPrice,
+  state: DataItemState.Idle,
+}
+
 export const initialDataState: DataState = {
-  idle: [],
+  idle: [idleAppPrice],
   displayed: [appPrice],
   saved: [],
 };
 
 export const dataStateReducer = createReducer(
-  initialDataState
+  initialDataState,
+  // IDLE PART
+  on(addToIdle, (state, { item }) => ({
+    ...state,
+    idle: [...state.idle, item],
+  })),
+  on(removeFromIdle, (state, { id }) => ({
+    ...state,
+    idle: state.idle.filter(item => item.id !== id),
+  })),
+  on(displayFromIdle, (state, { id }) => {
+    const item = state.idle.find(el => el.id === id);
+    if (!item) return state;
+
+    return {
+      ...state,
+      displayed: [...state.displayed, { ...item, state: DataItemState.Displayed }],
+    };
+  }),
+  on(saveFromIdle, (state, { id }) => {
+    const item = state.idle.find(el => el.id === id);
+    if (!item) return state;
+
+    return {
+      ...state,
+      idle: state.idle.filter(el => el.id !== id),
+      saved: [...state.saved, { ...item, state: DataItemState.Saved }],
+    };
+  }),
+
+  // DISPLAY PART
+  on(removeFromDisplay, (state, { id }) => ({
+    ...state,
+    displayed: state.displayed.filter(item => item.id !== id),
+  })),
+  on(saveFromDisplay, (state, { id }) => {
+    const item = state.idle.find(el => el.id === id);
+    if (!item) return state;
+
+    return {
+      ...state,
+      displayed: state.idle.filter(el => el.id !== id),
+      saved: [...state.saved, { ...item, state: DataItemState.Displayed }],
+    };
+  }),
 );

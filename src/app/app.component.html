@@ -1,22 +1,44 @@
 <div class="w-dvw h-dvh flex flex-col">
-  <app-header [currentSpace]="eSpaceTitle.accueil" />
+  <app-header [currentSpace]="'Accueil'" />
 
   <main class="flex flex-1 overflow-hidden">
     <!-- Sidebar gauche : Idle + Saved -->
-    <section class="w-[20%] min-w-[200px] max-w-[300px] bg-gray-100 border-r border-gray-300 p-2 flex flex-col gap-4 overflow-y-auto">
-      <div id="idle-section" class="bg-white rounded-xl shadow p-2 min-h-[100px]">
+    <section class="w-[20%] min-w-[200px] max-w-[300px] bg-layer-1 p-2 flex flex-col gap-4 overflow-y-auto">
+      <!-- IDLE -->
+      <div id="idle-section" class="bg-layer-3 rounded-xl shadow p-2 h-1/2 light-text">
         <h2 class="text-sm font-semibold mb-2">🟡 Données en attente</h2>
-        <!-- Placeholder pour idle -->
+        @if (idleItems().length > 0) {
+          <div class="space-y-2">
+            @for (item of idleItems(); track item.id) {
+              <app-mini [item]="item"/>
+            }
+          </div>
+        } @else {
+          <p class="text-xs text-gray-500">Aucune donnée en attente.</p>
+        }
       </div>
 
-      <div id="saved-section" class="bg-white rounded-xl shadow p-2 min-h-[100px]">
+      <!-- SAVED -->
+      <div id="saved-section" class="bg-layer-3 rounded-xl shadow p-2 h-1/2 light-text">
         <h2 class="text-sm font-semibold mb-2">💾 Données sauvegardées</h2>
-        <!-- Placeholder pour saved -->
+        @if (savedItems().length > 0) {
+          <div class="space-y-2">
+            @for (item of savedItems(); track item.id) {
+              <app-mini [item]="item" />
+            }
+          </div>
+        } @else {
+          <p class="text-xs text-gray-500">Aucune donnée sauvegardée.</p>
+        }
       </div>
     </section>
 
-    <!-- Affichage principal : données affichées -->
-    <section class="flex-1 p-4 overflow-y-auto">
+    <div class="separator h-[80%] self-center mx-2">
+
+    </div>
+
+    <!-- Affichage principal -->
+    <section class="flex-1 p-2 overflow-y-auto">
       <router-outlet />
     </section>
   </main>

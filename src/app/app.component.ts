@@ -1,16 +1,26 @@
 import { Component } from '@angular/core';
-import {eSpaceTitle} from './core/utils/enum';
-import {HeaderComponent} from './header/header.component';
-import {RouterOutlet} from '@angular/router';
+import { HeaderComponent } from './header/header.component';
+import { RouterOutlet } from '@angular/router';
+import { Store } from '@ngrx/store';
+import {MiniComponent} from './components/data-item-container/Minified/mini.component';
+import {selectIdleItems, selectSavedItems} from './store/Data/dataState.selectors';
 
 @Component({
   selector: 'app-root',
-  imports: [HeaderComponent, RouterOutlet],
-  templateUrl: './app.component.html',
   standalone: true,
-  styleUrl: './app.component.scss'
+  imports: [HeaderComponent, RouterOutlet, MiniComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'Analyse-vidéo';
-  protected readonly eSpaceTitle = eSpaceTitle;
+  constructor(private readonly store: Store) {}
+
+  get idleItems() {
+    return this.store.selectSignal(selectIdleItems);
+  }
+
+  get savedItems() {
+    return this.store.selectSignal(selectSavedItems);
+  }
 }
+

@@ -1,10 +1,23 @@
-import { createSelector } from '@ngrx/store';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { DataState } from './dataState.reducers';
-import {AppState} from '../initial-state.state';
 
-export const selectDataState = (state: AppState) => state.dataState;
+// Sélecteur de la feature entière
+export const selectDataState = createFeatureSelector<DataState>('dataState');
 
-export const selectDisplayedData = createSelector(
+// Sélecteur des éléments idle
+export const selectIdleItems = createSelector(
   selectDataState,
-  (state: DataState) => state.displayed
+  (state) => state.idle
+);
+
+// Sélecteur des éléments saved
+export const selectSavedItems = createSelector(
+  selectDataState,
+  (state) => state.saved
+);
+
+// Tu peux aussi rajouter pour displayed si besoin
+export const selectDisplayedItems = createSelector(
+  selectDataState,
+  (state) => state.displayed
 );

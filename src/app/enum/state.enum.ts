@@ -6,4 +6,5 @@ export enum DataItemState {
 
 export enum DataItemType {
   Price = 'price',
+  Text = 'text',
 }

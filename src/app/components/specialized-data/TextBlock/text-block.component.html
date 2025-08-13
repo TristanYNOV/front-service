@@ -1,0 +1,31 @@
+<section class="flex flex-col gap-4">
+  @switch (data.id) {
+    @case ('club-guide') {
+      <div>
+        <h3 class="text-lg font-semibold">Créer un club</h3>
+        <ol class="list-decimal list-inside flex flex-col gap-2">
+          <li>Créez votre compte pour démarrer.</li>
+          <li>Créez un club puis ajoutez vos équipes et joueurs.</li>
+        </ol>
+      </div>
+    }
+    @case ('cgu') {
+      <div>
+        <h3 class="text-lg font-semibold">Conditions générales d'utilisation</h3>
+        <p>Consultez nos CGU pour comprendre l'utilisation du service.</p>
+      </div>
+    }
+    @case ('upcoming-features') {
+      <div>
+        <h3 class="text-lg font-semibold">Fonctionnalités à venir</h3>
+        <ul class="list-disc list-inside flex flex-col gap-1">
+          <li>Analyse vidéo automatisée à bas prix.</li>
+          <li>Outil complet de gestion de club.</li>
+          <li>Partage de statistiques avec vos joueurs.</li>
+          <li>Support multi-langue et export de rapports.</li>
+        </ul>
+      </div>
+    }
+  }
+</section>
+

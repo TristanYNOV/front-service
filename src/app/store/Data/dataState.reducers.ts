@@ -60,8 +60,26 @@ const idleAppPrice = {
   state: DataItemState.Idle,
 }
 
+const clubGuide: AnyDataItems = {
+  id: 'club-guide',
+  type: DataItemType.Text,
+  state: DataItemState.Idle,
+};
+
+const cguInfo: AnyDataItems = {
+  id: 'cgu',
+  type: DataItemType.Text,
+  state: DataItemState.Idle,
+};
+
+const upcomingFeatures: AnyDataItems = {
+  id: 'upcoming-features',
+  type: DataItemType.Text,
+  state: DataItemState.Idle,
+};
+
 export const initialDataState: DataState = {
-  idle: [idleAppPrice],
+  idle: [idleAppPrice, clubGuide, cguInfo, upcomingFeatures],
   displayed: [appPrice],
   saved: [],
 };

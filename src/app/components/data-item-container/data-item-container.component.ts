@@ -1,14 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
 import { CommonModule } from '@angular/common';
-import {PriceTableComponent} from '../specialized-data/PriceTable/price-table.component';
-import {Store} from '@ngrx/store';
-import {removeFromDisplay, saveFromDisplay} from '../../store/Data/dataState.actions';
+import { PriceTableComponent } from '../specialized-data/PriceTable/price-table.component';
+import { TextBlockComponent } from '../specialized-data/TextBlock/text-block.component';
+import { Store } from '@ngrx/store';
+import { removeFromDisplay, saveFromDisplay } from '../../store/Data/dataState.actions';
 
 @Component({
   selector: 'app-data-item-container',
   standalone: true,
-  imports: [CommonModule, PriceTableComponent],
+  imports: [CommonModule, PriceTableComponent, TextBlockComponent],
   templateUrl: './data-item-container.component.html',
 })
 export class DataItemContainerComponent {
@@ -20,6 +21,8 @@ export class DataItemContainerComponent {
     switch (this.item.type) {
       case 'price':
         return 'price';
+      case 'text':
+        return 'text';
       default:
         return null;
     }

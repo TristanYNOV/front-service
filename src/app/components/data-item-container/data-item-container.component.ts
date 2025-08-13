@@ -19,11 +19,11 @@ export class DataItemContainerComponent {
 
   onDelete() {
     console.log(this.item);
-    this.store.dispatch(removeFromDisplay(this.item))
+    this.store.dispatch(removeFromDisplay({ id: this.item.id }));
   }
 
   onSave() {
     console.log(this.item);
-    this.store.dispatch(saveFromDisplay(this.item))
+    this.store.dispatch(saveFromDisplay({ id: this.item.id }));
   }
 }

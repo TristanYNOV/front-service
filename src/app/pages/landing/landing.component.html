@@ -1,7 +1,42 @@
 <div class="h-full flex flex-col gap-16 justify-center items-center">
-    <span class="light-text text-center text-4xl m-8"> Bienvenue sur l'application web ! </span>
-    <section class="flex flex-col justify-center items-center gap-2 bg-layer-2 rounded-3xl accent-text p-8">
-      <h3>Découvrez ici l'application</h3>
-      <a routerLink="/discover">svg Arrow</a>
-    </section >
+  <span class="light-text text-center text-4xl m-8">
+    Bienvenue sur l'application web !
+  </span>
+
+  <p class="max-w-xl text-center">
+    Cette plateforme a pour objectif de proposer une analyse vidéo abordable et un
+    outil de gestion de club simple à utiliser. Elle évoluera avec de nombreuses
+    fonctionnalités pour vous accompagner au quotidien.
+  </p>
+
+  <button
+    type="button"
+    (click)="toggleTutorial()"
+    class="px-4 py-2 rounded-md bg-layer-2 accent-text"
+  >
+    {{ showTutorial() ? 'Masquer le tutoriel' : 'Afficher le tutoriel' }}
+  </button>
+
+  @if (showTutorial()) {
+    <section class="flex flex-col gap-4 bg-layer-2 rounded-3xl accent-text p-8 max-w-xl">
+      <h3 class="text-lg font-semibold text-center">Tutoriel de démarrage</h3>
+      <ol class="list-decimal list-inside flex flex-col gap-2">
+        <li>Créez votre compte pour démarrer.</li>
+        <li>Créez un club puis ajoutez vos équipes et joueurs.</li>
+        <li>Consultez nos CGU pour comprendre l'utilisation du service.</li>
+      </ol>
+      <h4 class="text-md font-semibold">Fonctionnalités à venir</h4>
+      <ul class="list-disc list-inside flex flex-col gap-1">
+        <li>Analyse vidéo automatisée à bas prix.</li>
+        <li>Outil complet de gestion de club.</li>
+        <li>Partage de statistiques avec vos joueurs.</li>
+        <li>Support multi-langue et export de rapports.</li>
+      </ul>
+    </section>
+  }
+
+  <section class="flex flex-col justify-center items-center gap-2 bg-layer-2 rounded-3xl accent-text p-8">
+    <h3>Découvrez ici l'application</h3>
+    <a routerLink="/discover">svg Arrow</a>
+  </section>
 </div>

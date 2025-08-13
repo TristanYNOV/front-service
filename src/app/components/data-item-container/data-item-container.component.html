@@ -1,9 +1,12 @@
 <div class="border rounded-xl shadow p-4 bg-white mb-4">
-  <!-- Composant dynamique -->
-  @if (componentType === 'price') {
-    <app-price-table [data]="item" />
+  @switch (item.type) {
+    @case ('price') {
+      <app-price-table [data]="item" />
+    }
+    @case ('text') {
+      <app-text-block [data]="item" />
+    }
   }
-
   <div class="flex justify-end gap-2 mt-4">
     <button class="text-sm text-red-600 hover:underline" (click)="onDelete()">🗑 Supprimer</button>
     <button class="text-sm text-blue-600 hover:underline" (click)="onSave()">💾 Sauvegarder</button>

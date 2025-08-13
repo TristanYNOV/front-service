@@ -142,6 +142,7 @@ export const dataStateReducer = createReducer(
     }
     return {
       ...state,
+      displayed: state.displayed.filter(el => el.id !== id),
       saved: [...state.saved, { ...item, state: DataItemState.Saved }],
     };
   }),
@@ -155,6 +156,7 @@ export const dataStateReducer = createReducer(
     }
     return {
       ...state,
+      saved: state.saved.filter(el => el.id !== id),
       displayed: [...state.displayed, { ...item, state: DataItemState.Displayed }],
     };
   }),

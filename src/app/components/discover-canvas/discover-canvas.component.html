@@ -3,10 +3,9 @@
     <div
       cdkDrag
       [cdkDragBoundary]="canvas"
+      [cdkDragFreeDragPosition]="positions[item.id]"
       (cdkDragEnded)="onDragEnd(item, $event)"
       class="absolute"
-      [style.left.px]="positions[item.id]?.x || 0"
-      [style.top.px]="positions[item.id]?.y || 0"
     >
       <app-data-item-container [item]="item" />
     </div>

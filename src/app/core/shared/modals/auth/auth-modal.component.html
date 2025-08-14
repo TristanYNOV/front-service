@@ -1,6 +1,11 @@
-<div class="max-h-[85vh] w-[500px] h-[600px] bg-layer-2 rounded-lg light-text pt-8 p-4 overflow-hidden">
+<div class="max-h-[85vh] w-[500px] h-fit bg-layer-2 rounded-lg light-text pt-8 p-4 overflow-hidden">
   <h4 class="text-center font-bold text-3xl"> {{ this.modalType === 'login' ? 'Connexion' : "S'inscrire" }} </h4>
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 mt-12">
+  <div class="text-center mt-4">
+    <button type="button" class="underline text-sm" (click)="toggleMode()">
+      {{ modalType === 'login' ? 'Créer un compte' : 'Se connecter' }}
+    </button>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 mt-4">
       <mat-form-field>
         <mat-label>Email</mat-label>
           <input
@@ -19,7 +24,7 @@
           required
         />
       </mat-form-field>
-    @if (showPasswordHint()) {
+    @if (shouldShowPasswordErrors()) {
       <div class="flex flex-col">
         @if (form.controls['password'].hasError('minLength')) {
           <mat-error><span class="alert-text">Le mot de passe doit contenir au moins 8 caractères.</span></mat-error>
@@ -41,7 +46,7 @@
 
     <div class="flex justify-around mt-8">
       <button class="btn-accent p-2" type="submit">{{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}</button>
-      <button (click)="closeModal()" class="btn-accent p-2">Cancel</button>
+      <button (click)="closeModal()" class="btn-accent p-2">Annuler</button>
     </div>
   </form>
 </div>

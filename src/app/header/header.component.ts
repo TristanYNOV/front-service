@@ -2,8 +2,6 @@ import {Component, inject, Input} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {AuthModalComponent} from '../core/shared/modals/auth/auth-modal.component';
 
-
-
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',

@@ -5,7 +5,6 @@ import { PriceTableComponent } from '../specialized-data/PriceTable/price-table.
 import { TextBlockComponent } from '../specialized-data/TextBlock/text-block.component';
 import { Store } from '@ngrx/store';
 import { removeFromDisplay, saveFromDisplay } from '../../store/Data/dataState.actions';
-import { CdkResizableDirective as CdkResizable } from '../../directives/cdk-resizable.directive';
 
 @Component({
   selector: 'app-data-item-container',
@@ -14,7 +13,6 @@ import { CdkResizableDirective as CdkResizable } from '../../directives/cdk-resi
     CommonModule,
     PriceTableComponent,
     TextBlockComponent,
-    CdkResizable,
   ],
   templateUrl: './data-item-container.component.html',
 })

@@ -9,7 +9,7 @@ import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
   standalone: true,
   imports: [CommonModule, DataItemContainerComponent, CdkDrag],
   templateUrl: './discover-canvas.component.html',
-  host: { class: 'block h-screen' },
+  host: { class: 'block h-full' },
 })
 export class DiscoverCanvasComponent implements OnChanges {
   @Input() items: AnyDataItems[] = [];

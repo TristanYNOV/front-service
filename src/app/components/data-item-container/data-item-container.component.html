@@ -1,5 +1,7 @@
 <div
   cdkResizable
+  (cdkResizeStart)="resizeStart.emit()"
+  (cdkResizeEnd)="resizeEnd.emit()"
   class="border rounded-xl shadow p-4 bg-white mb-4 resize overflow-auto"
 >
   @switch (item.type) {

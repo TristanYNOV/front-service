@@ -15,6 +15,7 @@ export class DiscoverCanvasComponent implements OnChanges {
   @Input() items: AnyDataItems[] = [];
 
   positions: Record<string, { x: number; y: number }> = {};
+  dragDisabled: Record<string, boolean> = {};
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['items']) {
@@ -22,8 +23,19 @@ export class DiscoverCanvasComponent implements OnChanges {
         if (!this.positions[item.id]) {
           this.positions[item.id] = { x: 0, y: index * 120 };
         }
+        if (this.dragDisabled[item.id] === undefined) {
+          this.dragDisabled[item.id] = false;
+        }
       });
     }
+  }
+
+  onResizeStart(item: AnyDataItems): void {
+    this.dragDisabled[item.id] = true;
+  }
+
+  onResizeEnd(item: AnyDataItems): void {
+    this.dragDisabled[item.id] = false;
   }
 
   onDragEnd(item: AnyDataItems, event: CdkDragEnd): void {

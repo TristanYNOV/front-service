@@ -2,12 +2,17 @@
   @for (item of items; track item.id) {
     <div
       cdkDrag
+      [cdkDragDisabled]="dragDisabled[item.id]"
       [cdkDragBoundary]="canvas"
       [cdkDragFreeDragPosition]="positions[item.id]"
       (cdkDragEnded)="onDragEnd(item, $event)"
       class="absolute"
     >
-      <app-data-item-container [item]="item" />
+      <app-data-item-container
+        [item]="item"
+        (resizeStart)="onResizeStart(item)"
+        (resizeEnd)="onResizeEnd(item)"
+      />
     </div>
   }
 </div>

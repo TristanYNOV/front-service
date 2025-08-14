@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
 import { CommonModule } from '@angular/common';
 import { PriceTableComponent } from '../specialized-data/PriceTable/price-table.component';
@@ -20,6 +20,8 @@ import { CdkResizableDirective as CdkResizable } from '../../directives/cdk-resi
 })
 export class DataItemContainerComponent {
   @Input() item!: AnyDataItems;
+  @Output() resizeStart = new EventEmitter<void>();
+  @Output() resizeEnd = new EventEmitter<void>();
 
   constructor(private readonly store: Store) {}
 

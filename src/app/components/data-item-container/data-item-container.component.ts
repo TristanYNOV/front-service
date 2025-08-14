@@ -29,13 +29,6 @@ export class DataItemContainerComponent {
   }
 
   onSave() {
-    console.log(this.item);
     this.store.dispatch(saveFromDisplay({ id: this.item.id }));
-  }
-
-  onResizeEnd(rect: DOMRectReadOnly) {
-    const { width, height } = rect;
-    console.log(`Resized to w: ${width}, h: ${height}`);
-    // Dispatch to store or notify parent if persistence is required
   }
 }

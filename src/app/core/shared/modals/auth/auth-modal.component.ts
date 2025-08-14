@@ -48,7 +48,6 @@ export class AuthModalComponent {
       this.form.controls['password'].hasError('uppercaseMissing') ||
       this.form.controls['password'].hasError('digitMissing') ||
       this.form.controls['password'].hasError('specialCharMissing');
-
   }
 
   closeModal(): void {
@@ -56,11 +55,7 @@ export class AuthModalComponent {
   }
 
   submit() {
-    const formData = {
-      email: this.form.controls['email'].value,
-      password: this.form.controls['password'].value,
-    }
-
+    const formData = this.form.getRawValue()
     console.log(formData);
   }
 }

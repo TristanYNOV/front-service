@@ -1,4 +1,7 @@
-<div class="border rounded-xl shadow p-4 bg-white mb-4">
+<div
+  cdkResizable
+  class="border rounded-xl shadow p-4 bg-white mb-4 resize overflow-auto"
+>
   @switch (item.type) {
     @case ('price') {
       <app-price-table [data]="item" />

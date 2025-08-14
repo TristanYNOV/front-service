@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { DataItemContainerComponent } from '../../components/data-item-container/data-item-container.component';
-import {selectDisplayedItems} from '../../store/Data/dataState.selectors';
+import { DiscoverCanvasComponent } from '../../components/discover-canvas/discover-canvas.component';
+import { selectDisplayedItems } from '../../store/Data/dataState.selectors';
 
 @Component({
   selector: 'app-discover',
   standalone: true,
-  imports: [DataItemContainerComponent],
+  imports: [DiscoverCanvasComponent],
   templateUrl: './discover.component.html',
 })
 export class DiscoverComponent {

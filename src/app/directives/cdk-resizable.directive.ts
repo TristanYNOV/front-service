@@ -23,8 +23,8 @@ export class CdkResizableDirective implements AfterViewInit, OnDestroy {
     }
 
     const element = this.elementRef.nativeElement;
-    element.addEventListener('mousedown', this.checkResizeStart);
-    element.addEventListener('touchstart', this.checkResizeStart);
+    element.addEventListener('mousedown', this.checkResizeStart, true);
+    element.addEventListener('touchstart', this.checkResizeStart, true);
     element.addEventListener('mouseup', this.emitSize);
     element.addEventListener('touchend', this.emitSize);
   }
@@ -32,8 +32,8 @@ export class CdkResizableDirective implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     const element = this.elementRef.nativeElement;
     this.observer?.disconnect();
-    element.removeEventListener('mousedown', this.checkResizeStart);
-    element.removeEventListener('touchstart', this.checkResizeStart);
+    element.removeEventListener('mousedown', this.checkResizeStart, true);
+    element.removeEventListener('touchstart', this.checkResizeStart, true);
     element.removeEventListener('mouseup', this.emitSize);
     element.removeEventListener('touchend', this.emitSize);
   }
@@ -47,6 +47,7 @@ export class CdkResizableDirective implements AfterViewInit, OnDestroy {
     const y = clientY - rect.top;
     const edgeSize = 10;
     if (x > rect.width - edgeSize && y > rect.height - edgeSize) {
+      event.stopImmediatePropagation();
       this.cdkResizeStart.emit();
     }
   };

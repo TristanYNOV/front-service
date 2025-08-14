@@ -1,18 +1,13 @@
 <div class="relative h-full overflow-y-auto" #canvas>
   @for (item of items; track item.id) {
     <div
-      cdkDrag
-      [cdkDragDisabled]="dragDisabled[item.id]"
+      cdkDragResize
       [cdkDragBoundary]="canvas"
       [cdkDragFreeDragPosition]="positions[item.id]"
       (cdkDragEnded)="onDragEnd(item, $event)"
-      class="absolute"
+      class="absolute border rounded-xl shadow bg-white mb-4 resize overflow-auto"
     >
-      <app-data-item-container
-        [item]="item"
-        (resizeStart)="onResizeStart(item)"
-        (resizeEnd)="onResizeEnd(item)"
-      />
+      <app-data-item-container [item]="item" />
     </div>
   }
 </div>

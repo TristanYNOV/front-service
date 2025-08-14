@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
 import { CommonModule } from '@angular/common';
 import { PriceTableComponent } from '../specialized-data/PriceTable/price-table.component';
 import { TextBlockComponent } from '../specialized-data/TextBlock/text-block.component';
 import { Store } from '@ngrx/store';
 import { removeFromDisplay, saveFromDisplay } from '../../store/Data/dataState.actions';
-import { CdkResizableDirective as CdkResizable } from '../../directives/cdk-resizable.directive';
 
 @Component({
   selector: 'app-data-item-container',
@@ -14,14 +13,11 @@ import { CdkResizableDirective as CdkResizable } from '../../directives/cdk-resi
     CommonModule,
     PriceTableComponent,
     TextBlockComponent,
-    CdkResizable,
   ],
   templateUrl: './data-item-container.component.html',
 })
 export class DataItemContainerComponent {
   @Input() item!: AnyDataItems;
-  @Output() resizeStart = new EventEmitter<void>();
-  @Output() resizeEnd = new EventEmitter<void>();
 
   constructor(private readonly store: Store) {}
 

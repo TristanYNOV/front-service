@@ -19,7 +19,7 @@
           required
         />
       </mat-form-field>
-    @if (showPasswordHint()) {
+    @if (shouldShowPasswordErrors()) {
       <div class="flex flex-col">
         @if (form.controls['password'].hasError('minLength')) {
           <mat-error><span class="alert-text">Le mot de passe doit contenir au moins 8 caractères.</span></mat-error>
@@ -38,6 +38,12 @@
         }
       </div>
     }
+
+    <div class="text-center mt-4">
+      <button type="button" class="underline text-sm" (click)="toggleMode()">
+        {{ modalType === 'login' ? 'Créer un compte' : 'Se connecter' }}
+      </button>
+    </div>
 
     <div class="flex justify-around mt-8">
       <button class="btn-accent p-2" type="submit">{{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}</button>

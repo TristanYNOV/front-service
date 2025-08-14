@@ -10,14 +10,14 @@
 
   <nav class="flex justify-around min-w-1 mr-6 light-text">
     @if (!isloggedIn) {
-        <ul class="flex gap-4 [&>*]:p-2">
-          <button class="icon" (click)="openAuthModal('register')">
-            <li>Créer un compte</li>
-          </button>
-          <button class="icon" (click)="openAuthModal('login')">
-            <li>Se connecter</li>
-          </button>
-        </ul>
+      <div class="flex gap-4">
+        <button mat-icon-button aria-label="Créer un compte" (click)="openAuthModal('register')">
+          <mat-icon>person_add</mat-icon>
+        </button>
+        <button mat-icon-button aria-label="Se connecter" (click)="openAuthModal('login')">
+          <mat-icon>login</mat-icon>
+        </button>
+      </div>
     }
   </nav>
 </header>

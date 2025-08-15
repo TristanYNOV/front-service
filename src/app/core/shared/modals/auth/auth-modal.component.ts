@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
@@ -26,9 +26,10 @@ export class AuthModalComponent {
   readonly form: FormGroup;
   modalType: 'register' | 'login';
 
+  private dialogRef: MatDialogRef<AuthModalComponent> = inject(MatDialogRef);
+  public data = inject<AuthModalData>(MAT_DIALOG_DATA);
+
   constructor(
-    private dialogRef: MatDialogRef<AuthModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AuthModalData
   ) {
     this.modalType = this.data.type === 'login' ? 'login' : 'register';
     this.form = new FormGroup({

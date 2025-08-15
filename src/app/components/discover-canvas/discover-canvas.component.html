@@ -1,7 +1,7 @@
 <div class="relative h-full overflow-y-auto" #canvas>
   @for (item of items; track item.id) {
     <div
-      cdkDragResize
+      appCdkDragResize
       [cdkDragBoundary]="canvas"
       [cdkDragFreeDragPosition]="positions[item.id]"
       (cdkDragEnded)="onDragEnd(item, $event)"

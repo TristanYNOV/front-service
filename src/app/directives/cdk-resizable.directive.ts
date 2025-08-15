@@ -1,7 +1,7 @@
-import { AfterViewInit, Directive, ElementRef, EventEmitter, OnDestroy, Output } from '@angular/core';
+import {AfterViewInit, Directive, ElementRef, EventEmitter, inject, OnDestroy, Output} from '@angular/core';
 
 @Directive({
-  selector: '[cdkResizable]',
+  selector: '[appCdkResizable]',
   standalone: true,
 })
 export class CdkResizableDirective implements AfterViewInit, OnDestroy {
@@ -10,7 +10,7 @@ export class CdkResizableDirective implements AfterViewInit, OnDestroy {
   private observer?: ResizeObserver;
   private lastSize?: DOMRectReadOnly;
 
-  constructor(private elementRef: ElementRef<HTMLElement>) {}
+  private elementRef: ElementRef<HTMLElement> = inject(ElementRef<HTMLElement>);
 
   ngAfterViewInit() {
     if (typeof ResizeObserver !== 'undefined') {

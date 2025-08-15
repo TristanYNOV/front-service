@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
 import { CommonModule } from '@angular/common';
 import { PriceTableComponent } from '../specialized-data/PriceTable/price-table.component';
@@ -19,7 +19,7 @@ import { removeFromDisplay, saveFromDisplay } from '../../store/Data/dataState.a
 export class DataItemContainerComponent {
   @Input() item!: AnyDataItems;
 
-  constructor(private readonly store: Store) {}
+  private readonly store = inject(Store);
 
   onDelete() {
     console.log(this.item);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { HeaderComponent } from './header/header.component';
 import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,7 @@ import {selectIdleItems, selectSavedItems} from './store/Data/dataState.selector
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  constructor(private readonly store: Store) {}
+  private readonly store = inject(Store)
 
   get idleItems() {
     return this.store.selectSignal(selectIdleItems);

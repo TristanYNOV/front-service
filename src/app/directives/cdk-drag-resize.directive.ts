@@ -3,7 +3,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop';
 import { CdkResizableDirective } from './cdk-resizable.directive';
 
 @Directive({
-  selector: '[cdkDragResize]',
+  selector: '[appCdkDragResize]',
   standalone: true,
   hostDirectives: [
     {

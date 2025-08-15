@@ -1,10 +1,9 @@
-import { Component, Input } from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AnyDataItems } from '../../../interfaces/dataItem.interface';
 import { DataItemState, DataItemType } from '../../../enum/state.enum';
 import {PriceTableMiniComponent} from '../../specialized-data/PriceTable/Minified/price-table-mini.component';
 import {TextBlockMiniComponent} from '../../specialized-data/TextBlock/Minified/text-block-mini.component';
-import {selectIdleItems} from '../../../store/Data/dataState.selectors';
 import { displayFromIdle, displayFromSaved } from '../../../store/Data/dataState.actions';
 
 @Component({
@@ -19,9 +18,7 @@ import { displayFromIdle, displayFromSaved } from '../../../store/Data/dataState
 export class MiniComponent {
   @Input({required: true}) item!: AnyDataItems;
   protected readonly DataItemType = DataItemType;
-  protected readonly DataItemState = DataItemState;
-
-  constructor(private readonly store: Store) {}
+  private readonly store = inject(Store)
 
   displayData() {
     console.log(this.item.id);

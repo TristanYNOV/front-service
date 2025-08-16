@@ -5,15 +5,36 @@
   border-radius: 30rem;
 }
 
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  border-color: var(--btn-primary-border);
+  border-style: solid;
+  border-width: var(--border-width);
+  border-radius: var(--border-radius);
+  color: var(--btn-primary-color);
+  &:disabled {
+    @apply cursor-not-allowed;
+    &:hover {
+      background-color: var(--btn-primary-bg-disabled);
+    }
+    background-color: var(--btn-primary-bg-disabled);
+  }
+  &:hover {
+    background-color: var(--btn-primary-hover-bg);
+  }
+}
+
+
 .btn-default {
   background-color: var(--btn-default-bg);
   border-color: var(--btn-default-border);
   border-style: solid;
   border-width: var(--border-width);
   border-radius: var(--border-radius);
-    &:hover {
-      background-color: var(--btn-default-bg-hover);
-    }
+
+  &:hover {
+    background-color: var(--btn-default-bg-hover);
+  }
 }
 
 .btn-accent {
@@ -23,13 +44,16 @@
   border-width: var(--border-width);
   border-radius: var(--border-radius);
   color: var(--btn-accent-color);
+
   &:disabled {
     @apply cursor-not-allowed;
     &:hover {
       background-color: var(--btn-accent-bg-disabled);
     }
+
     background-color: var(--btn-accent-bg-disabled);
   }
+
   &:hover {
     background-color: var(--btn-accent-hover-bg);
   }

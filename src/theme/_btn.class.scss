@@ -23,6 +23,13 @@
   border-width: var(--border-width);
   border-radius: var(--border-radius);
   color: var(--btn-accent-color);
+  &:disabled {
+    @apply cursor-not-allowed;
+    &:hover {
+      background-color: var(--btn-accent-bg-disabled);
+    }
+    background-color: var(--btn-accent-bg-disabled);
+  }
   &:hover {
     background-color: var(--btn-accent-hover-bg);
   }

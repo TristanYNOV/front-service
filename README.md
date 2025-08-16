@@ -1,71 +1,74 @@
-# FrontService
+# Front Service
 
-# TODO: 
-## CI/CD
-Add .yml to test build and run lint
-Add git ignore --> VSCFILE, .env, ...
+Front Service est l'interface web de l'application. Il s'agit d'une application Angular (v19) utilisant NgRx pour la gestion d'état, TailwindCSS pour le style et un serveur Express pour le rendu côté serveur (SSR).
 
-## CODE : 
-- Set space title dynamic with URL
-- Create main component
-- Insert Main component within route
-- Add 3-4 components into Home routes for the main component and playground
-
-
-
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
+## Structure du projet
+```
+front-service/
+├── Dockerfile             # Image de production basée sur Nginx
+├── angular.json           # Configuration Angular CLI
+├── nginx.conf             # Configuration Nginx pour la distribution
+├── package.json           # Dépendances et scripts NPM
+├── public/                # Fichiers statiques (favicon, ...)
+├── src/
+│   ├── app/
+│   │   ├── components/    # Composants réutilisables
+│   │   ├── core/          # Services, API, guards et utilitaires
+│   │   ├── directives/    # Directives personnalisées
+│   │   ├── header/        # Composant d'en-tête
+│   │   ├── pages/         # Pages de l'application (landing, discover, ...)
+│   │   └── store/         # Gestion d'état avec NgRx
+│   ├── theme/             # Styles globaux et variables
+│   ├── index.html         # Document HTML principal
+│   ├── main.ts            # Point d'entrée client
+│   ├── main.server.ts     # Point d'entrée SSR
+│   └── server.ts          # Serveur Express pour le SSR
+└── tailwind.config.js     # Configuration TailwindCSS
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Prérequis
+- [Node.js](https://nodejs.org/) 18+
+- [Angular CLI](https://angular.dev/tools/cli) installé globalement (`npm install -g @angular/cli`)
 
-## Code scaffolding
+## Installation
+1. Cloner ce dépôt.
+2. Installer les dépendances :
+   ```bash
+   npm install
+   ```
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+## Utilisation
+### Développement
+Lancer un serveur de développement avec rechargement automatique :
 ```bash
-ng generate component component-name
+npm start
+```
+Ouvrir le navigateur à [http://localhost:4200](http://localhost:4200).
+
+### Tests et lint
+```bash
+npm test      # lance les tests unitaires
+npm run lint  # exécute ESLint
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+### Build de production
 ```bash
-ng generate --help
+npm run build
+```
+Le code compilé est généré dans le dossier `dist/`.
+
+### Rendu côté serveur
+Pour démarrer le serveur SSR après compilation :
+```bash
+npm run build
+npm run serve:ssr:front-service
 ```
 
-## Building
-
-To build the project run:
-
+### Docker
+Une image de production peut être construite via :
 ```bash
-ng build
+docker build -t front-service .
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Objet du projet
+Ce service fournit l'interface utilisateur principale et consomme les API du backend. Il est conçu pour être déployé comme conteneur autonome et peut être servi derrière un reverse proxy Nginx.

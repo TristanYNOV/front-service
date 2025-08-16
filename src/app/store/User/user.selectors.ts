@@ -20,5 +20,8 @@ export const selectAuthLoading = createSelector(
 
 export const selectIsLoggedIn = createSelector(
   selectUserState,
-  state => !!state.email && !!state.tokens
+  state =>
+    !!state.email &&
+    !!state.tokens?.accessToken &&
+    !!state.tokens?.refreshToken
 );

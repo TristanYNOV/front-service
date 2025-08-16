@@ -45,7 +45,17 @@
     }
 
     <div class="flex justify-around mt-8">
-      <button class="btn-accent p-2" type="submit">{{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}</button>
+      @if (loading$ | async) {
+        <app-loading-dots />
+      } @else {
+        <button
+          class="btn-accent p-2"
+          type="submit"
+          [disabled]="form.invalid || (loading$ | async)"
+        >
+          {{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}
+        </button>
+      }
       <button (click)="closeModal()" class="btn-accent p-2">Annuler</button>
     </div>
   </form>

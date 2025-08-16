@@ -3,6 +3,9 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
+import { Store } from '@ngrx/store';
+import { LoadingDotsComponent } from '../../../../components/loading-dots';
+import { selectAuthLoading } from '../../../../store/auth/auth.selectors';
 import {
   digitValidator,
   lowercaseValidator,
@@ -18,7 +21,7 @@ interface AuthModalData {
 @Component({
   selector: 'app-auth-modal',
   templateUrl: './auth-modal.component.html',
-  imports: [MatFormField, MatLabel, MatInput, MatError, ReactiveFormsModule],
+  imports: [MatFormField, MatLabel, MatInput, MatError, ReactiveFormsModule, LoadingDotsComponent],
   standalone: true
 })
 export class AuthModalComponent {
@@ -28,6 +31,8 @@ export class AuthModalComponent {
 
   private dialogRef: MatDialogRef<AuthModalComponent> = inject(MatDialogRef);
   public data = inject<AuthModalData>(MAT_DIALOG_DATA);
+  private store = inject(Store);
+  readonly loading$ = this.store.select(selectAuthLoading);
 
   constructor(
   ) {

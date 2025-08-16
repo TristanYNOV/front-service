@@ -36,17 +36,17 @@ interface AuthModalData {
   standalone: true
 })
 export class AuthModalComponent {
-  hidePassword = true;
-  readonly form: FormGroup;
-  modalType: 'register' | 'login';
   private store = inject(Store);
+  public data = inject<AuthModalData>(MAT_DIALOG_DATA);
+
   error$ = this.store.select(selectAuthError);
   loading$ = this.store.select(selectAuthLoading);
 
+  hidePassword = true;
+  readonly form: FormGroup;
+  modalType: 'register' | 'login';
+
   private dialogRef: MatDialogRef<AuthModalComponent> = inject(MatDialogRef);
-  public data = inject<AuthModalData>(MAT_DIALOG_DATA);
-  private store = inject(Store);
-  readonly loading$ = this.store.select(selectAuthLoading);
 
   constructor(
   ) {

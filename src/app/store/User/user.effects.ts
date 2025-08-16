@@ -64,7 +64,10 @@ export class UserEffects {
     () =>
       this.actions$.pipe(
         ofType(logout),
-        tap(() => this.tokenService.clearTokens())
+        tap(() => {
+          this.tokenService.clearTokens();
+          this.router.navigate(['/']);
+        })
       ),
     { dispatch: false }
   );

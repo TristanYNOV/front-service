@@ -1,7 +1,7 @@
 <div class="flex flex-col border rounded-md p-2 max-h-16 overflow-y-auto">
   <div class="flex gap-2">
     <span class="font-bold truncate">{{ item.id }}</span>
-    <button (click)="displayData()" class="btn-accent w-fit px-2 ml-auto">Afficher</button>
+    <button (click)="displayData()" class="btn-accent w-fit px-2 ml-auto" [disabled]="item.state === DataItemState.Displayed">Afficher</button>
   </div>
 
   @switch (item.type) {

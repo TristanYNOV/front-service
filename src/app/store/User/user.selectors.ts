@@ -17,3 +17,8 @@ export const selectAuthLoading = createSelector(
   selectUserState,
   state => state.loading
 );
+
+export const selectIsLoggedIn = createSelector(
+  selectUserState,
+  state => !!state.email && !!state.tokens
+);

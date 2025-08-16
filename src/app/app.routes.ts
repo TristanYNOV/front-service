@@ -5,6 +5,6 @@ import { DiscoverComponent } from './pages/discover/discover.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
-  { path: 'test', component: LandingComponent },
   { path: 'discover', component: DiscoverComponent },
+  { path: 'welcome', component: DiscoverComponent },
 ];

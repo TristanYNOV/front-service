@@ -21,7 +21,6 @@ export class MiniComponent {
   private readonly store = inject(Store)
 
   displayData() {
-    console.log(this.item.id);
     if (this.item.state === DataItemState.Saved) {
       this.store.dispatch(displayFromSaved({ id: this.item.id }));
     } else if (this.item.state === DataItemState.Idle) {

@@ -12,7 +12,18 @@
         </button>
       </div>
     } @else {
-      <button class="icon p-2" (click)="logout()">Déconnexion</button>
+      <div class="flex gap-4 items-center">
+        <button mat-button [matMenuTriggerFor]="clubMenu">Club</button>
+        <mat-menu #clubMenu="matMenu">
+          <button mat-menu-item routerLink="/club">Club</button>
+          <button mat-menu-item routerLink="/teams">Teams</button>
+          <button mat-menu-item routerLink="/players">Players</button>
+          <button mat-menu-item routerLink="/tournaments">Tournaments</button>
+          <button mat-menu-item routerLink="/matchs">Matchs</button>
+        </mat-menu>
+        <button mat-button routerLink="/analyse">Analyse</button>
+        <button class="icon p-2" (click)="logout()">Déconnexion</button>
+      </div>
     }
   </nav>
 </header>

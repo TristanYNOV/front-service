@@ -18,6 +18,7 @@ import { displayFromIdle, displayFromSaved } from '../../../store/Data/dataState
 export class MiniComponent {
   @Input({required: true}) item!: AnyDataItems;
   protected readonly DataItemType = DataItemType;
+  protected readonly DataItemState = DataItemState;
   private readonly store = inject(Store)
 
   displayData() {

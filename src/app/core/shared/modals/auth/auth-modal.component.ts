@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { signIn, register } from '../../../../store/User/user.actions';
 import { selectAuthError, selectAuthLoading } from '../../../../store/User/user.selectors';
 import { LoadingDotsComponent } from '../../../../components/loading-dots';
+
 import {
   digitValidator,
   lowercaseValidator,
@@ -44,6 +45,8 @@ export class AuthModalComponent {
 
   private dialogRef: MatDialogRef<AuthModalComponent> = inject(MatDialogRef);
   public data = inject<AuthModalData>(MAT_DIALOG_DATA);
+  private store = inject(Store);
+  readonly loading$ = this.store.select(selectAuthLoading);
 
   constructor(
   ) {

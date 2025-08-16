@@ -5,6 +5,9 @@
       {{ modalType === 'login' ? 'Créer un compte' : 'Se connecter' }}
     </button>
   </div>
+  @if (error$ | async; as error) {
+    <div class="text-center alert-text mt-2">{{ error }}</div>
+  }
   <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 mt-4">
       <mat-form-field>
         <mat-label>Email</mat-label>

@@ -5,6 +5,9 @@
       {{ modalType === 'login' ? 'Créer un compte' : 'Se connecter' }}
     </button>
   </div>
+  @if (error$ | async; as error) {
+    <div class="text-center alert-text mt-2">{{ error }}</div>
+  }
   <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 mt-4">
       <mat-form-field>
         <mat-label>Email</mat-label>
@@ -45,7 +48,17 @@
     }
 
     <div class="flex justify-around mt-8">
-      <button class="btn-accent p-2" type="submit">{{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}</button>
+      @if (loading$ | async) {
+        <app-loading-dots class="p-2"></app-loading-dots>
+      } @else {
+        <button
+          class="btn-accent p-2"
+          type="submit"
+          [disabled]="form.invalid || (loading$ | async)"
+        >
+          {{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}
+        </button>
+      }
       <button (click)="closeModal()" class="btn-accent p-2">Annuler</button>
     </div>
   </form>

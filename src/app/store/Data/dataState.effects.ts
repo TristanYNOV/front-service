@@ -13,7 +13,7 @@ export class DataEffects {
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
       switchMap(({ urlAfterRedirects }) => {
-        let actions: Array<Action> = [clearIdleData()];
+        const actions: Action[] = [clearIdleData()];
         switch (urlAfterRedirects) {
           case '/discover':
             actions.push(loadDiscoverData());

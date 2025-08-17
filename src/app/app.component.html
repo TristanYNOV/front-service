@@ -2,7 +2,7 @@
   <app-header [currentSpace]="'Accueil'" />
 
   <main class="flex-1 overflow-hidden" [class.flex]="showSidebar">
-    <ng-container *ngIf="showSidebar">
+    @if(showSidebar){
       <!-- Sidebar gauche : Idle + Saved -->
       <section class="w-[20%] min-w-[200px] max-w-[300px] bg-layer-1 p-2 flex flex-col gap-4 overflow-y-auto">
         <!-- IDLE -->
@@ -33,9 +33,8 @@
           }
         </div>
       </section>
-
       <div class="separator h-[80%] self-center mx-2"></div>
-    </ng-container>
+    }
 
     <!-- Affichage principal -->
     <section class="p-2 overflow-y-auto" [class.flex-1]="showSidebar" [class.w-full]="!showSidebar">

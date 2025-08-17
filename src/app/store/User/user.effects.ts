@@ -12,6 +12,9 @@ import {
   registerSuccess,
   registerFailure,
   logout,
+  loadInitialState,
+  loadInitialStateSuccess,
+  loadInitialStateFailed,
 } from './user.actions';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 
@@ -51,8 +54,9 @@ export class UserEffects {
     () =>
       this.actions$.pipe(
         ofType(signInSuccess, registerSuccess),
-        tap(({ tokens }) => {
+        tap(({ email, tokens }) => {
           this.tokenService.setTokens(tokens);
+          localStorage.setItem('user_email', email);
           this.dialog.closeAll();
           this.router.navigate(['/welcome']);
         })
@@ -66,9 +70,24 @@ export class UserEffects {
         ofType(logout),
         tap(() => {
           this.tokenService.clearTokens();
+          localStorage.removeItem('user_email');
           this.router.navigate(['/']);
         })
       ),
     { dispatch: false }
+  );
+
+  loadInitialState$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loadInitialState),
+      switchMap(() => {
+        const tokens = this.tokenService.getTokens();
+        const email = localStorage.getItem('user_email');
+        if (tokens && email) {
+          return of(loadInitialStateSuccess({ email, tokens }));
+        }
+        return of(loadInitialStateFailed({ error: 'No stored credentials' }));
+      })
+    )
   );
 }

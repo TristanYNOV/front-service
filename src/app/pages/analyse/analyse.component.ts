@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { VideoPlayerComponent } from './video-player.component';
-import { SequencerPanelComponent } from './sequencer-panel.component';
-import { TimelineComponent } from './timeline.component';
+import {VideoPlayerComponent} from '../../components/analyse/video/video-player.component';
+import {SequencerPanelComponent} from '../../components/analyse/sequencer/sequencer-panel.component';
+import {TimelineComponent} from '../../components/analyse/timeline/timeline.component';
 
 @Component({
   selector: 'app-analyse',

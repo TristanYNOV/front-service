@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CdkDragResizeDirective } from '../../directives/cdk-drag-resize.directive';
+import {CdkDragResizeDirective} from '../../../directives/cdk-drag-resize.directive';
 
 @Component({
   selector: 'app-timeline',

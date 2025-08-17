@@ -2,8 +2,10 @@ import { AnyDataItems } from '../../interfaces/dataItem.interface';
 import { createReducer, on } from '@ngrx/store';
 import {
   addToIdle,
+  clearIdleData,
   displayFromIdle,
   displayFromSaved,
+  loadDiscoverData,
   removeFromDisplay,
   removeFromIdle,
   saveFromDisplay,
@@ -80,13 +82,23 @@ const upcomingFeatures: AnyDataItems = {
 };
 
 export const initialDataState: DataState = {
-  idle: [idleAppPrice, clubGuide, cguInfo, upcomingFeatures],
-  displayed: [appPrice],
+  idle: [],
+  displayed: [],
   saved: [],
 };
 
 export const dataStateReducer = createReducer(
   initialDataState,
+  on(loadDiscoverData, state => ({
+    ...state,
+    idle: [idleAppPrice, clubGuide, cguInfo, upcomingFeatures],
+    displayed: [appPrice],
+  })),
+  on(clearIdleData, state => ({
+    ...state,
+    idle: [],
+    displayed: [],
+  })),
   // IDLE PART
   on(addToIdle, (state, { item }) => {
     // Empêche l'ajout d'un élément déjà présent dans l'un des états

@@ -7,6 +7,9 @@ import {
   registerSuccess,
   registerFailure,
   logout,
+  loadInitialState,
+  loadInitialStateSuccess,
+  loadInitialStateFailed,
 } from './user.actions';
 
 // Interfaces liées au store User
@@ -31,14 +34,14 @@ export const initialUserState: UserState = {
 
 export const userReducer = createReducer(
   initialUserState,
-  on(signIn, register, state => ({ ...state, loading: true, error: null })),
-  on(signInSuccess, registerSuccess, (state, { email, tokens }) => ({
+  on(signIn, register, loadInitialState, state => ({ ...state, loading: true, error: null })),
+  on(signInSuccess, registerSuccess, loadInitialStateSuccess, (state, { email, tokens }) => ({
     ...state,
     loading: false,
     email,
     tokens,
   })),
-  on(signInFailure, registerFailure, (state, { error }) => ({
+  on(signInFailure, registerFailure, loadInitialStateFailed, (state, { error }) => ({
     ...state,
     loading: false,
     error,

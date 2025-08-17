@@ -10,6 +10,7 @@ import { provideEffects } from '@ngrx/effects';
 import { dataStateReducer } from './store/Data/dataState.reducers';
 import { userReducer } from './store/User/user.reducer';
 import { UserEffects } from './store/User/user.effects';
+import { DataEffects } from './store/Data/dataState.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
       dataState: dataStateReducer,
       userState: userReducer
     }),
-    provideEffects(UserEffects),
+    provideEffects(UserEffects, DataEffects),
     provideHttpClient()
   ]
 };

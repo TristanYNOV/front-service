@@ -1,4 +1,19 @@
 :root {
+
+  .mat-mdc-menu-panel.mat-menu-custom {
+    background-color: var(--btn-primary-bg) !important;
+    color: var(--dark-text) !important;
+    border-radius: 0.75rem; /* optionnel, arrondi */
+
+    .mat-mdc-menu-item,
+    .mdc-list-item__primary-text {
+      color: var(--dark-text) !important;
+    }
+
+    .mat-mdc-menu-item:hover {
+      background-color: var(--btn-primary-hover-bg) !important;
+    }
+  }
   .mat-mdc-dialog-surface {
     background-color: inherit;
   }

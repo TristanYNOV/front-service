@@ -1,4 +1,7 @@
 import {Component, inject, Input} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {MatButtonModule} from '@angular/material/button';
+import {MatMenuModule} from '@angular/material/menu';
 import {MatDialog} from '@angular/material/dialog';
 import {AuthModalComponent} from '../core/shared/modals/auth/auth-modal.component';
 import {Store} from '@ngrx/store';
@@ -9,6 +12,7 @@ import {selectIsLoggedIn} from '../store/User/user.selectors';
   selector: 'app-header',
   templateUrl: './header.component.html',
   standalone: true,
+  imports: [MatMenuModule, MatButtonModule, RouterLink],
 })
 export class HeaderComponent {
   @Input({required: true}) currentSpace!: string;

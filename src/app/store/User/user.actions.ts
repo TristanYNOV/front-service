@@ -32,3 +32,15 @@ export const registerFailure = createAction(
 );
 
 export const logout = createAction('[User] Logout');
+
+export const loadInitialState = createAction('[User] Load Initial State');
+
+export const loadInitialStateSuccess = createAction(
+  '[User] Load Initial State Success',
+  props<{ email: string; tokens: AuthTokens }>()
+);
+
+export const loadInitialStateFailed = createAction(
+  '[User] Load Initial State Failed',
+  props<{ error: string }>()
+);

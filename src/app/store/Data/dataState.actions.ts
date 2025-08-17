@@ -19,6 +19,10 @@ export const saveFromIdle = createAction(
   props<{ id: string }>()
 );
 
+// ROUTE ACTIONS
+export const loadDiscoverData = createAction('[DataState] Load Discover Data');
+export const clearIdleData = createAction('[DataState] Clear Route Data');
+
 // DISPLAY ACTIONS
 export const removeFromDisplay = createAction(
   '[DataState] Remove from display',

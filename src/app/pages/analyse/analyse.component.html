@@ -1,6 +1,47 @@
-<main id="analyse-container" class="relative w-full h-full m-2">
-  <app-video-player></app-video-player>
-  <app-sequencer-panel></app-sequencer-panel>
-  <app-timeline></app-timeline>
-</main>
+<main
+  #analysisContainer
+  data-testid="analysis-container"
+  class="relative w-full h-full p-2"
+>
+  <div
+    appCdkDragResize
+    appAnalysisPane
+    [cdkDragBoundary]="analysisContainer"
+    [cdkDragFreeDragPosition]="panePosition('video')"
+    (dragEnd)="onPaneDragEnd('video', $event)"
+    (resizeEnd)="onPaneResizeEnd('video', $event)"
+    [ngStyle]="paneStyle('video')"
+    data-testid="pane-video"
+    class="absolute resize overflow-hidden rounded-md border border-neutral-700 bg-neutral-900/70 shadow"
+  >
+    <app-video-player></app-video-player>
+  </div>
 
+  <div
+    appCdkDragResize
+    appAnalysisPane
+    [cdkDragBoundary]="analysisContainer"
+    [cdkDragFreeDragPosition]="panePosition('sequencer')"
+    (dragEnd)="onPaneDragEnd('sequencer', $event)"
+    (resizeEnd)="onPaneResizeEnd('sequencer', $event)"
+    [ngStyle]="paneStyle('sequencer')"
+    data-testid="pane-sequencer"
+    class="absolute resize overflow-auto rounded-md border border-neutral-700 bg-neutral-900/70 shadow"
+  >
+    <app-sequencer-panel></app-sequencer-panel>
+  </div>
+
+  <div
+    appCdkDragResize
+    appAnalysisPane
+    [cdkDragBoundary]="analysisContainer"
+    [cdkDragFreeDragPosition]="panePosition('timeline')"
+    (dragEnd)="onPaneDragEnd('timeline', $event)"
+    (resizeEnd)="onPaneResizeEnd('timeline', $event)"
+    [ngStyle]="paneStyle('timeline')"
+    data-testid="pane-timeline"
+    class="absolute resize overflow-auto rounded-md border border-neutral-700 bg-neutral-800/70 shadow"
+  >
+    <app-timeline></app-timeline>
+  </div>
+</main>

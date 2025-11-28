@@ -2,8 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
 import { DataItemContainerComponent } from '../data-item-container/data-item-container.component';
-import { CdkDragEnd } from '@angular/cdk/drag-drop';
-import { CdkDragResizeDirective } from '../../directives/cdk-drag-resize.directive';
+import { CdkDragResizeDirective, DragResizeRect } from '../../directives/cdk-drag-resize.directive';
 
 @Component({
   selector: 'app-discover-canvas',
@@ -26,8 +25,8 @@ export class DiscoverCanvasComponent implements OnChanges {
       });
     }
   }
-  onDragEnd(item: AnyDataItems, event: CdkDragEnd): void {
-    const { x, y } = event.source.getFreeDragPosition();
+  onDragEnd(item: AnyDataItems, event: DragResizeRect): void {
+    const { x, y } = event;
     this.positions[item.id] = { x, y };
   }
 }

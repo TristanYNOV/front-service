@@ -1,6 +1,6 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Output, inject, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Output, inject, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { CdkResizableDirective } from '../../directives/cdk-resizable.directive';
+import { CdkDragResizeDirective, DragResizeRect } from '../../directives/cdk-drag-resize.directive';
 
 export interface PaneRect {
   x: number;
@@ -18,31 +18,23 @@ export class AnalysisPaneDirective implements OnDestroy {
   @Output() resizeEnd = new EventEmitter<PaneRect>();
 
   private readonly elementRef = inject(ElementRef<HTMLElement>);
-  private readonly resizeDirective = inject(CdkResizableDirective);
+  private readonly dragResize = inject(CdkDragResizeDirective);
   private readonly subscriptions = new Subscription();
 
   constructor() {
-    this.subscriptions.add(
-      this.resizeDirective.cdkResizeEnd.subscribe(() => this.emitRect(this.resizeEnd)),
-    );
-  }
-
-  @HostListener('cdkDragEnded')
-  onDragEnded() {
-    this.emitRect(this.dragEnd);
+    this.subscriptions.add(this.dragResize.resizeEnd.subscribe(rect => this.emitRect(this.resizeEnd, rect)));
+    this.subscriptions.add(this.dragResize.dragEnd.subscribe(rect => this.emitRect(this.dragEnd, rect)));
   }
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
 
-  private emitRect(emitter: EventEmitter<PaneRect>) {
-    const rect = this.elementRef.nativeElement.getBoundingClientRect();
-    emitter.emit({
-      x: rect.left,
-      y: rect.top,
-      width: rect.width,
-      height: rect.height,
-    });
+  private emitRect(emitter: EventEmitter<PaneRect>, rect?: DragResizeRect) {
+    const bounds = this.elementRef.nativeElement.getBoundingClientRect();
+    const value = rect
+      ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+      : { x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height };
+    emitter.emit(value);
   }
 }

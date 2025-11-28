@@ -7,7 +7,131 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --rzr-padding: 10px;
+  --rzr-ring-bg: rgba(107, 114, 128, 0.28);
+  --rzr-handle-bg: rgba(255, 255, 255, 0.16);
+  --rzr-handle-contrast: #f8fafc;
+  --rzr-handle-border: rgba(0, 0, 0, 0.4);
+  --rzr-control-bg: #0f172a;
+  --rzr-control-border: rgba(255, 255, 255, 0.2);
+  --rzr-control-color: #f8fafc;
+}
+
 body {
   background-color: var(--bg-layer-1);
+}
+
+.rzr-wrap {
+  position: absolute;
+  padding: var(--rzr-padding);
+  box-sizing: border-box;
+  background: var(--rzr-ring-bg);
+}
+
+.rzr-ring {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+}
+
+.rzr-content {
+  position: absolute;
+  inset: var(--rzr-padding);
+  width: auto;
+  height: auto;
+}
+
+.rzr-handle {
+  position: absolute;
+  background: var(--rzr-handle-bg);
+  border: 1px solid var(--rzr-handle-border);
+  border-radius: 4px;
+  pointer-events: auto;
+  min-width: 12px;
+  min-height: 12px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.rzr-handle-top {
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 12px;
+}
+
+.rzr-handle-bottom {
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 12px;
+}
+
+.rzr-handle-left {
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 12px;
+}
+
+.rzr-handle-right {
+  right: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 12px;
+}
+
+.rzr-handle-top-left {
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+}
+
+.rzr-handle-top-left::after {
+  content: '\2630';
+  color: var(--rzr-handle-contrast);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.rzr-handle-bottom-right {
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.rzr-zindex {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: auto;
+}
+
+.rzr-zindex button {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--rzr-control-border);
+  background: var(--rzr-control-bg);
+  color: var(--rzr-control-color);
+  border-radius: 4px;
+  line-height: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.rzr-zindex button:disabled {
+  opacity: 0.65;
+  cursor: default;
 }
 

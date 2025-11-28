@@ -303,19 +303,24 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy {
   private getBoundsElement(): HTMLElement | null {
     if (this.boundsSelector) {
       const target = document.querySelector(this.boundsSelector);
-      if (target) {
-        return target as HTMLElement;
+      if (target instanceof HTMLElement) {
+        return target;
       }
     }
+
     if (this.cdkDragBoundary) {
       if (typeof this.cdkDragBoundary === 'string') {
         const boundary = document.querySelector(this.cdkDragBoundary);
-        if (boundary) {
-          return boundary as HTMLElement;
+        if (boundary instanceof HTMLElement) {
+          return boundary;
         }
+        return null;
       }
-      return this.cdkDragBoundary;
+      if (this.cdkDragBoundary instanceof HTMLElement) {
+        return this.cdkDragBoundary;
+      }
     }
+
     return this.host.parentElement;
   }
 

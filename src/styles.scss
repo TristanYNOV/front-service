@@ -37,43 +37,43 @@ body {
 }
 
 .rzr-handle-top {
-  top: -6px;
-  left: 12px;
-  right: 12px;
+  top: 0;
+  left: 8px;
+  right: 8px;
   height: 12px;
 }
 
 .rzr-handle-bottom {
-  bottom: -6px;
-  left: 12px;
-  right: 12px;
+  bottom: 0;
+  left: 8px;
+  right: 8px;
   height: 12px;
 }
 
 .rzr-handle-left {
-  left: -6px;
-  top: 12px;
-  bottom: 12px;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
   width: 12px;
 }
 
 .rzr-handle-right {
-  right: -6px;
-  top: 12px;
-  bottom: 12px;
+  right: 0;
+  top: 8px;
+  bottom: 8px;
   width: 12px;
 }
 
 .rzr-handle-top-left {
-  top: -6px;
-  left: -6px;
+  top: 0;
+  left: 0;
   width: 16px;
   height: 16px;
 }
 
 .rzr-handle-bottom-right {
-  bottom: -6px;
-  right: -6px;
+  bottom: 0;
+  right: 0;
   width: 16px;
   height: 16px;
 }

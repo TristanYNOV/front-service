@@ -5,9 +5,11 @@ import {
   EventEmitter,
   Input,
   NgZone,
+  OnChanges,
   OnDestroy,
   Output,
   Renderer2,
+  SimpleChanges,
 } from '@angular/core';
 
 export interface DragResizeRect {
@@ -24,7 +26,7 @@ type ResizeDirection = 'top' | 'bottom' | 'left' | 'right' | 'corner';
   selector: '[appCdkDragResize]',
   standalone: true,
 })
-export class CdkDragResizeDirective implements AfterViewInit, OnDestroy {
+export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChanges {
   @Input() cdkDragBoundary?: string | HTMLElement;
   @Input() cdkDragFreeDragPosition: { x: number; y: number } = { x: 0, y: 0 };
   @Input() boundsSelector?: string;
@@ -54,11 +56,13 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy {
   private ring!: HTMLElement;
   private content!: HTMLElement;
   private removeActiveWindowListeners?: () => void;
+  private initialLayoutRect?: DOMRect;
 
   constructor(private renderer: Renderer2, private elementRef: ElementRef<HTMLElement>, private zone: NgZone) {}
 
   ngAfterViewInit(): void {
     this.host = this.elementRef.nativeElement;
+    this.initialLayoutRect = this.host.getBoundingClientRect();
     this.host.classList.add('rzr-wrap');
     this.host.style.position = this.host.style.position || 'absolute';
     this.host.style.zIndex = `${this.zIndex}`;
@@ -66,6 +70,20 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy {
     this.setupStructure();
     this.applyInitialPosition();
     this.initAspectRatio();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!this.host) {
+      return;
+    }
+
+    if (changes['zIndex'] && !changes['zIndex'].isFirstChange()) {
+      this.host.style.zIndex = `${this.zIndex}`;
+    }
+
+    if (changes['cdkDragFreeDragPosition'] && this.cdkDragFreeDragPosition) {
+      this.applyPositionFromInput();
+    }
   }
 
   ngOnDestroy(): void {
@@ -116,12 +134,12 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy {
   }
 
   private applyInitialPosition() {
-    const rect = this.host.getBoundingClientRect();
     const parentRect = this.getBoundsRect();
-    const width = rect.width || this.minSize.w;
-    const height = rect.height || this.minSize.h;
-    const x = this.cdkDragFreeDragPosition?.x ?? rect.left - parentRect.left;
-    const y = this.cdkDragFreeDragPosition?.y ?? rect.top - parentRect.top;
+    const layoutRect = this.initialLayoutRect ?? this.host.getBoundingClientRect();
+    const width = layoutRect.width || this.minSize.w;
+    const height = layoutRect.height || this.minSize.h;
+    const x = this.cdkDragFreeDragPosition?.x ?? layoutRect.left - parentRect.left;
+    const y = this.cdkDragFreeDragPosition?.y ?? layoutRect.top - parentRect.top;
     this.applyRect(this.clampRect({ x, y, width, height }));
   }
 
@@ -228,6 +246,14 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy {
         window.removeEventListener('pointerup', upListener, true);
       };
     });
+  }
+
+  private applyPositionFromInput() {
+    const current = this.getCurrentRect();
+    const x = this.cdkDragFreeDragPosition?.x ?? current.x;
+    const y = this.cdkDragFreeDragPosition?.y ?? current.y;
+    const next = this.clampRect({ x, y, width: current.width, height: current.height });
+    this.applyRect(next);
   }
 
   private onPointerMove(event: PointerEvent) {

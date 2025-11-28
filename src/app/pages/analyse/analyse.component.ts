@@ -66,8 +66,6 @@ export class AnalyseComponent implements AfterViewInit {
       height: `${pane.height}px`,
       minWidth: `${this.minWidth}px`,
       minHeight: `${this.minHeight}px`,
-      left: '0px',
-      top: '0px',
     };
   }
 

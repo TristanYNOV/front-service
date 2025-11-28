@@ -133,10 +133,13 @@ export class AnalyseComponent implements AfterViewInit {
   }
 
   private toRelativeRect(rect: PaneRect): PaneRect {
-    const container = this.getContainerRect();
+    // Drag-resize events already report coordinates relative to the analysis container
+    // thanks to the directive's boundary handling, so we can pass them through without
+    // re-offsetting. Keeping these values untouched prevents panes from jumping when
+    // a click emits an unchanged rect.
     return {
-      x: rect.x - container.left,
-      y: rect.y - container.top,
+      x: rect.x,
+      y: rect.y,
       width: rect.width,
       height: rect.height,
     };

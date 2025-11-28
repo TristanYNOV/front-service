@@ -48,6 +48,7 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
   private cleanup: Array<() => void> = [];
   private aspectRatio?: number;
   private pointerId?: number;
+  private pointerMoved = false;
   private activeMode: 'drag' | 'resize' | null = null;
   private resizeDir: ResizeDirection = 'corner';
   private startRect!: DragResizeRect;
@@ -228,6 +229,7 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
     event.preventDefault();
 
     this.pointerId = event.pointerId;
+    this.pointerMoved = false;
     this.activeMode = direction === 'corner' && position === 'top-left' ? 'drag' : 'resize';
     this.resizeDir = direction;
     this.startPointer = { x: event.clientX, y: event.clientY };
@@ -264,12 +266,14 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
       return;
     }
     event.preventDefault();
-    const dx = event.clientX - this.startPointer.x;
-    const dy = event.clientY - this.startPointer.y;
+    const dx = Math.round(event.clientX - this.startPointer.x);
+    const dy = Math.round(event.clientY - this.startPointer.y);
 
-    if (dx === 0 && dy === 0) {
+    if (!this.pointerMoved && Math.abs(dx) < 1 && Math.abs(dy) < 1) {
       return;
     }
+
+    this.pointerMoved = true;
 
     if (this.activeMode === 'drag') {
       const next = this.clampRect({
@@ -328,6 +332,7 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
     this.removeActiveWindowListeners = undefined;
     this.activeMode = null;
     this.pointerId = undefined;
+    this.pointerMoved = false;
   }
 
   private getBoundsElement(): HTMLElement | null {

@@ -267,6 +267,10 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
     const dx = event.clientX - this.startPointer.x;
     const dy = event.clientY - this.startPointer.y;
 
+    if (dx === 0 && dy === 0) {
+      return;
+    }
+
     if (this.activeMode === 'drag') {
       const next = this.clampRect({
         x: this.startRect.x + dx,

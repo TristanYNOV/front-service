@@ -8,6 +8,7 @@
     appAnalysisPane
     [cdkDragBoundary]="analysisContainer"
     [cdkDragFreeDragPosition]="panePosition('video')"
+    lockAspectRatio="16/9"
     (dragEnd)="onPaneDragEnd('video', $event)"
     (resizeEnd)="onPaneResizeEnd('video', $event)"
     [ngStyle]="paneStyle('video')"

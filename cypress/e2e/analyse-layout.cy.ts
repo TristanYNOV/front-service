@@ -1,4 +1,4 @@
-import { dragBy, resizeBy } from '../support/drag';
+import { dragBy, resizeBy, resizeSide } from '../support/drag';
 
 describe('Analyse layout', () => {
   const ensureDirectivePresent = () => {
@@ -14,6 +14,17 @@ describe('Analyse layout', () => {
   beforeEach(() => {
     cy.visit('/analyse');
     ensureDirectivePresent();
+  });
+
+  it('exposes drag handle and z-index controls', () => {
+    cy.get('[data-testid="pane-video"]').within(() => {
+      cy.get('.rzr-handle-top-left').should('exist');
+      cy.get('.rzr-handle-bottom-right').should('exist');
+      cy.get('.rzr-handle-top').should('exist');
+      cy.get('.rzr-handle-right').should('exist');
+      cy.get('.rzr-zup').should('exist');
+      cy.get('.rzr-zdown').should('exist');
+    });
   });
 
   it('drag within bounds', () => {
@@ -56,6 +67,35 @@ describe('Analyse layout', () => {
         expect(rect.right).to.be.lte(containerRect.right + 1);
         expect(rect.bottom).to.be.lte(containerRect.bottom + 1);
       });
+    });
+  });
+
+  it('z-index buttons clamp to limits', () => {
+    cy.get('[data-testid="pane-video"]').within(() => {
+      cy.get('.rzr-zup').click().click().click();
+      cy.get('.rzr-zdown').click();
+    });
+    cy.get('[data-testid="pane-video"]').then($pane => {
+      const z = Number.parseInt(getComputedStyle($pane[0]).zIndex || '0', 10);
+      expect(z).to.be.within(1, 10);
+    });
+  });
+
+  it('aspect ratio lock keeps video near 16/9 when resizing', () => {
+    resizeBy('pane-video', 200, 200);
+    cy.get('[data-testid="pane-video"]').then($pane => {
+      const rect = $pane[0].getBoundingClientRect();
+      const ratio = rect.width / rect.height;
+      expect(ratio).to.be.closeTo(16 / 9, 0.05);
+    });
+  });
+
+  it('side resize adjusts with ratio preserved', () => {
+    resizeSide('pane-video', '.rzr-handle-right', 120, 0);
+    cy.get('[data-testid="pane-video"]').then($pane => {
+      const rect = $pane[0].getBoundingClientRect();
+      const ratio = rect.width / rect.height;
+      expect(ratio).to.be.closeTo(16 / 9, 0.05);
     });
   });
 

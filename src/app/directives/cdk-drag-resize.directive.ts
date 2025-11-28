@@ -255,6 +255,9 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
     const x = this.cdkDragFreeDragPosition?.x ?? current.x;
     const y = this.cdkDragFreeDragPosition?.y ?? current.y;
     const next = this.clampRect({ x, y, width: current.width, height: current.height });
+    if (this.areRectsEqual(next, current)) {
+      return;
+    }
     this.applyRect(next);
   }
 
@@ -379,6 +382,10 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
     this.host.style.top = `${rect.y}px`;
     this.host.style.width = `${rect.width}px`;
     this.host.style.height = `${rect.height}px`;
+  }
+
+  private areRectsEqual(a: DragResizeRect, b: DragResizeRect): boolean {
+    return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
   }
 
   private getCurrentRect(): DragResizeRect {

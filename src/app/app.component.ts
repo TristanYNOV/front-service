@@ -6,6 +6,7 @@ import {MiniComponent} from './components/data-item-container/Minified/mini.comp
 import {selectIdleItems, selectSavedItems} from './store/Data/dataState.selectors';
 import { loadInitialState } from './store/User/user.actions';
 import {filter} from 'rxjs';
+import {LayoutEditModeService} from './core/services/layout-edit-mode.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ import {filter} from 'rxjs';
 export class AppComponent {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
+  protected readonly layoutEditMode = inject(LayoutEditModeService);
 
   showSidebar = true;
 

@@ -146,6 +146,17 @@ body {
   pointer-events: none;
 }
 
+.layout-locked .rzr-wrap {
+  padding: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.layout-locked .rzr-content {
+  inset: 0;
+  pointer-events: auto;
+}
+
 .layout-edit .rzr-ring,
 .layout-edit .rzr-handle,
 .layout-edit .rzr-zindex {

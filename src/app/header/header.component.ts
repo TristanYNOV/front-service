@@ -7,6 +7,7 @@ import {AuthModalComponent} from '../core/shared/modals/auth/auth-modal.componen
 import {Store} from '@ngrx/store';
 import {logout} from '../store/User/user.actions';
 import {selectIsLoggedIn} from '../store/User/user.selectors';
+import {LayoutEditModeService} from '../core/services/layout-edit-mode.service';
 
 @Component({
   selector: 'app-header',
@@ -19,6 +20,7 @@ export class HeaderComponent {
   private readonly store = inject(Store);
   protected readonly isloggedIn = this.store.selectSignal(selectIsLoggedIn);
   readonly dialog = inject(MatDialog);
+  protected readonly layoutEditMode = inject(LayoutEditModeService);
 
   openAuthModal(type: 'login' | 'register'): void {
     this.dialog.open(AuthModalComponent, {

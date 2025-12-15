@@ -22,6 +22,27 @@
           <button mat-menu-item routerLink="/matchs">Matchs</button>
         </mat-menu>
         <button mat-button routerLink="/analyse">Commencer une Analyse</button>
+        <button
+          type="button"
+          class="icon p-2 flex items-center gap-2"
+          (click)="layoutEditMode.toggle()"
+          [attr.aria-pressed]="layoutEditMode.isEditMode()"
+          [title]="layoutEditMode.isEditMode() ? 'Verrouiller le layout' : 'Éditer le layout'"
+        >
+          @if (layoutEditMode.isEditMode()) {
+            <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1.5 12s3.5-7.5 10.5-7.5S22.5 12 22.5 12 19 19.5 12 19.5 1.5 12 1.5 12z" />
+              <circle cx="12" cy="12" r="3.25" />
+            </svg>
+            <span class="text-sm">Édition</span>
+          } @else {
+            <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <span class="text-sm">Verrouillé</span>
+          }
+        </button>
         <button class="icon p-2" (click)="logout()">Déconnexion</button>
       </div>
     }

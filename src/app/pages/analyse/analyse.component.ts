@@ -12,6 +12,7 @@ import { SequencerPanelComponent } from '../../components/analyse/sequencer/sequ
 import { TimelineComponent } from '../../components/analyse/timeline/timeline.component';
 import { AnalysisPaneDirective, PaneRect } from './analysis-pane.directive';
 import { CdkDragResizeDirective } from '../../directives/cdk-drag-resize.directive';
+import { LayoutEditModeService } from '../../core/services/layout-edit-mode.service';
 
 type PaneKey = 'video' | 'sequencer' | 'timeline';
 
@@ -31,6 +32,7 @@ interface PaneState {
 export class AnalyseComponent implements AfterViewInit {
   @ViewChild('analysisContainer', { static: true }) analysisContainer?: ElementRef<HTMLElement>;
   private readonly changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  protected readonly layoutEditMode = inject(LayoutEditModeService);
 
   readonly minWidth = 160;
   readonly minHeight = 120;

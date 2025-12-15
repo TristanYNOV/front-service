@@ -138,3 +138,34 @@ body {
   cursor: default;
 }
 
+.layout-locked .rzr-ring,
+.layout-locked .rzr-handle,
+.layout-locked .rzr-zindex {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.layout-locked .rzr-wrap {
+  padding: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.layout-locked .rzr-content {
+  inset: 0;
+  pointer-events: auto;
+}
+
+.layout-edit .rzr-ring,
+.layout-edit .rzr-handle,
+.layout-edit .rzr-zindex {
+  opacity: 1;
+  visibility: visible;
+}
+
+.layout-edit .rzr-handle,
+.layout-edit .rzr-zindex {
+  pointer-events: auto;
+}
+

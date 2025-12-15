@@ -1,4 +1,8 @@
-<div class="w-dvw h-dvh flex flex-col">
+<div
+  class="w-dvw h-dvh flex flex-col"
+  [class.layout-edit]="layoutEditMode.isEditMode()"
+  [class.layout-locked]="!layoutEditMode.isEditMode()"
+>
   <app-header [currentSpace]="'Accueil'" />
 
   <div class="flex-1 overflow-hidden" [class.flex]="showSidebar">

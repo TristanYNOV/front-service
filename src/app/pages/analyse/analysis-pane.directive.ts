@@ -22,8 +22,8 @@ export class AnalysisPaneDirective implements OnDestroy {
   private readonly subscriptions = new Subscription();
 
   constructor() {
-    this.subscriptions.add(this.dragResize.resizeEnd.subscribe(rect => this.emitRect(this.resizeEnd, rect)));
-    this.subscriptions.add(this.dragResize.dragEnd.subscribe(rect => this.emitRect(this.dragEnd, rect)));
+    this.subscriptions.add(this.dragResize.cdkResizeEnded.subscribe(rect => this.emitRect(this.resizeEnd, rect)));
+    this.subscriptions.add(this.dragResize.cdkDragEnded.subscribe(rect => this.emitRect(this.dragEnd, rect)));
   }
 
   ngOnDestroy() {

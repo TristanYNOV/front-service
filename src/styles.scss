@@ -8,7 +8,7 @@
 @tailwind utilities;
 
 :root {
-  --rzr-padding: 10px;
+  --rzr-padding: 22px;
   --rzr-ring-bg: rgba(107, 114, 128, 0.28);
   --rzr-handle-bg: rgba(255, 255, 255, 0.16);
   --rzr-handle-contrast: #f8fafc;
@@ -16,6 +16,9 @@
   --rzr-control-bg: #0f172a;
   --rzr-control-border: rgba(255, 255, 255, 0.2);
   --rzr-control-color: #f8fafc;
+  --rzr-control-zIndex-size: 18px;
+  --rzr-control-zIndex-position-top: 0px;
+  --rzr-control-zIndex-position-right: 0px;
 }
 
 body {
@@ -107,17 +110,17 @@ body {
 
 .rzr-zindex {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: var(--rzr-control-zIndex-position-top);
+  right: var(--rzr-control-zIndex-position-right);
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   pointer-events: auto;
 }
 
 .rzr-zindex button {
-  width: 24px;
-  height: 24px;
+  @apply flex items-center justify-center;
+  width: var(--rzr-control-zIndex-size);
+  height: var(--rzr-control-zIndex-size);
   border: 1px solid var(--rzr-control-border);
   background: var(--rzr-control-bg);
   color: var(--rzr-control-color);

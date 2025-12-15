@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener,
+  HostListener, inject,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -15,12 +15,12 @@ import { CdkDragResizeDirective } from '../../directives/cdk-drag-resize.directi
 
 type PaneKey = 'video' | 'sequencer' | 'timeline';
 
-type PaneState = {
+interface PaneState {
   x: number;
   y: number;
   width: number;
   height: number;
-};
+}
 
 @Component({
   selector: 'app-analyse',
@@ -30,6 +30,7 @@ type PaneState = {
 })
 export class AnalyseComponent implements AfterViewInit {
   @ViewChild('analysisContainer', { static: true }) analysisContainer?: ElementRef<HTMLElement>;
+  private readonly changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   readonly minWidth = 160;
   readonly minHeight = 120;
@@ -39,8 +40,6 @@ export class AnalyseComponent implements AfterViewInit {
     sequencer: { x: 0, y: 0, width: 320, height: 360 },
     timeline: { x: 0, y: 0, width: 640, height: 240 },
   };
-
-  constructor(private changeDetectorRef: ChangeDetectorRef) {}
 
   ngAfterViewInit() {
     this.measureContainer();
@@ -110,8 +109,8 @@ export class AnalyseComponent implements AfterViewInit {
     const target = this.toAbsolute(rect);
     return (Object.entries(this.panes) as [PaneKey, PaneState][])
       .filter(([key]) => key !== targetKey)
-      .some(([_, pane]) => {
-        const comparison = this.toAbsolute(pane);
+      .some(( pane) => {
+        const comparison = this.toAbsolute(pane[1]);
         const intersection = this.intersectionArea(target, comparison);
         const minArea = Math.min(this.area(target), this.area(comparison));
         return minArea > 0 && intersection / minArea >= 0.9;

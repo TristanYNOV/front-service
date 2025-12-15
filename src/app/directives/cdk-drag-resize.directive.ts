@@ -2,7 +2,7 @@ import {
   AfterViewInit,
   Directive,
   ElementRef,
-  EventEmitter,
+  EventEmitter, inject,
   Input,
   NgZone,
   OnChanges,
@@ -27,6 +27,10 @@ type ResizeDirection = 'top' | 'bottom' | 'left' | 'right' | 'corner';
   standalone: true,
 })
 export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChanges {
+  private readonly renderer = inject(Renderer2);
+  private readonly elementRef = inject(ElementRef) as ElementRef<HTMLElement>;
+  private readonly zone = inject(NgZone);
+
   @Input() cdkDragBoundary?: string | HTMLElement;
   @Input() cdkDragFreeDragPosition: { x: number; y: number } = { x: 0, y: 0 };
   @Input() boundsSelector?: string;
@@ -36,16 +40,15 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
   @Input() zIndexMax = 10;
   @Input() lockAspectRatio: AspectLock = false;
 
-  @Output() dragStart = new EventEmitter<DragResizeRect>();
-  @Output() drag = new EventEmitter<DragResizeRect>();
-  @Output('cdkDragEnded')
-  @Output() dragEnd = new EventEmitter<DragResizeRect>();
-  @Output() resizeStart = new EventEmitter<DragResizeRect>();
-  @Output() resize = new EventEmitter<DragResizeRect>();
-  @Output() resizeEnd = new EventEmitter<DragResizeRect>();
+  @Output() cdkDragStarted = new EventEmitter<DragResizeRect>();
+  @Output() cdkDragMoved = new EventEmitter<DragResizeRect>();
+  @Output() cdkDragEnded = new EventEmitter<DragResizeRect>();
+  @Output() cdkResizeStarted = new EventEmitter<DragResizeRect>();
+  @Output() cdkResized = new EventEmitter<DragResizeRect>();
+  @Output() cdkResizeEnded = new EventEmitter<DragResizeRect>();
   @Output() zIndexChange = new EventEmitter<number>();
 
-  private cleanup: Array<() => void> = [];
+  private cleanup: (() => void)[] = [];
   private aspectRatio?: number;
   private pointerId?: number;
   private pointerMoved = false;
@@ -58,8 +61,6 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
   private content!: HTMLElement;
   private removeActiveWindowListeners?: () => void;
   private initialLayoutRect?: DOMRect;
-
-  constructor(private renderer: Renderer2, private elementRef: ElementRef<HTMLElement>, private zone: NgZone) {}
 
   ngAfterViewInit(): void {
     this.host = this.elementRef.nativeElement;
@@ -235,7 +236,7 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
     this.startPointer = { x: event.clientX, y: event.clientY };
     this.startRect = this.getCurrentRect();
 
-    const emitStart = this.activeMode === 'drag' ? this.dragStart : this.resizeStart;
+    const emitStart = this.activeMode === 'drag' ? this.cdkDragStarted : this.cdkResizeStarted;
     emitStart.emit(this.startRect);
 
     this.zone.runOutsideAngular(() => {
@@ -286,7 +287,7 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
         height: this.startRect.height,
       });
       this.applyRect(next);
-      this.drag.emit(next);
+      this.cdkDragMoved.emit(next);
       return;
     }
 
@@ -315,7 +316,7 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
     const adjusted = this.applyAspect(rect, this.resizeDir);
     const clamped = this.clampRect(adjusted);
     this.applyRect(clamped);
-    this.resize.emit(clamped);
+    this.cdkResized.emit(clamped);
   }
 
   private onPointerUp(event: PointerEvent) {
@@ -327,9 +328,9 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
     }
     const finalRect = this.getCurrentRect();
     if (this.activeMode === 'drag') {
-      this.dragEnd.emit(finalRect);
+      this.cdkDragEnded.emit(finalRect);
     } else {
-      this.resizeEnd.emit(finalRect);
+      this.cdkResizeEnded.emit(finalRect);
     }
     this.removeActiveWindowListeners?.();
     this.removeActiveWindowListeners = undefined;

@@ -11,13 +11,13 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { VideoService } from '../../../core/services/video.service';
+import { AnalysisNameService } from '../../../core/services/analysis-name.service';
 
 @Component({
   selector: 'app-video-display',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './video-display.component.html',
   styleUrl: './video-display.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,19 +25,20 @@ import { VideoService } from '../../../core/services/video.service';
 export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('videoElement') videoElement?: ElementRef<HTMLVideoElement>;
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('hotkeysZone') hotkeysZone?: ElementRef<HTMLElement>;
 
   protected readonly videoService = inject(VideoService);
+  protected readonly analysisNameService = inject(AnalysisNameService);
 
   readonly videoName = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly hasVideo = computed(() => this.videoName() !== null);
+  readonly isEditingTitle = signal(false);
+  readonly titleInput = signal(this.analysisNameService.analysisName());
 
-  seekInputMs = 0;
-  rateInput = 1;
-
-  private readonly rateSync = effect(() => {
-    this.rateInput = this.videoService.playbackRate();
+  private readonly titleSync = effect(() => {
+    if (!this.isEditingTitle()) {
+      this.titleInput.set(this.analysisNameService.analysisName());
+    }
   });
 
   ngAfterViewInit() {
@@ -47,7 +48,7 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.rateSync.destroy();
+    this.titleSync.destroy();
     this.videoService.detachVideo();
   }
 
@@ -66,75 +67,11 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   }
 
   onVideoLoaded() {
-    this.seekInputMs = 0;
+    this.videoService.seekMs(0);
   }
 
   onVideoError() {
     this.errorMessage.set('La vidéo n’a pas pu être chargée.');
-  }
-
-  onSeek() {
-    this.videoService.seekMs(this.seekInputMs);
-  }
-
-  onRateChange() {
-    this.videoService.setRate(this.rateInput);
-  }
-
-  focusHotkeys() {
-    this.hotkeysZone?.nativeElement.focus();
-  }
-
-  onKeydown(event: KeyboardEvent) {
-    if (this.isFormField(event.target)) {
-      return;
-    }
-
-    const key = event.key;
-    if (key === ' ' || event.code === 'Space') {
-      event.preventDefault();
-      this.videoService.togglePlayPause();
-      return;
-    }
-
-    switch (key) {
-      case 'ArrowLeft':
-        event.preventDefault();
-        this.videoService.seekMs(this.videoService.nowMs() - 1000);
-        return;
-      case 'ArrowRight':
-        event.preventDefault();
-        this.videoService.seekMs(this.videoService.nowMs() + 1000);
-        return;
-      case ',':
-        event.preventDefault();
-        this.videoService.stepFrames(-1);
-        return;
-      case '.':
-        event.preventDefault();
-        this.videoService.stepFrames(1);
-        return;
-      case '/':
-        event.preventDefault();
-        this.videoService.setRate(this.videoService.playbackRate() + 0.25);
-        return;
-      case '-':
-        event.preventDefault();
-        this.videoService.setRate(this.videoService.playbackRate() - 0.25);
-        return;
-      default:
-        return;
-    }
-  }
-
-  formatDuration(ms: number) {
-    if (!Number.isFinite(ms) || ms <= 0) {
-      return '0:00';
-    }
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
   private changeVideo(file: File) {
@@ -145,14 +82,47 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
     this.videoService.loadVideo(file);
     this.videoName.set(file.name);
     this.errorMessage.set(null);
-    this.seekInputMs = 0;
   }
 
-  private isFormField(target: EventTarget | null) {
-    if (!(target instanceof HTMLElement)) {
-      return false;
+  startEditingTitle() {
+    this.isEditingTitle.set(true);
+    this.titleInput.set(this.analysisNameService.analysisName());
+  }
+
+  cancelEditingTitle() {
+    this.isEditingTitle.set(false);
+    this.titleInput.set(this.analysisNameService.analysisName());
+  }
+
+  saveTitle() {
+    const nextValue = this.titleInput().trim();
+    if (nextValue.length > 0) {
+      this.analysisNameService.setAnalysisName(nextValue);
     }
-    const tagName = target.tagName.toLowerCase();
-    return tagName === 'input' || tagName === 'textarea' || tagName === 'select' || target.isContentEditable;
+    this.isEditingTitle.set(false);
+  }
+
+  onTitleInput(event: Event) {
+    const input = event.target as HTMLInputElement | null;
+    if (!input) {
+      return;
+    }
+    this.titleInput.set(input.value);
+  }
+
+  onScrub(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = Number.parseFloat(input.value);
+    if (Number.isFinite(value)) {
+      this.videoService.seekMs(value);
+    }
+  }
+
+  increaseRate() {
+    this.videoService.setRate(this.videoService.playbackRate() + 0.25);
+  }
+
+  decreaseRate() {
+    this.videoService.setRate(this.videoService.playbackRate() - 0.25);
   }
 }

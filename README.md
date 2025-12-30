@@ -51,6 +51,9 @@ npm test      # lance les tests unitaires
 npm run lint  # exécute ESLint
 ```
 
+### Hotkeys Vidéo
+Les hotkeys pour la vidéo ne sont pas activées pour le moment. Utiliser les contrôles de lecture dans l'interface.
+
 ### Build de production
 ```bash
 npm run build

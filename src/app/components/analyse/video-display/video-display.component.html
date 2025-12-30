@@ -1,29 +1,32 @@
-<section
-  #hotkeysZone
-  tabindex="0"
-  class="flex h-full w-full flex-col gap-3 rounded-md bg-slate-950 p-3 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-sky-400/70"
-  (keydown)="onKeydown($event)"
-  (click)="focusHotkeys()"
->
+<section class="flex h-full w-full flex-col gap-3 rounded-md bg-slate-950 p-3 text-sm text-slate-100">
   <div class="flex flex-wrap items-center justify-between gap-3">
-    <div class="space-y-1">
-      <p class="text-xs uppercase tracking-wide text-slate-400">Vidéo</p>
+    <div class="flex flex-wrap items-center gap-3">
       <p class="text-base font-semibold">
-        {{ videoName() ?? 'Aucune vidéo chargée' }}
+        {{ analysisNameService.analysisName() }}
       </p>
+      <button type="button" class="btn-secondary text-xs" (click)="startEditingTitle()">Éditer</button>
     </div>
-    <div class="text-right text-xs text-slate-300">
-      <p>Durée : {{ formatDuration(videoService.durationMs()) }}</p>
-      <p>Position : {{ formatDuration(videoService.positionMs()) }}</p>
-      <p>Vitesse : x{{ videoService.playbackRate() }}</p>
-      @if (videoService.fps()) {
-        <p>FPS estimé : {{ videoService.fps() }}</p>
-      }
-    </div>
+    <p class="text-xs text-slate-400">
+      {{ videoName() ?? 'Aucune vidéo chargée' }}
+    </p>
   </div>
 
+  @if (isEditingTitle()) {
+    <div class="flex flex-wrap items-center gap-2">
+      <input
+        type="text"
+        class="min-w-[180px] flex-1 rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-sm text-slate-100"
+        [value]="titleInput()"
+        (input)="onTitleInput($event)"
+        placeholder="Nom de l'analyse"
+      />
+      <button type="button" class="btn-primary text-xs" (click)="saveTitle()">Enregistrer</button>
+      <button type="button" class="btn-secondary text-xs" (click)="cancelEditingTitle()">Annuler</button>
+    </div>
+  }
+
   <div class="flex min-h-[180px] flex-1 flex-col gap-3">
-    <div class="relative flex flex-1 items-center justify-center rounded-md bg-black" (click)="focusHotkeys()">
+    <div class="relative flex flex-1 items-center justify-center rounded-md bg-black">
       <video
         #videoElement
         class="h-full w-full rounded-md object-contain"
@@ -47,7 +50,18 @@
       }
     </div>
 
-    <div class="flex flex-wrap items-center gap-3">
+    <div class="flex flex-col gap-3">
+      <input
+        type="range"
+        class="w-full accent-sky-400"
+        min="0"
+        [max]="videoService.durationMs() || 0"
+        [value]="videoService.positionMs()"
+        [disabled]="!hasVideo()"
+        (input)="onScrub($event)"
+      />
+
+      <div class="flex flex-wrap items-center gap-3">
       @if (!hasVideo()) {
         <input
           #fileInput
@@ -61,48 +75,60 @@
         <button type="button" class="btn-secondary" (click)="onChangeVideoClick()">Changer de vidéo</button>
       }
 
-      <button type="button" class="btn-primary" (click)="videoService.togglePlayPause()" [disabled]="!hasVideo()">
-        {{ videoService.isPlaying() ? 'Pause' : 'Play' }}
+      <button
+        type="button"
+        class="btn-primary flex items-center justify-center"
+        (click)="videoService.togglePlayPause()"
+        [disabled]="!hasVideo()"
+        [attr.aria-label]="videoService.isPlaying() ? 'Stop' : 'Play'"
+      >
+        <span class="text-base">{{ videoService.isPlaying() ? '■' : '▶' }}</span>
       </button>
 
-      <button type="button" class="btn-secondary" (click)="videoService.stepFrames(-1)" [disabled]="!hasVideo()">
-        Step -1
+      <button
+        type="button"
+        class="btn-secondary flex items-center justify-center"
+        (click)="videoService.stepFrames(-1)"
+        [disabled]="!hasVideo()"
+        aria-label="Step frame arrière"
+      >
+        ◀
       </button>
-      <button type="button" class="btn-secondary" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
-        Step +1
-      </button>
-
-      <label class="flex items-center gap-2 text-xs text-slate-300">
-        Seek (ms)
-        <input
-          type="number"
-          min="0"
-          class="w-28 rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-100"
-          [(ngModel)]="seekInputMs"
-          [disabled]="!hasVideo()"
-        />
-      </label>
-      <button type="button" class="btn-secondary" (click)="onSeek()" [disabled]="!hasVideo()">
-        Aller
+      <button
+        type="button"
+        class="btn-secondary flex items-center justify-center"
+        (click)="videoService.stepFrames(1)"
+        [disabled]="!hasVideo()"
+        aria-label="Step frame avant"
+      >
+        ▶
       </button>
 
-      <label class="flex items-center gap-2 text-xs text-slate-300">
-        Vitesse
-        <input
-          type="number"
-          min="0.25"
-          max="2"
-          step="0.25"
-          class="w-20 rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-100"
-          [(ngModel)]="rateInput"
-          (change)="onRateChange()"
-          [disabled]="!hasVideo()"
-        />
-      </label>
-    </div>
-
-    <div class="text-xs text-slate-400">
-      <p>Hotkeys (focus zone vidéo) : Space play/pause, ←/→ ±1000ms, ,/. step frame, / et - vitesse.</p>
+      <div class="flex items-center gap-2 text-xs text-slate-300">
+        <span>Vitesse</span>
+        <span class="font-semibold text-slate-100">x{{ videoService.playbackRate() }}</span>
+        <div class="flex flex-col">
+          <button
+            type="button"
+            class="btn-secondary px-2 py-0.5 text-xs leading-none"
+            (click)="increaseRate()"
+            [disabled]="!hasVideo()"
+            aria-label="Augmenter la vitesse"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            class="btn-secondary px-2 py-0.5 text-xs leading-none"
+            (click)="decreaseRate()"
+            [disabled]="!hasVideo()"
+            aria-label="Diminuer la vitesse"
+          >
+            -
+          </button>
+        </div>
+      </div>
+      </div>
     </div>
   </div>
 </section>

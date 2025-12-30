@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VideoPlayerComponent } from '../../components/analyse/video/video-player.component';
+import { VideoDisplayComponent } from '../../components/analyse/video-display/video-display.component';
 import { SequencerPanelComponent } from '../../components/analyse/sequencer/sequencer-panel.component';
 import { TimelineComponent } from '../../components/analyse/timeline/timeline.component';
 import { AnalysisPaneDirective, PaneRect } from './analysis-pane.directive';
@@ -27,7 +27,14 @@ interface PaneState {
   selector: 'app-analyse',
   standalone: true,
   templateUrl: './analyse.component.html',
-  imports: [CommonModule, VideoPlayerComponent, SequencerPanelComponent, TimelineComponent, AnalysisPaneDirective, CdkDragResizeDirective],
+  imports: [
+    CommonModule,
+    VideoDisplayComponent,
+    SequencerPanelComponent,
+    TimelineComponent,
+    AnalysisPaneDirective,
+    CdkDragResizeDirective,
+  ],
 })
 export class AnalyseComponent implements AfterViewInit {
   @ViewChild('analysisContainer', { static: true }) analysisContainer?: ElementRef<HTMLElement>;

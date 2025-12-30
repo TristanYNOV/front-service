@@ -51,12 +51,6 @@ npm test      # lance les tests unitaires
 npm run lint  # exécute ESLint
 ```
 
-### Hotkeys Vidéo
-Hotkeys actifs uniquement quand la zone vidéo a le focus :
-- Space : play/pause
-- Flèche gauche / droite : reculer / avancer de 1000 ms
-- , / . : step frame -1 / +1
-- / / - : augmenter / diminuer la vitesse (pas de 0,25)
 
 ### Build de production
 ```bash

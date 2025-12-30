@@ -11,13 +11,13 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { VideoService } from '../../../core/services/video.service';
-import { AnalysisNameService } from '../../../core/services/analysis-name.service';
 
 @Component({
   selector: 'app-video-display',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './video-display.component.html',
   styleUrl: './video-display.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,21 +28,16 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('hotkeysZone') hotkeysZone?: ElementRef<HTMLElement>;
 
   protected readonly videoService = inject(VideoService);
-  protected readonly analysisNameService = inject(AnalysisNameService);
 
   readonly videoName = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
   readonly hasVideo = computed(() => this.videoName() !== null);
-  readonly isEditingTitle = signal(false);
-  readonly titleInput = signal(this.analysisNameService.analysisName());
 
-  private readonly boundHotkeyHandler = (event: KeyboardEvent) => this.onKeydown(event);
-  private hotkeysActive = false;
+  seekInputMs = 0;
+  rateInput = 1;
 
-  private readonly titleSync = effect(() => {
-    if (!this.isEditingTitle()) {
-      this.titleInput.set(this.analysisNameService.analysisName());
-    }
+  private readonly rateSync = effect(() => {
+    this.rateInput = this.videoService.playbackRate();
   });
 
   ngAfterViewInit() {
@@ -52,9 +47,8 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.titleSync.destroy();
+    this.rateSync.destroy();
     this.videoService.detachVideo();
-    this.disableHotkeys();
   }
 
   onFileSelected(event: Event) {
@@ -72,47 +66,23 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   }
 
   onVideoLoaded() {
-    this.videoService.seekMs(0);
+    this.seekInputMs = 0;
   }
 
   onVideoError() {
     this.errorMessage.set('La vidéo n’a pas pu être chargée.');
   }
 
-  private changeVideo(file: File) {
-    if (this.videoService.isPlaying()) {
-      this.videoService.pause();
-    }
-    this.videoService.clearVideo();
-    this.videoService.loadVideo(file);
-    this.videoName.set(file.name);
-    this.errorMessage.set(null);
+  onSeek() {
+    this.videoService.seekMs(this.seekInputMs);
   }
 
-  startEditingTitle() {
-    this.isEditingTitle.set(true);
-    this.titleInput.set(this.analysisNameService.analysisName());
+  onRateChange() {
+    this.videoService.setRate(this.rateInput);
   }
 
-  cancelEditingTitle() {
-    this.isEditingTitle.set(false);
-    this.titleInput.set(this.analysisNameService.analysisName());
-  }
-
-  saveTitle() {
-    const nextValue = this.titleInput().trim();
-    if (nextValue.length > 0) {
-      this.analysisNameService.setAnalysisName(nextValue);
-    }
-    this.isEditingTitle.set(false);
-  }
-
-  onTitleInput(event: Event) {
-    const input = event.target as HTMLInputElement | null;
-    if (!input) {
-      return;
-    }
-    this.titleInput.set(input.value);
+  focusHotkeys() {
+    this.hotkeysZone?.nativeElement.focus();
   }
 
   onKeydown(event: KeyboardEvent) {
@@ -146,35 +116,15 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
         return;
       case '/':
         event.preventDefault();
-        this.increaseRate();
+        this.videoService.setRate(this.videoService.playbackRate() + 0.25);
         return;
       case '-':
         event.preventDefault();
-        this.decreaseRate();
+        this.videoService.setRate(this.videoService.playbackRate() - 0.25);
         return;
       default:
         return;
     }
-  }
-
-  onScrub(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const value = Number.parseFloat(input.value);
-    if (Number.isFinite(value)) {
-      this.videoService.seekMs(value);
-    }
-  }
-
-  increaseRate() {
-    this.videoService.setRate(this.videoService.playbackRate() + 0.25);
-  }
-
-  decreaseRate() {
-    this.videoService.setRate(this.videoService.playbackRate() - 0.25);
-  }
-
-  focusHotkeys() {
-    this.hotkeysZone?.nativeElement.focus();
   }
 
   formatDuration(ms: number) {
@@ -187,34 +137,22 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
+  private changeVideo(file: File) {
+    if (this.videoService.isPlaying()) {
+      this.videoService.pause();
+    }
+    this.videoService.clearVideo();
+    this.videoService.loadVideo(file);
+    this.videoName.set(file.name);
+    this.errorMessage.set(null);
+    this.seekInputMs = 0;
+  }
+
   private isFormField(target: EventTarget | null) {
     if (!(target instanceof HTMLElement)) {
       return false;
     }
     const tagName = target.tagName.toLowerCase();
-    if (tagName === 'textarea' || tagName === 'select' || target.isContentEditable) {
-      return true;
-    }
-    if (tagName === 'input') {
-      const input = target as HTMLInputElement;
-      return input.type === 'text' || input.type === 'search' || input.type === 'email' || input.type === 'number';
-    }
-    return false;
-  }
-
-  enableHotkeys() {
-    if (this.hotkeysActive) {
-      return;
-    }
-    window.addEventListener('keydown', this.boundHotkeyHandler);
-    this.hotkeysActive = true;
-  }
-
-  disableHotkeys() {
-    if (!this.hotkeysActive) {
-      return;
-    }
-    window.removeEventListener('keydown', this.boundHotkeyHandler);
-    this.hotkeysActive = false;
+    return tagName === 'input' || tagName === 'textarea' || tagName === 'select' || target.isContentEditable;
   }
 }

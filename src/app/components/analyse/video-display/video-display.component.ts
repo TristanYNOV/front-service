@@ -25,6 +25,7 @@ import { AnalysisNameService } from '../../../core/services/analysis-name.servic
 export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('videoElement') videoElement?: ElementRef<HTMLVideoElement>;
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('hotkeysZone') hotkeysZone?: ElementRef<HTMLElement>;
 
   protected readonly videoService = inject(VideoService);
   protected readonly analysisNameService = inject(AnalysisNameService);
@@ -110,6 +111,48 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
     this.titleInput.set(input.value);
   }
 
+  onKeydown(event: KeyboardEvent) {
+    if (this.isFormField(event.target)) {
+      return;
+    }
+
+    const key = event.key;
+    if (key === ' ' || event.code === 'Space') {
+      event.preventDefault();
+      this.videoService.togglePlayPause();
+      return;
+    }
+
+    switch (key) {
+      case 'ArrowLeft':
+        event.preventDefault();
+        this.videoService.seekMs(this.videoService.nowMs() - 1000);
+        return;
+      case 'ArrowRight':
+        event.preventDefault();
+        this.videoService.seekMs(this.videoService.nowMs() + 1000);
+        return;
+      case ',':
+        event.preventDefault();
+        this.videoService.stepFrames(-1);
+        return;
+      case '.':
+        event.preventDefault();
+        this.videoService.stepFrames(1);
+        return;
+      case '/':
+        event.preventDefault();
+        this.increaseRate();
+        return;
+      case '-':
+        event.preventDefault();
+        this.decreaseRate();
+        return;
+      default:
+        return;
+    }
+  }
+
   onScrub(event: Event) {
     const input = event.target as HTMLInputElement;
     const value = Number.parseFloat(input.value);
@@ -124,5 +167,27 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
 
   decreaseRate() {
     this.videoService.setRate(this.videoService.playbackRate() - 0.25);
+  }
+
+  focusHotkeys() {
+    this.hotkeysZone?.nativeElement.focus();
+  }
+
+  formatDuration(ms: number) {
+    if (!Number.isFinite(ms) || ms <= 0) {
+      return '0:00';
+    }
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  private isFormField(target: EventTarget | null) {
+    if (!(target instanceof HTMLElement)) {
+      return false;
+    }
+    const tagName = target.tagName.toLowerCase();
+    return tagName === 'input' || tagName === 'textarea' || tagName === 'select' || target.isContentEditable;
   }
 }

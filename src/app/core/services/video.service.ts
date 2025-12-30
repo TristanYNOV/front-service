@@ -23,6 +23,8 @@ export class VideoService {
     this.usesVideoFrameCallback = typeof element.requestVideoFrameCallback === 'function';
 
     element.addEventListener('loadedmetadata', this.handleLoadedMetadata);
+    element.addEventListener('loadeddata', this.handleLoadedMetadata);
+    element.addEventListener('durationchange', this.handleLoadedMetadata);
     element.addEventListener('timeupdate', this.handleTimeUpdate);
     element.addEventListener('play', this.handlePlay);
     element.addEventListener('pause', this.handlePause);
@@ -46,6 +48,8 @@ export class VideoService {
     }
 
     element.removeEventListener('loadedmetadata', this.handleLoadedMetadata);
+    element.removeEventListener('loadeddata', this.handleLoadedMetadata);
+    element.removeEventListener('durationchange', this.handleLoadedMetadata);
     element.removeEventListener('timeupdate', this.handleTimeUpdate);
     element.removeEventListener('play', this.handlePlay);
     element.removeEventListener('pause', this.handlePause);
@@ -123,7 +127,7 @@ export class VideoService {
   stepFrames(delta: number) {
     const fps = this.fps();
     const stepMs = fps ? 1000 / fps : 1000 / 30;
-    this.seekMs(this.positionMs() + delta * stepMs);
+    this.seekMs(this.nowMs() + delta * stepMs);
   }
 
   nowMs() {

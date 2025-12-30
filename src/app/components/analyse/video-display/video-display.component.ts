@@ -36,6 +36,9 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   readonly isEditingTitle = signal(false);
   readonly titleInput = signal(this.analysisNameService.analysisName());
 
+  private readonly boundHotkeyHandler = (event: KeyboardEvent) => this.onKeydown(event);
+  private hotkeysActive = false;
+
   private readonly titleSync = effect(() => {
     if (!this.isEditingTitle()) {
       this.titleInput.set(this.analysisNameService.analysisName());
@@ -51,6 +54,7 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.titleSync.destroy();
     this.videoService.detachVideo();
+    this.disableHotkeys();
   }
 
   onFileSelected(event: Event) {
@@ -188,6 +192,29 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
       return false;
     }
     const tagName = target.tagName.toLowerCase();
-    return tagName === 'input' || tagName === 'textarea' || tagName === 'select' || target.isContentEditable;
+    if (tagName === 'textarea' || tagName === 'select' || target.isContentEditable) {
+      return true;
+    }
+    if (tagName === 'input') {
+      const input = target as HTMLInputElement;
+      return input.type === 'text' || input.type === 'search' || input.type === 'email' || input.type === 'number';
+    }
+    return false;
+  }
+
+  enableHotkeys() {
+    if (this.hotkeysActive) {
+      return;
+    }
+    window.addEventListener('keydown', this.boundHotkeyHandler);
+    this.hotkeysActive = true;
+  }
+
+  disableHotkeys() {
+    if (!this.hotkeysActive) {
+      return;
+    }
+    window.removeEventListener('keydown', this.boundHotkeyHandler);
+    this.hotkeysActive = false;
   }
 }

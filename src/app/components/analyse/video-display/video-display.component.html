@@ -1,32 +1,18 @@
 <section
   #hotkeysZone
   tabindex="0"
-  class="flex h-full w-full flex-col gap-3 rounded-md bg-slate-950 p-3 text-sm text-slate-100 outline-none focus:ring-2 focus:ring-sky-400/70"
+  class="flex h-full w-full flex-col gap-1 bg-slate-950 p-2 text-xs light-text"
   (keydown)="onKeydown($event)"
-  (click)="focusHotkeys()"
->
-  <div class="flex flex-wrap items-center justify-between gap-3">
-    <div class="space-y-1">
-      <p class="text-xs uppercase tracking-wide text-slate-400">Vidéo</p>
-      <p class="text-base font-semibold">
-        {{ videoName() ?? 'Aucune vidéo chargée' }}
-      </p>
-    </div>
-    <div class="text-right text-xs text-slate-300">
-      <p>Durée : {{ formatDuration(videoService.durationMs()) }}</p>
-      <p>Position : {{ formatDuration(videoService.positionMs()) }}</p>
-      <p>Vitesse : x{{ videoService.playbackRate() }}</p>
-      @if (videoService.fps()) {
-        <p>FPS estimé : {{ videoService.fps() }}</p>
-      }
-    </div>
-  </div>
+  (click)="focusHotkeys()">
+  <p class="font-semibold">
+    {{ videoName() ?? 'Aucune vidéo chargée' }}
+  </p>
 
-  <div class="flex min-h-[180px] flex-1 flex-col gap-3">
-    <div class="relative flex flex-1 items-center justify-center rounded-md bg-black" (click)="focusHotkeys()">
+  <div class="flex flex-1 flex-col">
+    <div class="relative flex flex-1 items-center" (click)="focusHotkeys()">
       <video
         #videoElement
-        class="h-full w-full rounded-md object-contain"
+        class="h-full w-full object-contain"
         (loadedmetadata)="onVideoLoaded()"
         (error)="onVideoError()"
       >
@@ -47,7 +33,7 @@
       }
     </div>
 
-    <div class="flex flex-wrap items-center gap-3">
+    <div class="flex flex-wrap items-center">
       @if (!hasVideo()) {
         <input
           #fileInput
@@ -57,52 +43,48 @@
           (change)="onFileSelected($event)"
         />
       } @else {
-        <input #fileInput type="file" accept="video/*" class="hidden" (change)="onFileSelected($event)" />
+        <input type="file" accept="video/*" class="hidden" (change)="onFileSelected($event)"/>
         <button type="button" class="btn-secondary" (click)="onChangeVideoClick()">Changer de vidéo</button>
       }
 
-      <button type="button" class="btn-primary" (click)="videoService.togglePlayPause()" [disabled]="!hasVideo()">
-        {{ videoService.isPlaying() ? 'Pause' : 'Play' }}
-      </button>
+      <div class="flex gap-1 ml-4 mr-2">
+        <button type="button" class="btn-secondary" (click)="videoService.stepFrames(-1)" [disabled]="!hasVideo()">
+          <
+        </button>
+        <button type="button" class="btn-primary" (click)="videoService.togglePlayPause()" [disabled]="!hasVideo()">
+          {{ videoService.isPlaying() ? 'Pause' : 'Play' }}
+        </button>
+        <button type="button" class="btn-secondary" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
+          >
+        </button>
+      </div>
 
-      <button type="button" class="btn-secondary" (click)="videoService.stepFrames(-1)" [disabled]="!hasVideo()">
-        Step -1
-      </button>
-      <button type="button" class="btn-secondary" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
-        Step +1
-      </button>
+      <div class="flex gap-1">
+        <p>{{ formatDuration(videoService.positionMs()) }}</p>
+        <p>/</p>
+        <p>{{ formatDuration(videoService.durationMs()) }}</p>
+      </div>
 
-      <label class="flex items-center gap-2 text-xs text-slate-300">
-        Seek (ms)
-        <input
-          type="number"
-          min="0"
-          class="w-28 rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-100"
-          [(ngModel)]="seekInputMs"
-          [disabled]="!hasVideo()"
-        />
-      </label>
-      <button type="button" class="btn-secondary" (click)="onSeek()" [disabled]="!hasVideo()">
-        Aller
-      </button>
-
-      <label class="flex items-center gap-2 text-xs text-slate-300">
-        Vitesse
-        <input
-          type="number"
-          min="0.25"
-          max="2"
-          step="0.25"
-          class="w-20 rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-100"
-          [(ngModel)]="rateInput"
-          (change)="onRateChange()"
-          [disabled]="!hasVideo()"
-        />
-      </label>
+      <div class="flex items-center gap-1 ml-auto">
+        <label class="flex items-center">
+          <input
+            type="number"
+            min="0.25"
+            max="2"
+            step="0.25"
+            class="text-right rounded-md border border-slate-700 bg-slate-900 py-0.5"
+            [(ngModel)]="rateInput"
+            (change)="onRateChange()"
+            [disabled]="!hasVideo()"
+          />
+          x
+        </label>
+        @if (videoService.fps()) {
+          <p>FPS estimé : {{ videoService.fps() }}</p>
+        }
+      </div>
     </div>
 
-    <div class="text-xs text-slate-400">
-      <p>Hotkeys (focus zone vidéo) : Space play/pause, ←/→ ±1000ms, ,/. step frame, / et - vitesse.</p>
-    </div>
+
   </div>
 </section>

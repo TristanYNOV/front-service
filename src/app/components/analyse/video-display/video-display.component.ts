@@ -73,10 +73,6 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
     this.errorMessage.set('La vidéo n’a pas pu être chargée.');
   }
 
-  onSeek() {
-    this.videoService.seekMs(this.seekInputMs);
-  }
-
   onRateChange() {
     this.videoService.setRate(this.rateInput);
   }

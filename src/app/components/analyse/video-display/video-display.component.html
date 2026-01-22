@@ -74,12 +74,16 @@
       </div>
 
       <div class="flex items-center gap-2 ml-auto">
-        <label class="flex items-center">
+        <span class="flex items-center">
           {{ rateInput }}x
-        </label>
+        </span>
         <div class="flex flex-col">
-          <mat-icon class="text-xs icon" (click)="upRateChange()">add</mat-icon>
-          <mat-icon class="text-xs icon" (click)="reduceRateChange()">remove</mat-icon>
+          <button (click)="upRateChange()">
+            <mat-icon class="text-xs icon" >add</mat-icon>
+          </button>
+          <button (click)="reduceRateChange()">
+            <mat-icon class="text-xs icon">remove</mat-icon>
+          </button>
         </div>
       </div>
     </div>

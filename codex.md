@@ -56,7 +56,7 @@
 ## 7) UI & styling
 - Tailwind disponible via `@tailwind` dans [`src/styles.scss`](src/styles.scss) + classes utilitaires dans les templates.
 - Thème SCSS : variables dans `src/theme/variables/*.scss`, classes globales (`bg-layer-*`, `light-text`, etc.) via [`_global.class.scss`](src/theme/_global.class.scss); boutons via [`_btn.class.scss`](src/theme/_btn.class.scss).
-- Material : menus (`MatMenu`), boutons (`MatButton`), dialogs (`MatDialog`), form fields/inputs dans la modal auth. Overrides couleur menu/dialog dans [`material-override.scss`](src/theme/override/material-override.scss).
+- Material : menus (`MatMenu`), boutons (`MatButton`), dialogs (`MatDialog`), form fields/inputs dans la modal auth. Overrides couleur menu/dialog dans [`material-override.scss`](src/theme/override/_material-override.scss).
 - Cohabitation : Tailwind pour layout/spacing, SCSS pour thèmes + styles drag/resize. Garder cohérence (pas d’override Material sauvage hors override dédié).
 
 ## 8) Directives & interactions

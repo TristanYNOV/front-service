@@ -4,9 +4,14 @@
   class="flex h-full w-full flex-col gap-1 bg-slate-950 p-2 text-xs light-text"
   (keydown)="onKeydown($event)"
   (click)="focusHotkeys()">
-  <p class="font-semibold">
-    {{ videoName() ?? 'Aucune vidéo chargée' }}
-  </p>
+  <div>
+    <p class="font-semibold">
+      {{ videoName() ?? 'Aucune vidéo chargée' }}
+    </p>
+    @if (videoService.fps()) {
+      <p class="ml-auto">FPS estimé : {{ videoService.fps() }}</p>
+    }
+  </div>
 
   <div class="flex flex-1 flex-col">
     <div class="relative flex flex-1 items-center" (click)="focusHotkeys()">
@@ -35,27 +40,30 @@
 
     <div class="flex flex-wrap items-center">
       @if (!hasVideo()) {
-        <input
-          #fileInput
-          type="file"
-          accept="video/*"
-          class="w-full text-xs text-slate-200 file:mr-3 file:rounded-md file:border-0 file:bg-slate-700 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-white hover:file:bg-slate-600"
-          (change)="onFileSelected($event)"
-        />
-      } @else {
-        <input type="file" accept="video/*" class="hidden" (change)="onFileSelected($event)"/>
-        <button type="button" class="btn-secondary" (click)="onChangeVideoClick()">Changer de vidéo</button>
+        <div class="w-full mb-0.5">
+          <input
+            #fileInput
+            type="file"
+            accept="video/*"
+            class="w-1/3 text-xs file-btn-primary"
+            (change)="onFileSelected($event)"
+          />
+        </div>
       }
 
       <div class="flex gap-1 ml-4 mr-2">
-        <button type="button" class="btn-secondary" (click)="videoService.stepFrames(-1)" [disabled]="!hasVideo()">
-          <
+        <button type="button" class="btn-default" (click)="videoService.stepFrames(-1)" [disabled]="!hasVideo()">
+          <mat-icon class="text-md">chevron_left</mat-icon>
         </button>
         <button type="button" class="btn-primary" (click)="videoService.togglePlayPause()" [disabled]="!hasVideo()">
-          {{ videoService.isPlaying() ? 'Pause' : 'Play' }}
+          @if (!videoService.isPlaying()) {
+            <mat-icon class="text-md">pause</mat-icon>
+          } @else {
+            <mat-icon class="text-md">play</mat-icon>
+          }
         </button>
-        <button type="button" class="btn-secondary" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
-          >
+        <button type="button" class="btn-default" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
+          <mat-icon class="text-md">chevron_right</mat-icon>
         </button>
       </div>
 
@@ -65,26 +73,20 @@
         <p>{{ formatDuration(videoService.durationMs()) }}</p>
       </div>
 
-      <div class="flex items-center gap-1 ml-auto">
-        <label class="flex items-center">
-          <input
-            type="number"
-            min="0.25"
-            max="2"
-            step="0.25"
-            class="text-right rounded-md border border-slate-700 bg-slate-900 py-0.5"
-            [(ngModel)]="rateInput"
-            (change)="onRateChange()"
-            [disabled]="!hasVideo()"
-          />
-          x
-        </label>
-        @if (videoService.fps()) {
-          <p>FPS estimé : {{ videoService.fps() }}</p>
-        }
+      <div class="flex items-center gap-2 ml-auto">
+        <span class="flex items-center">
+          {{ rateInput }}x
+        </span>
+        <div class="flex flex-col">
+          <button (click)="upRateChange()">
+            <mat-icon class="text-xs icon" >add</mat-icon>
+          </button>
+          <button (click)="reduceRateChange()">
+            <mat-icon class="text-xs icon">remove</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
-
 
   </div>
 </section>

@@ -1,4 +1,10 @@
 :root {
+  .mat-icon {
+    @apply items-center justify-center;
+    display: flex !important;
+    height: fit-content !important;
+    width: fit-content !important;
+  }
 
   .mat-mdc-menu-panel.mat-menu-custom {
     background-color: var(--btn-primary-bg) !important;

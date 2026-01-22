@@ -1,11 +1,13 @@
 @use './variables/button.variables';
 
 .icon:hover {
-  background-color: var(--btn-default-bg-hover);
+  @apply cursor-pointer;
+  background-color: var(--btn-default-hover-bg);
   border-radius: 30rem;
 }
 
 .btn-primary {
+  @apply cursor-pointer;
   background-color: var(--btn-primary-bg);
   border-color: var(--btn-primary-border);
   border-style: solid;
@@ -14,46 +16,54 @@
   color: var(--btn-primary-color);
   &:disabled {
     @apply cursor-not-allowed;
-    &:hover {
-      background-color: var(--btn-primary-bg-disabled);
-    }
     background-color: var(--btn-primary-bg-disabled);
+    &:hover {
+      @apply cursor-not-allowed;
+      background-color: var(--btn-primary-bg-disabled-hover);
+    }
   }
   &:hover {
     background-color: var(--btn-primary-hover-bg);
   }
 }
 
-
 .btn-default {
+  @apply cursor-pointer;
   background-color: var(--btn-default-bg);
   border-color: var(--btn-default-border);
   border-style: solid;
   border-width: var(--border-width);
   border-radius: var(--border-radius);
-
+  color: var(--btn-default-color);
+  &:disabled {
+    @apply cursor-not-allowed;
+    background-color: var(--btn-default-bg-disabled);
+    &:hover {
+      @apply cursor-not-allowed;
+      background-color: var(--btn-default-bg-disabled-hover);
+    }
+  }
   &:hover {
-    background-color: var(--btn-default-bg-hover);
+    background-color: var(--btn-default-hover-bg);
   }
 }
 
 .btn-accent {
+  @apply cursor-pointer;
   background-color: var(--btn-accent-bg);
   border-color: var(--btn-accent-border);
   border-style: solid;
   border-width: var(--border-width);
   border-radius: var(--border-radius);
   color: var(--btn-accent-color);
-
   &:disabled {
     @apply cursor-not-allowed;
-    &:hover {
-      background-color: var(--btn-accent-bg-disabled);
-    }
-
     background-color: var(--btn-accent-bg-disabled);
+    &:hover {
+      @apply cursor-not-allowed;
+      background-color: var(--btn-accent-bg-disabled-hover);
+    }
   }
-
   &:hover {
     background-color: var(--btn-accent-hover-bg);
   }

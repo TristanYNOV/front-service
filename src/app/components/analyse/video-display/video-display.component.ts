@@ -13,11 +13,12 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VideoService } from '../../../core/services/video.service';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-video-display',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './video-display.component.html',
   styleUrl: './video-display.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +27,10 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('videoElement') videoElement?: ElementRef<HTMLVideoElement>;
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
   @ViewChild('hotkeysZone') hotkeysZone?: ElementRef<HTMLElement>;
+
+  private readonly maxRateInput = 2;
+  private readonly minRateInput = 0.25;
+  private readonly stepRate = 0.25;
 
   protected readonly videoService = inject(VideoService);
 
@@ -73,8 +78,22 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
     this.errorMessage.set('La vidéo n’a pas pu être chargée.');
   }
 
-  onRateChange() {
-    this.videoService.setRate(this.rateInput);
+  upRateChange() {
+    const newRateInput = this.rateInput + this.stepRate;
+    if(newRateInput > this.maxRateInput ) {
+      return;
+    } else {
+      this.videoService.setRate(newRateInput);
+    }
+  }
+
+  reduceRateChange() {
+    const newRateInput = this.rateInput - this.stepRate;
+    if(newRateInput < this.minRateInput ) {
+      return;
+    } else {
+      this.videoService.setRate(newRateInput);
+    }
   }
 
   focusHotkeys() {

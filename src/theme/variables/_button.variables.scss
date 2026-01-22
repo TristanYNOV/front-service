@@ -7,6 +7,8 @@
   --btn-primary-hover-bg: #1477b5;
   --btn-primary-color: #1C1C1C;
   --btn-primary-bg-disabled: #265f80;
+  --btn-primary-bg-disabled-hover: #215a7b;
+
 
 
   --btn-accent-bg: #FFA200;
@@ -14,13 +16,15 @@
   --btn-accent-hover-bg: #e08f00;
   --btn-accent-color: #1C1C1C;
   --btn-accent-bg-disabled: #a56b14;
+  --btn-accent-bg-disabled-hover: #9b610a;
 
 
   --btn-default-bg: #2a2a2a;
   --btn-default-border: #232323;
-  --btn-default-bg-hover: #575757;
-
-  --input-bg: #FAFAFA
+  --btn-default-hover-bg: #575757;
+  --btn-default-color: #fafafa;
+  --btn-default-bg-disabled: #505050;
+  --btn-default-bg-disabled-hover: #404040;
 }
 
 .dark-theme {

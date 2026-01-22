@@ -56,7 +56,7 @@ export class UserEffects {
         ofType(signInSuccess, registerSuccess),
         tap(({ email, tokens }) => {
           this.tokenService.setTokens(tokens);
-          localStorage.setItem('user_email', email);
+          this.tokenService.setEmailInLocalStorage(email);
           this.dialog.closeAll();
           this.router.navigate(['/welcome']);
         })
@@ -70,7 +70,7 @@ export class UserEffects {
         ofType(logout),
         tap(() => {
           this.tokenService.clearTokens();
-          localStorage.removeItem('user_email');
+          this.tokenService.removeEmailInLocalStorage();
           this.router.navigate(['/']);
         })
       ),
@@ -82,7 +82,7 @@ export class UserEffects {
       ofType(loadInitialState),
       switchMap(() => {
         const tokens = this.tokenService.getTokens();
-        const email = localStorage.getItem('user_email');
+        const email = this.tokenService.getEmailInLocalStorage();
         if (tokens && email) {
           return of(loadInitialStateSuccess({ email, tokens }));
         }

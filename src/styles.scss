@@ -1,12 +1,51 @@
 @use './theme/global.class';
 @use './theme/btn.class';
 
-@use './theme/override/material-override';
+@use 'theme/override/material-override';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: var(--bg-layer-1);
+}
+
+// CSS OVERRIDE HTML BASIC STYLE
+.file-btn-primary {
+  &::file-selector-button,
+  &::-webkit-file-upload-button {
+    cursor: pointer;
+    background-color: var(--btn-primary-bg);
+    border-color: var(--btn-primary-border);
+    border-style: solid;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    color: var(--btn-primary-color);
+  }
+  &:hover {
+    &::file-selector-button,
+    &::-webkit-file-upload-button {
+      background-color: var(--btn-primary-hover-bg);
+    }
+  }
+  &:disabled {
+    &::file-selector-button,
+    &::-webkit-file-upload-button {
+      cursor: not-allowed;
+      background-color: var(--btn-primary-bg-disabled);
+    }
+    &:hover {
+      &::file-selector-button,
+      &::-webkit-file-upload-button {
+        cursor: not-allowed;
+        background-color: var(--btn-primary-bg-disabled-hover);
+      }
+    }
+  }
+}
+
+// CSS STYLE FOR THE DIRECTIVE DRAG & RESIZE
 :root {
   --rzr-padding: 22px;
   --rzr-ring-bg: rgba(107, 114, 128, 0.28);
@@ -19,10 +58,6 @@
   --rzr-control-zIndex-size: 18px;
   --rzr-control-zIndex-position-top: 0px;
   --rzr-control-zIndex-position-right: 0px;
-}
-
-body {
-  background-color: var(--bg-layer-1);
 }
 
 .rzr-wrap {
@@ -168,4 +203,4 @@ body {
 .layout-edit .rzr-zindex {
   pointer-events: auto;
 }
-
+// END OF STYLE FOR DIRECTIVE DRAG & RESIZE

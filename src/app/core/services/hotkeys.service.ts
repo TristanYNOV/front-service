@@ -267,7 +267,7 @@ export class HotkeysService {
       return;
     }
 
-    if (this.isTextInputActive()) {
+    if (this.shouldIgnoreEvent(event)) {
       return;
     }
 
@@ -301,19 +301,27 @@ export class HotkeysService {
     binding.handler();
   }
 
+  private shouldIgnoreEvent(event: KeyboardEvent) {
+    return this.isTextInputTarget(event.target) || this.isTextInputActive();
+  }
+
   private isTextInputActive() {
     if (typeof document === 'undefined') {
       return false;
     }
     const activeElement = document.activeElement;
-    if (!(activeElement instanceof HTMLElement)) {
+    return this.isTextInputTarget(activeElement);
+  }
+
+  private isTextInputTarget(target: EventTarget | null) {
+    if (!(target instanceof HTMLElement)) {
       return false;
     }
-    const tagName = activeElement.tagName.toLowerCase();
+    const tagName = target.tagName.toLowerCase();
     if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
       return true;
     }
-    return activeElement.isContentEditable;
+    return target.isContentEditable;
   }
 
   private normalizeChord(chord: HotkeyChord): { normalized: string; isValid: boolean } {

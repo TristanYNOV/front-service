@@ -4,7 +4,7 @@
   class="flex h-full w-full flex-col gap-1 bg-slate-950 p-2 text-xs light-text"
   (keydown)="onKeydown($event)"
   (click)="focusHotkeys()">
-  <div>
+  <div class="flex justify-around">
     <p class="font-semibold">
       {{ videoName() ?? 'Aucune vidéo chargée' }}
     </p>
@@ -59,7 +59,7 @@
           @if (!videoService.isPlaying()) {
             <mat-icon class="text-md">pause</mat-icon>
           } @else {
-            <mat-icon class="text-md">play</mat-icon>
+            <mat-icon class="text-md">play_arrow</mat-icon>
           }
         </button>
         <button type="button" class="btn-default" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
@@ -67,13 +67,23 @@
         </button>
       </div>
 
-      <div class="flex gap-1">
+      <div class="flex items-center gap-2 flex-1">
         <p>{{ formatDuration(videoService.positionMs()) }}</p>
-        <p>/</p>
+        <div class="flex flex-1 items-center">
+          <input
+            type="range"
+            class="w-full"
+            [min]="0"
+            [max]="videoService.durationMs() || 0"
+            [value]="videoService.positionMs()"
+            [disabled]="!hasVideo()"
+            (input)="onSeekInput($event)"
+          />
+        </div>
         <p>{{ formatDuration(videoService.durationMs()) }}</p>
       </div>
 
-      <div class="flex items-center gap-2 ml-auto">
+      <div class="flex items-center gap-2 ml-3">
         <span class="flex items-center">
           {{ rateInput }}x
         </span>

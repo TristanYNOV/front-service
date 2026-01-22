@@ -106,6 +106,10 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  focusHotkeys() {
+    // Legacy no-op to avoid template errors if a click binding still exists.
+  }
+
   formatDuration(ms: number) {
     if (!Number.isFinite(ms) || ms <= 0) {
       return '0:00';

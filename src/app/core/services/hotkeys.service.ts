@@ -121,10 +121,6 @@ export class HotkeysService {
     );
   }
 
-  clearReservedHotkeys() {
-    this.reservedBindings.clear();
-  }
-
   registerSequencerHotkey(
     chord: HotkeyChord,
     actionId: string,

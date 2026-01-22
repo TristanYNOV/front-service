@@ -53,9 +53,9 @@
         </button>
         <button type="button" class="btn-primary" (click)="videoService.togglePlayPause()" [disabled]="!hasVideo()">
           @if (!videoService.isPlaying()) {
-            <mat-icon class="text-md">pause</mat-icon>
-          } @else {
             <mat-icon class="text-md">play_arrow</mat-icon>
+          } @else {
+            <mat-icon class="text-md">pause</mat-icon>
           }
         </button>
         <button type="button" class="btn-default" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
@@ -93,6 +93,5 @@
         </div>
       </div>
     </div>
-
   </div>
 </section>

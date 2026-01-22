@@ -3,7 +3,9 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener, inject,
+  HostListener,
+  OnDestroy,
+  inject,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -13,6 +15,7 @@ import { TimelineComponent } from '../../components/analyse/timeline/timeline.co
 import { AnalysisPaneDirective, PaneRect } from './analysis-pane.directive';
 import { CdkDragResizeDirective } from '../../directives/cdk-drag-resize.directive';
 import { LayoutEditModeService } from '../../core/services/layout-edit-mode.service';
+import { HotkeysService } from '../../core/services/hotkeys.service';
 
 type PaneKey = 'video' | 'sequencer' | 'timeline';
 
@@ -36,10 +39,11 @@ interface PaneState {
     CdkDragResizeDirective,
   ],
 })
-export class AnalyseComponent implements AfterViewInit {
+export class AnalyseComponent implements AfterViewInit, OnDestroy {
   @ViewChild('analysisContainer', { static: true }) analysisContainer?: ElementRef<HTMLElement>;
   private readonly changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected readonly layoutEditMode = inject(LayoutEditModeService);
+  private readonly hotkeysService = inject(HotkeysService);
 
   readonly minWidth = 160;
   readonly minHeight = 120;
@@ -53,7 +57,13 @@ export class AnalyseComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.measureContainer();
     this.initializeLayout();
+    this.hotkeysService.initReservedVideoHotkeys();
+    this.hotkeysService.enable();
     this.changeDetectorRef.detectChanges();
+  }
+
+  ngOnDestroy() {
+    this.hotkeysService.disable();
   }
 
   @HostListener('window:resize')

@@ -26,7 +26,6 @@ import {MatIconModule} from '@angular/material/icon';
 export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('videoElement') videoElement?: ElementRef<HTMLVideoElement>;
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('hotkeysZone') hotkeysZone?: ElementRef<HTMLElement>;
 
   private readonly maxRateInput = 2;
   private readonly minRateInput = 0.25;
@@ -108,49 +107,7 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   }
 
   focusHotkeys() {
-    this.hotkeysZone?.nativeElement.focus();
-  }
-
-  onKeydown(event: KeyboardEvent) {
-    if (this.isFormField(event.target)) {
-      return;
-    }
-
-    const key = event.key;
-    if (key === ' ' || event.code === 'Space') {
-      event.preventDefault();
-      this.videoService.togglePlayPause();
-      return;
-    }
-
-    switch (key) {
-      case 'ArrowLeft':
-        event.preventDefault();
-        this.videoService.seekMs(this.videoService.nowMs() - 1000);
-        return;
-      case 'ArrowRight':
-        event.preventDefault();
-        this.videoService.seekMs(this.videoService.nowMs() + 1000);
-        return;
-      case ',':
-        event.preventDefault();
-        this.videoService.stepFrames(-1);
-        return;
-      case '.':
-        event.preventDefault();
-        this.videoService.stepFrames(1);
-        return;
-      case '/':
-        event.preventDefault();
-        this.videoService.setRate(this.videoService.playbackRate() + 0.25);
-        return;
-      case '-':
-        event.preventDefault();
-        this.videoService.setRate(this.videoService.playbackRate() - 0.25);
-        return;
-      default:
-        return;
-    }
+    // Legacy no-op to avoid template errors if a click binding still exists.
   }
 
   formatDuration(ms: number) {
@@ -174,11 +131,4 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
     this.seekInputMs = 0;
   }
 
-  private isFormField(target: EventTarget | null) {
-    if (!(target instanceof HTMLElement)) {
-      return false;
-    }
-    const tagName = target.tagName.toLowerCase();
-    return tagName === 'input' || tagName === 'textarea' || tagName === 'select' || target.isContentEditable;
-  }
 }

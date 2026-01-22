@@ -67,9 +67,19 @@
         </button>
       </div>
 
-      <div class="flex gap-1">
+      <div class="flex items-center gap-2 flex-1">
         <p>{{ formatDuration(videoService.positionMs()) }}</p>
-        <p>/</p>
+        <div class="flex flex-1 items-center">
+          <input
+            type="range"
+            class="w-full"
+            [min]="0"
+            [max]="videoService.durationMs() || 0"
+            [value]="videoService.positionMs()"
+            [disabled]="!hasVideo()"
+            (input)="onSeekInput($event)"
+          />
+        </div>
         <p>{{ formatDuration(videoService.durationMs()) }}</p>
       </div>
 

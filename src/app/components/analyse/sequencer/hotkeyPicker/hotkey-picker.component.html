@@ -1,0 +1,44 @@
+<div class="hotkey-picker">
+  <mat-form-field appearance="fill" class="hotkey-field">
+    <mat-label>Base key</mat-label>
+    <mat-select [value]="baseKey()" (valueChange)="onBaseKeyChange($event)">
+      <mat-option [value]="null">Aucune</mat-option>
+      @for (key of baseKeys; track key) {
+        <mat-option [value]="key">{{ formatNormalized(key) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="modifier-grid">
+    @for (modifier of modifiers; track modifier) {
+      <mat-checkbox
+        [checked]="modifierState()[modifier]"
+        (change)="toggleModifier(modifier, $event.checked)"
+      >
+        {{ modifier }}
+      </mat-checkbox>
+    }
+  </div>
+
+  <div class="hotkey-preview">
+    <span class="label">Preview:</span>
+    <span class="value">{{ preview() || '—' }}</span>
+    <button mat-stroked-button type="button" (click)="clear()">Retirer</button>
+  </div>
+
+  @if (status(); as status) {
+    <div class="hotkey-status">
+      @if (!status.isValid) {
+        <span class="error">Touche non autorisée.</span>
+      } @else if (status.usedBy?.kind === 'reserved') {
+        <span class="error">Réservée vidéo: {{ status.usedBy?.label ?? '—' }}</span>
+      } @else if (status.usedBy?.kind === 'sequencer') {
+        <span class="error">
+          Déjà utilisée: {{ status.usedBy?.label ?? status.usedBy?.actionId ?? '—' }}
+        </span>
+      } @else {
+        <span class="ok">Disponible</span>
+      }
+    </div>
+  }
+</div>

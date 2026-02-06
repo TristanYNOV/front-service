@@ -1,95 +1,120 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { HotkeysService, HotkeyChord, RegisterHotkeyResult, SequencerHotkeyEntry } from '../../../core/services/hotkeys.service';
-import { SequencerService } from '../../../core/services/sequencer.service';
-
-interface SequencerActionConfig {
-  id: string;
-  label: string;
-  defaultChord: HotkeyChord;
-}
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatInputModule } from '@angular/material/input';
+import { SequencerPanelService } from '../../../core/service/sequencer-panel.service';
+import { SequencerRuntimeService } from '../../../core/service/sequencer-runtime.service';
+import { HotkeysService } from '../../../core/services/hotkeys.service';
+import { EventBtn, LabelBtn, SequencerBtn } from '../../../interfaces/sequencer-btn.interface';
+import { formatNormalizedHotkey } from '../../../utils/sequencer/sequencer-hotkey-options.util';
+import { CreateEventBtnDialogComponent } from './create-event-btn-dialog.component';
+import { CreateLabelBtnDialogComponent } from './create-label-btn-dialog.component';
 
 @Component({
   selector: 'app-sequencer-panel',
   standalone: true,
   templateUrl: './sequencer-panel.component.html',
   styleUrl: './sequencer-panel.component.scss',
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule,
+    MatDialogModule,
+    MatInputModule,
+  ],
 })
-export class SequencerPanelComponent implements OnInit {
+export class SequencerPanelComponent {
+  private readonly panelService = inject(SequencerPanelService);
+  private readonly runtimeService = inject(SequencerRuntimeService);
   private readonly hotkeysService = inject(HotkeysService);
-  private readonly sequencerService = inject(SequencerService);
+  private readonly dialog = inject(MatDialog);
 
-  private readonly actions: SequencerActionConfig[] = [
-    {
-      id: 'sequence:add-clip',
-      label: 'Ajouter un clip',
-      defaultChord: { key: '1', code: 'Digit1' },
-    },
-    {
-      id: 'sequence:split-clip',
-      label: 'Scinder le clip',
-      defaultChord: { key: '2', code: 'Digit2', shiftKey: true },
-    },
-  ];
+  readonly panelName = this.panelService.panelName;
+  readonly btnList = this.panelService.btnList;
+  readonly editMode = this.panelService.editMode;
+  readonly recentTriggers = this.runtimeService.recentTriggers;
+  readonly lastTriggeredBtnId = this.runtimeService.lastTriggeredBtnId;
+  readonly triggerCountByBtnId = this.runtimeService.triggerCountByBtnId;
 
-  readonly lastRegisterResult = signal<RegisterHotkeyResult | null>(null);
-  readonly hotkeys = signal<SequencerHotkeyEntry[]>([]);
-  readonly actionsWithHotkeys = computed(() => {
-    const hotkeys = this.hotkeys();
-    return this.actions.map(action => ({
-      ...action,
-      assigned: hotkeys.find(entry => entry.actionId === action.id),
-    }));
-  });
+  readonly showRenameInput = signal(false);
+  readonly renameDraft = signal(this.panelName());
+  readonly showEditIcons = computed(() => this.editMode());
 
-  ngOnInit() {
-    this.refreshHotkeys();
+  readonly sortedBtnList = computed(() => [...this.btnList()]);
+
+  toggleEditMode() {
+    this.panelService.toggleEditMode();
   }
 
-  assignDefaultHotkey(actionId: string) {
-    const action = this.actions.find(item => item.id === actionId);
-    if (!action) {
+  openEventDialog(btn?: EventBtn) {
+    this.dialog.open(CreateEventBtnDialogComponent, {
+      data: { mode: btn ? 'edit' : 'create', btn },
+    });
+  }
+
+  openLabelDialog(btn?: LabelBtn) {
+    this.dialog.open(CreateLabelBtnDialogComponent, {
+      data: { mode: btn ? 'edit' : 'create', btn },
+    });
+  }
+
+  onBtnClick(btn: SequencerBtn) {
+    if (this.editMode()) {
+      this.openEditDialog(btn);
       return;
     }
-    const result = this.hotkeysService.registerSequencerHotkey(
-      action.defaultChord,
-      action.id,
-      () => this.dispatchSequencerAction(action.id),
-      { label: action.label },
-    );
-    this.lastRegisterResult.set(result);
-    if (result.ok) {
-      this.refreshHotkeys();
+    this.runtimeService.trigger(btn.id, 'click');
+  }
+
+  openEditDialog(btn: SequencerBtn) {
+    if (btn.type === 'event') {
+      this.openEventDialog(btn);
+    } else {
+      this.openLabelDialog(btn);
     }
   }
 
-  unassignHotkey(actionId: string) {
-    const removed = this.hotkeysService.unassignSequencerHotkeyByAction(actionId);
-    if (removed) {
-      this.lastRegisterResult.set(null);
-      this.refreshHotkeys();
+  deleteBtn(event: MouseEvent, btn: SequencerBtn) {
+    event.stopPropagation();
+    this.panelService.removeBtn(btn.id);
+    this.hotkeysService.unassignSequencerHotkeyByAction(btn.id);
+  }
+
+  toggleRename() {
+    if (!this.showRenameInput()) {
+      this.renameDraft.set(this.panelName());
+      this.showRenameInput.set(true);
+      return;
     }
+    this.saveRename();
   }
 
-  clearAll() {
-    this.hotkeysService.clearSequencerHotkeys();
-    this.lastRegisterResult.set(null);
-    this.refreshHotkeys();
+  saveRename() {
+    this.panelService.setPanelName(this.renameDraft());
+    this.showRenameInput.set(false);
   }
 
-  private refreshHotkeys() {
-    this.hotkeys.set(this.hotkeysService.getSequencerHotkeys());
-  }
-
-  private dispatchSequencerAction(actionId: string) {
-    switch (actionId) {
-      case 'sequence:add-clip':
-        this.sequencerService.addClip();
-        return;
-      case 'sequence:split-clip':
-        this.sequencerService.splitClip();
-        return;
-      default:
-        return;
+  onRenameInput(event: Event) {
+    const target = event.target as HTMLInputElement | null;
+    if (!target) {
+      return;
     }
+    this.renameDraft.set(target.value);
+  }
+
+  formatHotkey(normalized?: string | null) {
+    return formatNormalizedHotkey(normalized) || '—';
+  }
+
+  triggerCount(btnId: string) {
+    return this.triggerCountByBtnId()[btnId] ?? 0;
+  }
+
+  formatTimestamp(timestamp: number) {
+    return new Date(timestamp).toLocaleTimeString('fr-FR', { hour12: false });
   }
 }

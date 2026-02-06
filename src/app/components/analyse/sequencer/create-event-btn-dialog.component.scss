@@ -1,0 +1,28 @@
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+}
+
+.section h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.error {
+  color: #fca5a5;
+  font-size: 12px;
+  margin-top: 6px;
+}

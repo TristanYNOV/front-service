@@ -167,3 +167,14 @@ Checklist
  - Logs debug retirés
  - Docs mise à jour si nécessaire (codex.md / README)
 ```
+
+## 14) Sequencing Panel - Step1
+- Interfaces : `SequencerBtn` (event/label) + `SequencerPanel` dans `src/app/interfaces` ; hotkey chord partagé dans `src/app/interfaces/hotkey-chord.interface.ts`.
+- Utils séquençage : whitelist des touches (`ArrowUp`, `ArrowDown`, `Digit0..Digit9`) + modificateurs (`Shift`, `Ctrl`, `Alt`, `Meta`) + helpers `buildChord`/`formatNormalizedHotkey` dans `src/app/utils/sequencer/sequencer-hotkey-options.util.ts`.
+- Services :
+  - `SequencerPanelService` (config panneau, `btnList`, `panelName`, `editMode`) dans `src/app/core/service/sequencer-panel.service.ts`.
+  - `SequencerRuntimeService` (feedback UI : flash, compteurs, `recentTriggers`) dans `src/app/core/service/sequencer-runtime.service.ts`.
+  - `HotkeysService` : validation stricte des chords séquenceur (whitelist), collisions détectées, `isHotkeyUsed` renvoie aussi `isValid`. En mode édition, les hotkeys séquenceur sont ignorées (les hotkeys vidéo restent actives).
+- UI Sequencing Panel (analyse) : TopBar A/E/L/N/Name/M, liste verticale de boutons (event/label) avec hotkey formatée + compteur, feedback visuel “hotkey → action” (flash 200ms + recent triggers).
+- Dialogs Step1 : création/édition Event/Label via `create-event-btn-dialog` / `create-label-btn-dialog` + `hotkey-picker` (sélection base key + modificateurs, unassign).
+- Cette base est conçue pour être étendue en Step2 (liens/activation) puis Step3 (canvas infini/layout).

@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Éditer un Label' : 'Créer un Label' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <div class="row">
+      <mat-form-field appearance="fill">
+        <mat-label>ID</mat-label>
+        <input matInput formControlName="id" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+    </div>
+
+    <mat-radio-group class="radio-group" formControlName="mode">
+      <mat-radio-button value="once">Once</mat-radio-button>
+      <mat-radio-button value="indefinite">Indefinite</mat-radio-button>
+    </mat-radio-group>
+
+    <div class="section">
+      <h4>Hotkey</h4>
+      <app-hotkey-picker
+        [currentActionId]="currentActionId"
+        [chord]="selectedChord()"
+        (chordChange)="onChordChange($event)"
+      ></app-hotkey-picker>
+      @if (hotkeyError()) {
+        <div class="error">{{ hotkeyError() }}</div>
+      }
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="close()">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="!canSave()">
+    {{ isEdit ? 'Mettre à jour' : 'Créer' }}
+  </button>
+</mat-dialog-actions>

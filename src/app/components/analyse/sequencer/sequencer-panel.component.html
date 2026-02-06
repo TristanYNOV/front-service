@@ -1,39 +1,85 @@
-<div class="flex h-full w-full flex-col gap-3 bg-slate-800 p-3 text-xs text-white">
-  <div class="flex items-center justify-between">
-    <h3 class="text-sm font-semibold">Sequencer Hotkeys</h3>
-    <button type="button" class="btn-default text-xs" (click)="clearAll()">Tout effacer</button>
+<div class="sequencer-panel">
+  <div class="topbar">
+    <button mat-stroked-button [matMenuTriggerFor]="menu">A</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item disabled>Export</button>
+      <button mat-menu-item disabled>Import</button>
+      <button mat-menu-item disabled>Save</button>
+      <button mat-menu-item disabled>SeeAllMyPanels</button>
+    </mat-menu>
+
+    <button mat-stroked-button type="button" (click)="openEventDialog()">E</button>
+    <button mat-stroked-button type="button" (click)="openLabelDialog()">L</button>
+    <button mat-stroked-button type="button" (click)="toggleRename()">N</button>
+
+    <div class="panel-name">
+      @if (showRenameInput()) {
+        <input
+          matInput
+          [value]="renameDraft()"
+          (input)="onRenameInput($event)"
+          (blur)="saveRename()"
+          (keydown.enter)="saveRename()"
+        />
+      } @else {
+        <span>{{ panelName() }}</span>
+      }
+    </div>
+
+    <button mat-stroked-button type="button" (click)="toggleEditMode()">M</button>
   </div>
 
-  <div class="flex flex-col gap-2">
-    @for (action of actionsWithHotkeys(); track action.id) {
-      <div class="flex items-center justify-between rounded border border-slate-700 bg-slate-900 px-2 py-1">
-        <div class="flex flex-col">
-          <span class="font-medium">{{ action.label }}</span>
-          <span class="text-[11px] text-slate-300">
-            Hotkey: {{ action.assigned?.normalized ?? 'Non assignée' }}
-          </span>
+  <div class="btn-list">
+    @for (btn of sortedBtnList(); track btn.id) {
+      <button
+        type="button"
+        class="btn-item"
+        [class.pressed]="lastTriggeredBtnId() === btn.id"
+        (click)="onBtnClick(btn)"
+      >
+        <div class="btn-info">
+          <div class="btn-title">
+            <span class="name">{{ btn.name }}</span>
+            <span class="type">{{ btn.type }}</span>
+          </div>
+          <div class="btn-meta">
+            <span>ID: {{ btn.id }}</span>
+            <span>Hotkey: {{ formatHotkey(btn.hotkeyNormalized) }}</span>
+          </div>
         </div>
-        <div class="flex gap-2">
-          <button type="button" class="btn-primary text-xs" (click)="assignDefaultHotkey(action.id)">
-            Assigner (défaut)
-          </button>
-          <button type="button" class="btn-default text-xs" (click)="unassignHotkey(action.id)">
-            Retirer
-          </button>
+        <div class="btn-actions">
+          <span class="count">×{{ triggerCount(btn.id) }}</span>
+          @if (showEditIcons()) {
+            <button mat-icon-button type="button" (click)="openEditDialog(btn); $event.stopPropagation()">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button type="button" (click)="deleteBtn($event, btn)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
         </div>
-      </div>
+      </button>
     }
   </div>
 
-  @if (lastRegisterResult(); as result) {
-    <div class="rounded border border-slate-700 bg-slate-900 p-2 text-[11px] text-slate-200">
-      @if (result.ok) {
-        <span>Assigné : {{ result.normalized }}</span>
-      } @else {
-        <span>
-          Conflit: {{ result.errorCode }} ({{ result.normalized || '—' }})
-        </span>
-      }
-    </div>
-  }
+  <div class="recent-triggers">
+    <h4>Recent triggers</h4>
+    @if (!recentTriggers().length) {
+      <div class="empty">Aucun trigger pour l’instant.</div>
+    } @else {
+      <ul>
+        @for (entry of recentTriggers(); track entry.timestamp) {
+          <li>
+            <span class="time">{{ formatTimestamp(entry.timestamp) }}</span>
+            <span class="source">{{ entry.source }}</span>
+            <span class="name">{{ entry.name }}</span>
+            <span class="id">({{ entry.btnId }})</span>
+            @if (entry.normalizedHotkey) {
+              <span class="hotkey">{{ formatHotkey(entry.normalizedHotkey) }}</span>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
 </div>

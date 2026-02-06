@@ -1,17 +1,13 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { VideoService } from './video.service';
+import { HotkeyChord } from '../../interfaces/hotkey-chord.interface';
+import { SEQUENCER_BASE_KEYS } from '../../utils/sequencer/sequencer-hotkey-options.util';
+import { SequencerPanelService } from '../service/sequencer-panel.service';
 
 export type HotkeySourceKind = 'reserved' | 'sequencer';
 
-export interface HotkeyChord {
-  key?: string | null;
-  code?: string | null;
-  shiftKey?: boolean;
-  ctrlKey?: boolean;
-  altKey?: boolean;
-  metaKey?: boolean;
-}
+export type { HotkeyChord };
 
 export type RegisterHotkeyResult =
   | { ok: true; normalized: string }
@@ -55,6 +51,7 @@ const CODE_PREFIXES = ['Digit', 'Numpad'];
 })
 export class HotkeysService {
   private readonly videoService = inject(VideoService);
+  private readonly sequencerPanelService = inject(SequencerPanelService);
   private readonly enabledSignal = signal(false);
   readonly enabled = this.enabledSignal.asReadonly();
 
@@ -62,6 +59,7 @@ export class HotkeysService {
   private readonly reservedBindings = new Map<string, HotkeyBinding>();
   private readonly sequencerBindings = new Map<string, SequencerBinding>();
   private readonly actionBindings = new Map<string, string>();
+  private readonly sequencerBaseKeys = new Set<string>(SEQUENCER_BASE_KEYS);
 
   enable() {
     if (this.subscription) {
@@ -128,7 +126,7 @@ export class HotkeysService {
     options?: { label?: string; allowRepeat?: boolean },
   ): RegisterHotkeyResult {
     const normalization = this.normalizeChord(chord);
-    if (!normalization.isValid) {
+    if (!normalization.isValid || !this.isSequencerChordAllowed(normalization.baseKey)) {
       return {
         ok: false,
         errorCode: 'INVALID_CHORD',
@@ -146,18 +144,18 @@ export class HotkeysService {
       };
     }
 
-    if (this.sequencerBindings.has(normalization.normalized)) {
-      const binding = this.sequencerBindings.get(normalization.normalized);
+    const existingSequencer = this.sequencerBindings.get(normalization.normalized);
+    if (existingSequencer && existingSequencer.actionId !== actionId) {
       return {
         ok: false,
         errorCode: 'ALREADY_USED',
         normalized: normalization.normalized,
-        usedBy: { kind: 'sequencer', label: binding?.label },
+        usedBy: { kind: 'sequencer', label: existingSequencer.label },
       };
     }
 
     const existingBinding = this.actionBindings.get(actionId);
-    if (existingBinding) {
+    if (existingBinding && existingBinding !== normalization.normalized) {
       this.sequencerBindings.delete(existingBinding);
       this.actionBindings.delete(actionId);
     }
@@ -227,15 +225,20 @@ export class HotkeysService {
     }));
   }
 
-  isHotkeyUsed(chord: HotkeyChord): { normalized: string; usedBy?: UsedHotkeyEntry } {
+  isHotkeyUsed(chord: HotkeyChord): { normalized: string; isValid: boolean; usedBy?: UsedHotkeyEntry } {
     const normalization = this.normalizeChord(chord);
+    const isValid = normalization.isValid && this.isSequencerChordAllowed(normalization.baseKey);
     if (!normalization.normalized) {
-      return { normalized: normalization.normalized };
+      return { normalized: normalization.normalized, isValid };
+    }
+    if (!isValid) {
+      return { normalized: normalization.normalized, isValid };
     }
     const reserved = this.reservedBindings.get(normalization.normalized);
     if (reserved) {
       return {
         normalized: normalization.normalized,
+        isValid,
         usedBy: {
           normalized: normalization.normalized,
           kind: 'reserved',
@@ -247,6 +250,7 @@ export class HotkeysService {
     if (sequencer) {
       return {
         normalized: normalization.normalized,
+        isValid,
         usedBy: {
           normalized: normalization.normalized,
           kind: 'sequencer',
@@ -255,7 +259,7 @@ export class HotkeysService {
         },
       };
     }
-    return { normalized: normalization.normalized };
+    return { normalized: normalization.normalized, isValid };
   }
 
   private handleKeydown(event: KeyboardEvent) {
@@ -280,7 +284,9 @@ export class HotkeysService {
       return;
     }
 
-    const sequencerBinding = this.sequencerBindings.get(normalization.normalized);
+    const sequencerBinding = this.sequencerPanelService.editMode()
+      ? undefined
+      : this.sequencerBindings.get(normalization.normalized);
     const reservedBinding = this.reservedBindings.get(normalization.normalized);
     const binding = sequencerBinding ?? reservedBinding;
 
@@ -320,7 +326,7 @@ export class HotkeysService {
     return target.isContentEditable;
   }
 
-  private normalizeChord(chord: HotkeyChord): { normalized: string; isValid: boolean } {
+  private normalizeChord(chord: HotkeyChord): { normalized: string; isValid: boolean; baseKey: string } {
     const normalizedKey = this.resolveBaseKey(chord);
     const modifiers = this.resolveModifiers(chord);
     const parts = [...modifiers];
@@ -329,12 +335,12 @@ export class HotkeysService {
     }
     const normalized = parts.join('+');
     if (!normalizedKey) {
-      return { normalized, isValid: false };
+      return { normalized, isValid: false, baseKey: normalizedKey };
     }
     if (this.isModifierKey(normalizedKey, chord.code ?? undefined)) {
-      return { normalized, isValid: false };
+      return { normalized, isValid: false, baseKey: normalizedKey };
     }
-    return { normalized, isValid: true };
+    return { normalized, isValid: true, baseKey: normalizedKey };
   }
 
   private resolveBaseKey(chord: HotkeyChord): string {
@@ -356,6 +362,13 @@ export class HotkeysService {
       return code;
     }
     return '';
+  }
+
+  private isSequencerChordAllowed(baseKey: string) {
+    if (!baseKey) {
+      return false;
+    }
+    return this.sequencerBaseKeys.has(baseKey);
   }
 
   private resolveModifiers(chord: HotkeyChord) {

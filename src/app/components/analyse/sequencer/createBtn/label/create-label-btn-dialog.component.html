@@ -1,9 +1,14 @@
-<h2 mat-dialog-title class="bg-layer-3 light-text dialog-title">
+<h2 mat-dialog-title class="bg-layer-3 light-text m-0 text-center">
   {{ isEdit ? 'Éditer un Label' : 'Créer un Label' }}
 </h2>
 
-<mat-dialog-content class="bg-layer-3 light-text dialog-body">
-  <form [formGroup]="form" class="dialog-form">
+<mat-dialog-content class="bg-layer-3 light-text pt-3">
+  <form [formGroup]="form" class="flex flex-col gap-4">
+    <mat-radio-group class="flex justify-center gap-2" formControlName="mode">
+      <mat-radio-button value="once">Once</mat-radio-button>
+      <mat-radio-button value="indefinite">Indefinite</mat-radio-button>
+    </mat-radio-group>
+
     <div class="row">
       <mat-form-field appearance="fill">
         <mat-label>ID</mat-label>
@@ -15,13 +20,8 @@
       </mat-form-field>
     </div>
 
-    <mat-radio-group class="radio-group" formControlName="mode">
-      <mat-radio-button value="once">Once</mat-radio-button>
-      <mat-radio-button value="indefinite">Indefinite</mat-radio-button>
-    </mat-radio-group>
-
     <div class="section">
-      <h4>Hotkey</h4>
+      <h4 class="light-text">Hotkey</h4>
       <app-hotkey-picker
         [currentActionId]="currentActionId"
         [chord]="selectedChord()"
@@ -34,7 +34,7 @@
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="bg-layer-3 light-text dialog-actions">
+<mat-dialog-actions align="center" class="bg-layer-3 light-text pb-3">
   <button mat-stroked-button type="button" (click)="close()">Annuler</button>
   <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="!canSave()">
     {{ isEdit ? 'Mettre à jour' : 'Créer' }}

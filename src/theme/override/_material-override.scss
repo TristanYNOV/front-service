@@ -1,48 +1,52 @@
 :root {
   --mdc-dialog-container-color: var(--bg-layer-3);
-  --mdc-dialog-container-text-color: var(--light-text);
+  --mdc-dialog-container-text-color: var(--light);
 
   --mdc-filled-text-field-container-color: var(--bg-layer-3);
-  --mdc-filled-text-field-input-text-color: var(--light-text);
-  --mdc-filled-text-field-label-text-color: var(--light-text);
+  --mdc-filled-text-field-input-text-color: var(--light);
+  --mdc-filled-text-field-label-text-color: var(--light);
   --mdc-filled-text-field-caret-color: var(--accent);
   --mdc-filled-text-field-focus-active-indicator-color: var(--accent);
   --mdc-filled-text-field-hover-active-indicator-color: var(--accent);
 
-  --mdc-outlined-text-field-input-text-color: var(--light-text);
-  --mdc-outlined-text-field-label-text-color: var(--light-text);
+  --mdc-outlined-text-field-input-text-color: var(--light);
+  --mdc-outlined-text-field-label-text-color: var(--light);
   --mdc-outlined-text-field-caret-color: var(--accent);
   --mdc-outlined-text-field-focus-outline-color: var(--accent);
   --mdc-outlined-text-field-hover-outline-color: var(--accent);
 
-  --mdc-filled-button-label-text-color: var(--light-text);
+  --mdc-filled-button-label-text-color: var(--light);
   --mdc-filled-button-container-color: var(--btn-primary-bg);
   --mdc-filled-button-hover-state-layer-color: var(--btn-primary-hover-bg);
   --mdc-filled-button-focus-state-layer-color: var(--btn-primary-hover-bg);
   --mdc-filled-button-pressed-state-layer-color: var(--btn-primary-hover-bg);
 
-  --mdc-outlined-button-label-text-color: var(--light-text);
+  --mdc-outlined-button-label-text-color: var(--light);
   --mdc-outlined-button-hover-state-layer-color: var(--bg-layer-2);
   --mdc-outlined-button-focus-state-layer-color: var(--bg-layer-2);
   --mdc-outlined-button-pressed-state-layer-color: var(--bg-layer-2);
 
-  --mdc-radio-unselected-icon-color: var(--light-text);
+  --mdc-radio-unselected-icon-color: var(--light);
   --mdc-radio-selected-icon-color: var(--accent);
   --mdc-radio-selected-focus-icon-color: var(--accent);
   --mdc-radio-selected-hover-icon-color: var(--accent);
   --mdc-radio-selected-pressed-icon-color: var(--accent);
-  --mdc-radio-unselected-hover-icon-color: var(--light-text);
-  --mdc-radio-unselected-focus-icon-color: var(--light-text);
-  --mdc-radio-unselected-pressed-icon-color: var(--light-text);
+  --mdc-radio-unselected-hover-icon-color: var(--light);
+  --mdc-radio-unselected-focus-icon-color: var(--light);
+  --mdc-radio-unselected-pressed-icon-color: var(--light);
 
-  --mdc-checkbox-unselected-icon-color: var(--light-text);
+  --mdc-checkbox-unselected-icon-color: var(--light);
   --mdc-checkbox-selected-icon-color: var(--accent);
   --mdc-checkbox-selected-focus-icon-color: var(--accent);
   --mdc-checkbox-selected-hover-icon-color: var(--accent);
   --mdc-checkbox-selected-pressed-icon-color: var(--accent);
-  --mdc-checkbox-unselected-hover-icon-color: var(--light-text);
-  --mdc-checkbox-unselected-focus-icon-color: var(--light-text);
-  --mdc-checkbox-unselected-pressed-icon-color: var(--light-text);
+  --mdc-checkbox-unselected-hover-icon-color: var(--light);
+  --mdc-checkbox-unselected-focus-icon-color: var(--light);
+  --mdc-checkbox-unselected-pressed-icon-color: var(--light);
+
+  --mat-sys-on-surface: var(--light);
+  --mat-sys-surface-container: var(--bg-layer-3);
+  --mdc-dialog-supporting-text-color: var(--light);
 
   .mat-icon {
     @apply items-center justify-center;
@@ -53,12 +57,12 @@
 
   .mat-mdc-menu-panel.mat-menu-custom {
     background-color: var(--btn-primary-bg) !important;
-    color: var(--dark-text) !important;
+    color: var(--dark) !important;
     border-radius: 0.75rem; /* optionnel, arrondi */
 
     .mat-mdc-menu-item,
     .mdc-list-item__primary-text {
-      color: var(--dark-text) !important;
+      color: var(--dark) !important;
     }
 
     .mat-mdc-menu-item:hover {
@@ -67,6 +71,14 @@
   }
   .mat-mdc-dialog-surface {
     background-color: var(--bg-layer-3);
-    color: var(--light-text);
+    color: var(--light);
+  }
+
+  .mat-mdc-dialog-content {
+    overflow: hidden;
+  }
+
+  .mat-mdc-dialog-title {
+    @apply mt-2 mb-4;
   }
 }

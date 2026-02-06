@@ -6,22 +6,21 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { HotkeysService } from '../../../core/services/hotkeys.service';
-import { SequencerPanelService } from '../../../core/service/sequencer-panel.service';
-import { SequencerRuntimeService } from '../../../core/service/sequencer-runtime.service';
-import { EventBtn } from '../../../interfaces/sequencer-btn.interface';
-import { HotkeyChord } from '../../../interfaces/hotkey-chord.interface';
-import { HotkeyPickerComponent } from './hotkey-picker.component';
-import { parseNormalizedHotkey } from '../../../utils/sequencer/sequencer-hotkey-options.util';
-import { createSequencerDialogState } from '../../../utils/sequencer/sequencer-dialog-state.util';
+import {SequencerPanelService} from '../../../../../core/service/sequencer-panel.service';
+import {LabelBtn} from '../../../../../interfaces/sequencer-btn.interface';
+import {HotkeyPickerComponent} from '../../hotkeyPicker/hotkey-picker.component';
+import {HotkeyChord, HotkeysService} from '../../../../../core/services/hotkeys.service';
+import {SequencerRuntimeService} from '../../../../../core/service/sequencer-runtime.service';
+import {parseNormalizedHotkey} from '../../../../../utils/sequencer/sequencer-hotkey-options.util';
+import {createSequencerDialogState} from '../../../../../utils/sequencer/sequencer-dialog-state.util';
 
-export interface EventBtnDialogData {
+export interface LabelBtnDialogData {
   mode: 'create' | 'edit';
-  btn?: EventBtn;
+  btn?: LabelBtn;
 }
 
 @Component({
-  selector: 'app-create-event-btn-dialog',
+  selector: 'app-create-label-btn-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -33,12 +32,12 @@ export interface EventBtnDialogData {
     MatRadioModule,
     HotkeyPickerComponent,
   ],
-  templateUrl: './create-event-btn-dialog.component.html',
-  styleUrl: './create-event-btn-dialog.component.scss',
+  templateUrl: './create-label-btn-dialog.component.html',
+  styleUrl: './create-label-btn-dialog.component.scss',
 })
-export class CreateEventBtnDialogComponent {
-  private readonly dialogRef = inject(MatDialogRef<CreateEventBtnDialogComponent>);
-  readonly data = inject<EventBtnDialogData>(MAT_DIALOG_DATA);
+export class CreateLabelBtnDialogComponent {
+  private readonly dialogRef = inject(MatDialogRef<CreateLabelBtnDialogComponent>);
+  readonly data = inject<LabelBtnDialogData>(MAT_DIALOG_DATA);
   private readonly panelService = inject(SequencerPanelService);
   private readonly hotkeysService = inject(HotkeysService);
   private readonly runtimeService = inject(SequencerRuntimeService);
@@ -55,13 +54,7 @@ export class CreateEventBtnDialogComponent {
       [Validators.required],
     ),
     name: new FormControl(this.data.btn?.name ?? '', [Validators.required]),
-    kind: new FormControl<'limited' | 'indefinite'>(this.data.btn?.eventProps.kind ?? 'limited', {
-      nonNullable: true,
-    }),
-    preSec: new FormControl<number>(this.data.btn ? this.data.btn.eventProps.preMs / 1000 : 0, {
-      nonNullable: true,
-    }),
-    postSec: new FormControl<number>(this.data.btn ? this.data.btn.eventProps.postMs / 1000 : 0, {
+    mode: new FormControl<'once' | 'indefinite'>(this.data.btn?.labelProps.mode ?? 'once', {
       nonNullable: true,
     }),
   });
@@ -93,9 +86,7 @@ export class CreateEventBtnDialogComponent {
 
     const id = (this.form.controls.id.value ?? '').trim();
     const name = (this.form.controls.name.value ?? '').trim();
-    const kind = this.form.controls.kind.value ?? 'limited';
-    const preMs = Math.max(0, Math.round((this.form.controls.preSec.value ?? 0) * 1000));
-    const postMs = Math.max(0, Math.round((this.form.controls.postSec.value ?? 0) * 1000));
+    const mode = this.form.controls.mode.value ?? 'once';
 
     const chord = this.selectedChord();
     let hotkeyNormalized: string | null = null;
@@ -120,14 +111,14 @@ export class CreateEventBtnDialogComponent {
       this.panelService.updateBtn(id, {
         name,
         hotkeyNormalized,
-        eventProps: { kind, preMs, postMs },
+        labelProps: { mode },
       });
     } else {
-      const created = this.panelService.addEventBtn({
+      const created = this.panelService.addLabelBtn({
         id,
         name,
         hotkeyNormalized,
-        eventProps: { kind, preMs, postMs },
+        labelProps: { mode },
       });
       if (!created) {
         if (hotkeyNormalized) {

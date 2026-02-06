@@ -10,8 +10,8 @@ import { SequencerRuntimeService } from '../../../core/service/sequencer-runtime
 import { HotkeysService } from '../../../core/services/hotkeys.service';
 import { EventBtn, LabelBtn, SequencerBtn } from '../../../interfaces/sequencer-btn.interface';
 import { formatNormalizedHotkey } from '../../../utils/sequencer/sequencer-hotkey-options.util';
-import { CreateEventBtnDialogComponent } from './create-event-btn-dialog.component';
-import { CreateLabelBtnDialogComponent } from './create-label-btn-dialog.component';
+import {CreateEventBtnDialogComponent} from './createBtn/event/create-event-btn-dialog.component';
+import {CreateLabelBtnDialogComponent} from './createBtn/label/create-label-btn-dialog.component';
 
 @Component({
   selector: 'app-sequencer-panel',
@@ -52,12 +52,14 @@ export class SequencerPanelComponent {
 
   openEventDialog(btn?: EventBtn) {
     this.dialog.open(CreateEventBtnDialogComponent, {
+      width: "60%",
       data: { mode: btn ? 'edit' : 'create', btn },
     });
   }
 
   openLabelDialog(btn?: LabelBtn) {
     this.dialog.open(CreateLabelBtnDialogComponent, {
+      width: "60%",
       data: { mode: btn ? 'edit' : 'create', btn },
     });
   }

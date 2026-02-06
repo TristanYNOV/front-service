@@ -4,15 +4,15 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { HotkeysService } from '../../../core/services/hotkeys.service';
-import { HotkeyChord } from '../../../interfaces/hotkey-chord.interface';
+import { HotkeysService } from '../../../../core/services/hotkeys.service';
+import { HotkeyChord } from '../../../../interfaces/hotkey-chord.interface';
 import {
   SEQUENCER_BASE_KEYS,
   SEQUENCER_MODIFIERS,
   buildChord,
   formatNormalizedHotkey,
   parseNormalizedHotkey,
-} from '../../../utils/sequencer/sequencer-hotkey-options.util';
+} from '../../../../utils/sequencer/sequencer-hotkey-options.util';
 
 @Component({
   selector: 'app-hotkey-picker',

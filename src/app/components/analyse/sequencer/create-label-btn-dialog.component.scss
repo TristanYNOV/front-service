@@ -1,3 +1,15 @@
+.dialog-title {
+  margin: 0;
+}
+
+.dialog-body {
+  padding-top: 12px;
+}
+
+.dialog-actions {
+  padding-bottom: 12px;
+}
+
 .dialog-form {
   display: flex;
   flex-direction: column;
@@ -22,7 +34,6 @@
 }
 
 .error {
-  color: #fca5a5;
   font-size: 12px;
   margin-top: 6px;
 }

@@ -1,6 +1,8 @@
-<h2 mat-dialog-title>{{ isEdit ? 'Éditer un Label' : 'Créer un Label' }}</h2>
+<h2 mat-dialog-title class="bg-layer-3 light-text dialog-title">
+  {{ isEdit ? 'Éditer un Label' : 'Créer un Label' }}
+</h2>
 
-<mat-dialog-content>
+<mat-dialog-content class="bg-layer-3 light-text dialog-body">
   <form [formGroup]="form" class="dialog-form">
     <div class="row">
       <mat-form-field appearance="fill">
@@ -26,13 +28,13 @@
         (chordChange)="onChordChange($event)"
       ></app-hotkey-picker>
       @if (hotkeyError()) {
-        <div class="error">{{ hotkeyError() }}</div>
+        <div class="error alert-text">{{ hotkeyError() }}</div>
       }
     </div>
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" class="bg-layer-3 light-text dialog-actions">
   <button mat-stroked-button type="button" (click)="close()">Annuler</button>
   <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="!canSave()">
     {{ isEdit ? 'Mettre à jour' : 'Créer' }}

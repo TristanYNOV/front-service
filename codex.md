@@ -170,7 +170,7 @@ Checklist
 
 ## 14) Sequencing Panel - Step1
 - Interfaces : `SequencerBtn` (event/label) + `SequencerPanel` dans `src/app/interfaces` ; hotkey chord partagé dans `src/app/interfaces/hotkey-chord.interface.ts`.
-- Utils séquençage : whitelist des touches (`ArrowUp`, `ArrowDown`, `Digit0..Digit9`) + modificateurs (`Shift`, `Ctrl`, `Alt`, `Meta`) + helpers `buildChord`/`formatNormalizedHotkey` dans `src/app/utils/sequencer/sequencer-hotkey-options.util.ts`.
+- Utils séquençage : whitelist des touches (`ArrowUp`, `ArrowDown`, `Digit0..Digit9`) + modificateurs (`Shift`, `Ctrl`, `Alt`, `Meta`) + helpers `buildChord`/`formatNormalizedHotkey` dans `src/app/utils/sequencer/sequencer-hotkey-options.util.ts`, plus état partagé pour dialogs dans `src/app/utils/sequencer/sequencer-dialog-state.util.ts`.
 - Services :
   - `SequencerPanelService` (config panneau, `btnList`, `panelName`, `editMode`) dans `src/app/core/service/sequencer-panel.service.ts`.
   - `SequencerRuntimeService` (feedback UI : flash, compteurs, `recentTriggers`) dans `src/app/core/service/sequencer-runtime.service.ts`.

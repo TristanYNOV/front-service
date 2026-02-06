@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -13,6 +13,7 @@ import { LabelBtn } from '../../../interfaces/sequencer-btn.interface';
 import { HotkeyChord } from '../../../interfaces/hotkey-chord.interface';
 import { HotkeyPickerComponent } from './hotkey-picker.component';
 import { parseNormalizedHotkey } from '../../../utils/sequencer/sequencer-hotkey-options.util';
+import { createSequencerDialogState } from '../../../utils/sequencer/sequencer-dialog-state.util';
 
 export interface LabelBtnDialogData {
   mode: 'create' | 'edit';
@@ -59,23 +60,17 @@ export class CreateLabelBtnDialogComponent {
     }),
   });
 
-  readonly canSave = computed(() => {
-    if (this.form.invalid) {
-      return false;
-    }
-    if (!this.isEdit) {
-      const idValue = this.form.controls.id.value ?? '';
-      if (!this.panelService.isIdAvailable(idValue)) {
-        return false;
-      }
-    }
-    const chord = this.selectedChord();
-    if (!chord) {
-      return true;
-    }
-    const status = this.getHotkeyStatus(chord);
-    return !!status && status.isValid && !status.usedBy;
+  private readonly dialogState = createSequencerDialogState({
+    form: this.form,
+    isEdit: this.isEdit,
+    panelService: this.panelService,
+    selectedChord: this.selectedChord,
+    currentActionId: this.currentActionId,
+    hotkeysService: this.hotkeysService,
   });
+
+  readonly canSave = this.dialogState.canSave;
+  private readonly getHotkeyStatus = this.dialogState.getHotkeyStatus;
 
   onChordChange(chord: HotkeyChord | null) {
     this.selectedChord.set(chord);
@@ -140,13 +135,5 @@ export class CreateLabelBtnDialogComponent {
 
   close() {
     this.dialogRef.close(false);
-  }
-
-  private getHotkeyStatus(chord: HotkeyChord) {
-    const status = this.hotkeysService.isHotkeyUsed(chord);
-    if (status.usedBy?.kind === 'sequencer' && status.usedBy.actionId === this.currentActionId) {
-      return { ...status, usedBy: undefined };
-    }
-    return status;
   }
 }

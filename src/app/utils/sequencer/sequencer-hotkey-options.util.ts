@@ -25,10 +25,12 @@ export const buildChord = (baseKey: string | null, modifiers: string[]): HotkeyC
   if (!baseKey) {
     return {};
   }
+  const isLetter = /^[A-Z]$/.test(baseKey);
   const key = baseKey.startsWith('Digit') ? baseKey.replace('Digit', '') : baseKey;
+  const code = isLetter ? `Key${baseKey}` : baseKey;
   return {
     key,
-    code: baseKey,
+    code,
     shiftKey: modifiers.includes('Shift'),
     ctrlKey: modifiers.includes('Ctrl'),
     altKey: modifiers.includes('Alt'),

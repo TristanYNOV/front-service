@@ -346,15 +346,18 @@ export class HotkeysService {
   private resolveBaseKey(chord: HotkeyChord): string {
     const code = chord.code ?? undefined;
     const key = chord.key ?? undefined;
+    if (key && this.isSingleLetter(key)) {
+      return key.toUpperCase();
+    }
+    if (code && this.isLetterCode(code)) {
+      return code.replace('Key', '');
+    }
     if (code && (NON_CHARACTER_CODES.has(code) || this.isDigitCode(code) || this.isNumpadCode(code))) {
       return code;
     }
     if (key) {
       if (this.isSingleDigit(key)) {
         return `Digit${key}`;
-      }
-      if (this.isSingleLetter(key)) {
-        return key.toUpperCase();
       }
       if (key.length === 1) {
         return key;
@@ -405,6 +408,10 @@ export class HotkeysService {
 
   private isSingleLetter(key: string) {
     return /^[a-zA-Z]$/.test(key);
+  }
+
+  private isLetterCode(code: string) {
+    return /^Key[A-Z]$/.test(code);
   }
 
   private isModifierKey(normalizedKey: string, code?: string) {

@@ -162,6 +162,22 @@ describe('HotkeysService', () => {
     expect(service.isHotkeyUsed({ key: 'A', shiftKey: true }).normalized).toBe('Shift+A');
   });
 
+  it('accepts picker letter chords using KeyX code and matches keyboard keydown', () => {
+    const handler = jasmine.createSpy('handler');
+    const result = service.registerSequencerHotkey(
+      { key: 'Z', code: 'KeyZ' },
+      'sequence:keyz',
+      handler,
+    );
+
+    expect(result.ok).toBeTrue();
+    expect(service.isHotkeyUsed({ key: 'z', code: 'KeyZ' }).normalized).toBe('Z');
+
+    service.enable();
+    dispatchKeydown({ key: 'z', code: 'KeyZ' });
+    expect(handler).toHaveBeenCalled();
+  });
+
   it('stops handling hotkeys after disable', () => {
     service.initReservedVideoHotkeys();
     service.enable();

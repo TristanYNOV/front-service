@@ -105,42 +105,52 @@ export class SequencerRuntimeService {
   private applyDeactivate(ids: string[]) {
     ids.forEach(id => {
       const target = this.panelService.getBtnById(id);
-      if (!target || !this.isIndefinite(target)) {
+      if (!target || !this.isIndefinite(target) || !this.hasActiveId(id)) {
         return;
       }
       this.removeActiveId(id);
+      this.logIndefiniteEnded(target);
     });
   }
 
   private applyActivate(ids: string[]) {
     ids.forEach(id => {
       const target = this.panelService.getBtnById(id);
-      if (!target || !this.isIndefinite(target)) {
+      if (!target || !this.isIndefinite(target) || this.hasActiveId(id)) {
         return;
       }
       this.addActiveId(id);
+      this.logIndefiniteStart(target);
     });
   }
 
   private toggleIndefinite(btn: SequencerBtn) {
     if (this.hasActiveId(btn.id)) {
       this.removeActiveId(btn.id);
-      if (btn.type === 'event') {
-        const labels = this.getActiveIndefiniteLabels().map(item => item.name);
-        console.log(`[Sequencer] EVENT INDEFINITE ${btn.name} ENDED | Labels=[${labels.join(', ')}]`);
-      } else {
-        console.log(`[Sequencer] LABEL INDEFINITE ${btn.name} ENDED`);
-      }
+      this.logIndefiniteEnded(btn);
       return;
     }
 
     this.addActiveId(btn.id);
+    this.logIndefiniteStart(btn);
+  }
+
+
+  private logIndefiniteStart(btn: SequencerBtn) {
     if (btn.type === 'event') {
       console.log(`[Sequencer] EVENT INDEFINITE ${btn.name} START`);
       return;
     }
-
     console.log(`[Sequencer] LABEL INDEFINITE ${btn.name} START`);
+  }
+
+  private logIndefiniteEnded(btn: SequencerBtn) {
+    if (btn.type === 'event') {
+      const labels = this.getActiveIndefiniteLabels().map(item => item.name);
+      console.log(`[Sequencer] EVENT INDEFINITE ${btn.name} ENDED | Labels=[${labels.join(', ')}]`);
+      return;
+    }
+    console.log(`[Sequencer] LABEL INDEFINITE ${btn.name} ENDED`);
   }
 
   private addActiveId(id: string) {

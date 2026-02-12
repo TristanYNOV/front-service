@@ -80,7 +80,7 @@ describe('HotkeysService', () => {
     const result = service.registerSequencerHotkey(
       { key: ' ', code: 'Space' },
       'sequence:test',
-      () => {},
+      jasmine.createSpy('handler'),
     );
 
     expect(result.ok).toBeFalse();
@@ -94,12 +94,12 @@ describe('HotkeysService', () => {
     const first = service.registerSequencerHotkey(
       { key: 'a' },
       'sequence:first',
-      () => {},
+      jasmine.createSpy('handler'),
     );
     const second = service.registerSequencerHotkey(
       { key: 'a' },
       'sequence:second',
-      () => {},
+      jasmine.createSpy('handler'),
     );
 
     expect(first.ok).toBeTrue();
@@ -114,7 +114,7 @@ describe('HotkeysService', () => {
     service.registerSequencerHotkey(
       { key: 'b' },
       'sequence:remove',
-      () => {},
+      jasmine.createSpy('handler'),
     );
 
     const removed = service.unassignSequencerHotkey({ key: 'b' });
@@ -123,7 +123,7 @@ describe('HotkeysService', () => {
     const reassigned = service.registerSequencerHotkey(
       { key: 'b' },
       'sequence:reuse',
-      () => {},
+      jasmine.createSpy('handler'),
     );
     expect(reassigned.ok).toBeTrue();
   });
@@ -132,16 +132,34 @@ describe('HotkeysService', () => {
     const first = service.registerSequencerHotkey(
       { key: '2', code: 'Digit2' },
       'sequence:two',
-      () => {},
+      jasmine.createSpy('handler'),
     );
     const second = service.registerSequencerHotkey(
       { key: '2', code: 'Digit2', shiftKey: true },
       'sequence:shift-two',
-      () => {},
+      jasmine.createSpy('handler'),
     );
 
     expect(first.ok).toBeTrue();
     expect(second.ok).toBeTrue();
+  });
+
+  it('normalizes letter hotkeys from event.key to uppercase', () => {
+    const first = service.registerSequencerHotkey(
+      { key: 'a' },
+      'sequence:letter-a',
+      jasmine.createSpy('handler'),
+    );
+    const second = service.registerSequencerHotkey(
+      { key: 'A', shiftKey: true },
+      'sequence:letter-shift-a',
+      jasmine.createSpy('handler'),
+    );
+
+    expect(first.ok).toBeTrue();
+    expect(second.ok).toBeTrue();
+    expect(service.isHotkeyUsed({ key: 'a' }).normalized).toBe('A');
+    expect(service.isHotkeyUsed({ key: 'A', shiftKey: true }).normalized).toBe('Shift+A');
   });
 
   it('stops handling hotkeys after disable', () => {

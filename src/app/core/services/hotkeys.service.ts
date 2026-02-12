@@ -353,8 +353,11 @@ export class HotkeysService {
       if (this.isSingleDigit(key)) {
         return `Digit${key}`;
       }
-      if (key.length === 1) {
+      if (this.isSingleLetter(key)) {
         return key.toUpperCase();
+      }
+      if (key.length === 1) {
+        return key;
       }
       return key;
     }
@@ -398,6 +401,10 @@ export class HotkeysService {
 
   private isSingleDigit(key: string) {
     return /^[0-9]$/.test(key);
+  }
+
+  private isSingleLetter(key: string) {
+    return /^[a-zA-Z]$/.test(key);
   }
 
   private isModifierKey(normalizedKey: string, code?: string) {

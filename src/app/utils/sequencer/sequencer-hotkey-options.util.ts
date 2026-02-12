@@ -1,14 +1,33 @@
 import { HotkeyChord } from '../../interfaces/hotkey-chord.interface';
 
-export const SEQUENCER_BASE_KEYS = ['ArrowUp', 'ArrowDown', 'Digit0', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9'] as const;
+const LETTER_BASE_KEYS = Array.from({ length: 26 }, (_, index) =>
+  String.fromCharCode(65 + index),
+);
+
+export const SEQUENCER_BASE_KEYS = [
+  'ArrowUp',
+  'ArrowDown',
+  'Digit0',
+  'Digit1',
+  'Digit2',
+  'Digit3',
+  'Digit4',
+  'Digit5',
+  'Digit6',
+  'Digit7',
+  'Digit8',
+  'Digit9',
+  ...LETTER_BASE_KEYS,
+] as const;
 export const SEQUENCER_MODIFIERS = ['Shift', 'Ctrl', 'Alt', 'Meta'] as const;
 
 export const buildChord = (baseKey: string | null, modifiers: string[]): HotkeyChord => {
   if (!baseKey) {
     return {};
   }
+  const key = baseKey.startsWith('Digit') ? baseKey.replace('Digit', '') : baseKey;
   return {
-    key: baseKey.startsWith('Digit') ? baseKey.replace('Digit', '') : baseKey,
+    key,
     code: baseKey,
     shiftKey: modifiers.includes('Shift'),
     ctrlKey: modifiers.includes('Ctrl'),

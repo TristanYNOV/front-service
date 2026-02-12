@@ -1,7 +1,7 @@
 <main
   #analysisContainer
   data-testid="analysis-container"
-  class="relative w-full h-full p-2"
+  class="relative h-full w-full p-2"
   [class.layout-edit]="layoutEditMode.isEditMode()"
   [class.layout-locked]="!layoutEditMode.isEditMode()"
 >
@@ -15,7 +15,7 @@
     (cdkResizeEnded)="onPaneResizeEnd('video', $event)"
     [ngStyle]="paneStyle('video')"
     data-testid="pane-video"
-    class="absolute resize overflow-hidden rounded-md border border-neutral-700 bg-neutral-900/70 shadow"
+    class="bg-elevated border-layer absolute resize overflow-hidden rounded-md border shadow"
   >
     <app-video-display></app-video-display>
   </div>
@@ -29,7 +29,7 @@
     (cdkResizeEnded)="onPaneResizeEnd('sequencer', $event)"
     [ngStyle]="paneStyle('sequencer')"
     data-testid="pane-sequencer"
-    class="absolute resize overflow-auto rounded-md border border-neutral-700 bg-neutral-900/70 shadow"
+    class="bg-elevated border-layer absolute resize overflow-auto rounded-md border shadow"
   >
     <app-sequencer-panel></app-sequencer-panel>
   </div>
@@ -43,7 +43,7 @@
     (cdkResizeEnded)="onPaneResizeEnd('timeline', $event)"
     [ngStyle]="paneStyle('timeline')"
     data-testid="pane-timeline"
-    class="absolute resize overflow-auto rounded-md border border-neutral-700 bg-neutral-800/70 shadow"
+    class="bg-surface border-layer absolute resize overflow-auto rounded-md border shadow"
   >
     <app-timeline></app-timeline>
   </div>

@@ -178,3 +178,19 @@ Checklist
 - UI Sequencing Panel (analyse) : TopBar A/E/L/N/Name/M, liste verticale de boutons (event/label) avec hotkey formatée + compteur, feedback visuel “hotkey → action” (flash 200ms + recent triggers).
 - Dialogs Step1 : création/édition Event/Label via `create-event-btn-dialog` / `create-label-btn-dialog` + `hotkey-picker` (sélection base key + modificateurs, unassign).
 - Cette base est conçue pour être étendue en Step2 (liens/activation) puis Step3 (canvas infini/layout).
+
+## 15) Quality Step (pré-Step2) : styling & hotkeys
+- **Styling `/analyse`**
+  - Tailwind est la source principale pour layout/spacing/typography/borders/radius/flex/grid/responsive/hover/focus/transitions.
+  - Dans les templates `/analyse`, **ne pas utiliser de classes couleur Tailwind** (`bg-slate-*`, `text-white`, etc.) ni `bg-[var(--...)]` / `text-[var(--...)]`.
+  - Les couleurs doivent passer par des classes sémantiques du thème (`bg-*`, `text-*`, `border-*`, états `is-*`) définies dans `src/theme/*.class.scss`.
+  - Les `*.component.scss` doivent rester vides, sauf override ponctuel de librairie externe.
+  - Les overrides globaux de librairies (Angular Material, etc.) vont dans `src/theme/override/`.
+- **Ajouter une nouvelle catégorie thème**
+  1. Créer `src/theme/variables/_<category>.variables.scss` avec les variables CSS dans `:root { ... }` (et variantes `.dark-theme` si nécessaire).
+  2. Créer `src/theme/_<category>.class.scss` avec `@use './variables/<category>.variables';` en tête, puis les classes sémantiques.
+  3. Importer la catégorie dans `src/styles.scss` via `@use './theme/<category>.class';`.
+- **Hotkeys Sequencer**
+  - Whitelist étendue à `ArrowUp`, `ArrowDown`, `Digit0..Digit9`, `A..Z`.
+  - Normalisation des lettres basée sur `event.key` (AZERTY/QWERTY), transformées en majuscules (`a` -> `A`).
+  - Modificateurs conservés (`Shift`, `Ctrl`, `Alt`, `Meta`) ; les conflits avec hotkeys vidéo réservées et hotkeys séquenceur existantes restent bloquants.

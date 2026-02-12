@@ -1,6 +1,10 @@
 @use './variables/global.variables';
 @use './variables/state.variables';
 
+.bg-layer-0 {
+  background-color: var(--bg-layer-0);
+}
+
 .bg-layer-1 {
   background-color: var(--bg-layer-1);
 }
@@ -21,6 +25,18 @@
   background-color: var(--bg-secondary-layer-2);
 }
 
+.bg-surface {
+  background-color: var(--bg-surface);
+}
+
+.bg-elevated {
+  background-color: var(--bg-elevated);
+}
+
+.bg-overlay {
+  background-color: var(--bg-overlay);
+}
+
 .light-text {
   color: var(--light);
 }
@@ -39,4 +55,34 @@
 
 .accent-text {
   color: var(--accent);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-default {
+  color: var(--text-default);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-strong {
+  color: var(--text-strong);
+}
+
+.border-layer {
+  border-color: var(--border-layer);
+}
+
+.border-subtle {
+  border-color: var(--border-subtle);
+}
+
+.is-pressed,
+.is-active {
+  border-color: var(--interactive-active-border);
+  background-color: var(--interactive-active);
 }

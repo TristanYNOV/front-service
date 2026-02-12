@@ -1,5 +1,4 @@
-<section
-  class="flex h-full w-full flex-col gap-1 bg-slate-950 p-2 text-xs light-text">
+<section class="bg-layer-0 text-default flex h-full w-full flex-col gap-1 p-2 text-xs">
   <div class="flex justify-around">
     <p class="font-semibold">
       {{ videoName() ?? 'Aucune vidéo chargée' }}
@@ -21,14 +20,14 @@
       </video>
 
       @if (errorMessage()) {
-        <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/80 p-4 text-center">
-          <p class="text-sm text-rose-200">{{ errorMessage() }}</p>
+        <div class="bg-overlay absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center">
+          <p class="alert-text text-sm">{{ errorMessage() }}</p>
           <button type="button" class="btn-primary" (click)="onChangeVideoClick()">
             Choisir une autre vidéo
           </button>
         </div>
       } @else if (!hasVideo()) {
-        <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center text-slate-300">
+        <div class="text-muted absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
           <p>Importez une vidéo locale pour démarrer.</p>
         </div>
       }
@@ -36,18 +35,18 @@
 
     <div class="flex flex-wrap items-center">
       @if (!hasVideo()) {
-        <div class="w-full mb-0.5">
+        <div class="mb-0.5 w-full">
           <input
             #fileInput
             type="file"
             accept="video/*"
-            class="w-1/3 text-xs file-btn-primary"
+            class="file-btn-primary w-1/3 text-xs"
             (change)="onFileSelected($event)"
           />
         </div>
       }
 
-      <div class="flex gap-1 ml-4 mr-2">
+      <div class="mx-2 ml-4 flex gap-1">
         <button type="button" class="btn-default" (click)="videoService.stepFrames(-1)" [disabled]="!hasVideo()">
           <mat-icon class="text-md">chevron_left</mat-icon>
         </button>
@@ -63,7 +62,7 @@
         </button>
       </div>
 
-      <div class="flex items-center gap-2 flex-1">
+      <div class="flex flex-1 items-center gap-2">
         <p>{{ formatDuration(videoService.positionMs()) }}</p>
         <div class="flex flex-1 items-center">
           <input
@@ -79,16 +78,16 @@
         <p>{{ formatDuration(videoService.durationMs()) }}</p>
       </div>
 
-      <div class="flex items-center gap-2 ml-3">
+      <div class="ml-3 flex items-center gap-2">
         <span class="flex items-center">
           {{ rateInput }}x
         </span>
         <div class="flex flex-col">
           <button (click)="upRateChange()">
-            <mat-icon class="text-xs icon" >add</mat-icon>
+            <mat-icon class="icon text-xs">add</mat-icon>
           </button>
           <button (click)="reduceRateChange()">
-            <mat-icon class="text-xs icon">remove</mat-icon>
+            <mat-icon class="icon text-xs">remove</mat-icon>
           </button>
         </div>
       </div>

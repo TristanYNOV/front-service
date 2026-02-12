@@ -45,6 +45,11 @@ body {
   }
 }
 
+input {
+  @apply py-3 px-2 rounded-md cursor-pointer;
+  background-color: var(--dark);
+}
+
 // CSS STYLE FOR THE DIRECTIVE DRAG & RESIZE
 :root {
   --rzr-padding: 22px;

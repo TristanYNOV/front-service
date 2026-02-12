@@ -6,6 +6,7 @@
 - Store : slices `dataState` et `userState` enregistrés dans [`app.config.ts`](src/app/app.config.ts) ; effets dans `src/app/store/Data` et `src/app/store/User`.
 - Auth mockée via [`AuthApi`](src/app/core/api/auth.api.ts) + stockage localStorage dans [`TokenService`](src/app/core/services/token.service.ts) ; guard licence en placeholder HTTP `/api/license/validate`.
 - UI analyse : drag+resize via [`appCdkDragResize`](src/app/directives/cdk-drag-resize.directive.ts) et [`AnalysisPaneDirective`](src/app/pages/analyse/analysis-pane.directive.ts) ; mode édition/lock géré par [`LayoutEditModeService`](src/app/core/services/layout-edit-mode.service.ts).
+- Hotkeys globales sur `/analyse` via [`HotkeysService`](src/app/core/services/hotkeys.service.ts) (réservées vidéo + personnalisables séquenceur, normalisation des chords, désactivation automatique en saisie).
 - Tailwind actif via `src/styles.scss` (classes utilitaires + variables SCSS dans `src/theme/**`), Material pour menus/dialogs.
 - Commandes : `npm start`, `npm run build`, `npm test`, `npm run lint` ; SSR via `npm run serve:ssr:front-service` après build.
 - Pas de config d’environnement dédiée (pas de `environment.ts`) → URLs API à confirmer ou passer via gateway externe.
@@ -64,7 +65,23 @@
   - [`appCdkDragResize`](src/app/directives/cdk-drag-resize.directive.ts) ajoute handles, z-index controls, aspect lock (`lockAspectRatio`), bounds (`cdkDragBoundary`), événements drag/resize (start/move/end).
   - [`AnalysisPaneDirective`](src/app/pages/analyse/analysis-pane.directive.ts) enveloppe `appCdkDragResize` pour émettre des rectangles (dragEnd/resizeEnd) relatifs au conteneur analyse.
   - Layout edit/lock : [`LayoutEditModeService`](src/app/core/services/layout-edit-mode.service.ts) (signal + localStorage) ; classes `layout-edit`/`layout-locked` modifient l’interactivité des handles via CSS (`styles.scss`).
-- Hotkeys : aucune gestion actuelle (⚠️ À confirmer si requis).
+- Hotkeys (analyse) :
+  - Service global [`HotkeysService`](src/app/core/services/hotkeys.service.ts) écoute `document:keydown` via RxJS et s’active uniquement depuis [`AnalyseComponent`](src/app/pages/analyse/analyse.component.ts).
+  - Désactivation automatique en saisie : ignore `input`, `textarea`, `select`, et `contenteditable`.
+  - Hotkeys **réservées vidéo** (non personnalisables) :
+    - `Space` → play/pause
+    - `ArrowLeft`/`ArrowRight` → seek ±1000 ms
+    - `,` / `.` → step frame -1/+1
+    - `-` / `/` → playbackRate ±0.25
+  - Hotkeys **séquenceur** (personnalisables) enregistrées via `registerSequencerHotkey`, stockées séparément, collisions détectées (résultat typé).
+  - Normalisation : `HotkeyChord` (key/code + modifiers) → string canonique (`Shift+Digit2`, `Space`, etc.), distinction des modificateurs incluse.
+  - Nettoyage complet via `disable()` lors du `ngOnDestroy` de la page analyse.
+  - API principale :
+    - `enable()` / `disable()` + `enabled` (signal readonly).
+    - `initReservedVideoHotkeys()` à l’entrée `/analyse`.
+    - `registerSequencerHotkey(chord, actionId, handler, options?)` → `RegisterHotkeyResult` (`RESERVED_HOTKEY`, `ALREADY_USED`, `INVALID_CHORD`).
+    - `unassignSequencerHotkey(chord)` / `unassignSequencerHotkeyByAction(actionId)` / `clearSequencerHotkeys()`.
+    - `getUsedHotkeys()` / `getSequencerHotkeys()` / `isHotkeyUsed(chord)`.
 
 ## 9) Conventions Angular 19
 - Standalone components/directives partout, imports locaux.
@@ -98,6 +115,7 @@
   - Ajouter actions/selectors si nouvel état ; mémoïser selectors.
   - Utiliser `store.selectSignal`/Signals pour réactivité légère ; gérer les subscriptions manuelles (`Subscription` → `OnDestroy`).
   - Valider les formulaires via validators existants ou en créer dans `core/utils/validators`.
+  - Pour les hotkeys : enregistrer les actions via [`HotkeysService`](src/app/core/services/hotkeys.service.ts), garder la logique métier dans des services/facades (ex: [`SequencerService`](src/app/core/services/sequencer.service.ts)).
 - Avant PR : lancer lint/tests si concernés, vérifier navigation/guards, clean logs, mettre à jour `codex.md`/docs si besoin.
 
 ## 13) Règles PR
@@ -150,3 +168,13 @@ Checklist
  - Docs mise à jour si nécessaire (codex.md / README)
 ```
 
+## 14) Sequencing Panel - Step1
+- Interfaces : `SequencerBtn` (event/label) + `SequencerPanel` dans `src/app/interfaces` ; hotkey chord partagé dans `src/app/interfaces/hotkey-chord.interface.ts`.
+- Utils séquençage : whitelist des touches (`ArrowUp`, `ArrowDown`, `Digit0..Digit9`) + modificateurs (`Shift`, `Ctrl`, `Alt`, `Meta`) + helpers `buildChord`/`formatNormalizedHotkey` dans `src/app/utils/sequencer/sequencer-hotkey-options.util.ts`, plus état partagé pour dialogs dans `src/app/utils/sequencer/sequencer-dialog-state.util.ts`.
+- Services :
+  - `SequencerPanelService` (config panneau, `btnList`, `panelName`, `editMode`) dans `src/app/core/service/sequencer-panel.service.ts`.
+  - `SequencerRuntimeService` (feedback UI : flash, compteurs, `recentTriggers`) dans `src/app/core/service/sequencer-runtime.service.ts`.
+  - `HotkeysService` : validation stricte des chords séquenceur (whitelist), collisions détectées, `isHotkeyUsed` renvoie aussi `isValid`. En mode édition, les hotkeys séquenceur sont ignorées (les hotkeys vidéo restent actives).
+- UI Sequencing Panel (analyse) : TopBar A/E/L/N/Name/M, liste verticale de boutons (event/label) avec hotkey formatée + compteur, feedback visuel “hotkey → action” (flash 200ms + recent triggers).
+- Dialogs Step1 : création/édition Event/Label via `create-event-btn-dialog` / `create-label-btn-dialog` + `hotkey-picker` (sélection base key + modificateurs, unassign).
+- Cette base est conçue pour être étendue en Step2 (liens/activation) puis Step3 (canvas infini/layout).

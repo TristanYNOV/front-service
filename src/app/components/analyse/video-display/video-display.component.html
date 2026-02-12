@@ -1,9 +1,5 @@
 <section
-  #hotkeysZone
-  tabindex="0"
-  class="flex h-full w-full flex-col gap-1 bg-slate-950 p-2 text-xs light-text"
-  (keydown)="onKeydown($event)"
-  (click)="focusHotkeys()">
+  class="flex h-full w-full flex-col gap-1 bg-slate-950 p-2 text-xs light-text">
   <div class="flex justify-around">
     <p class="font-semibold">
       {{ videoName() ?? 'Aucune vidéo chargée' }}
@@ -14,7 +10,7 @@
   </div>
 
   <div class="flex flex-1 flex-col">
-    <div class="relative flex flex-1 items-center" (click)="focusHotkeys()">
+    <div class="relative flex flex-1 items-center">
       <video
         #videoElement
         class="h-full w-full object-contain"
@@ -57,9 +53,9 @@
         </button>
         <button type="button" class="btn-primary" (click)="videoService.togglePlayPause()" [disabled]="!hasVideo()">
           @if (!videoService.isPlaying()) {
-            <mat-icon class="text-md">pause</mat-icon>
-          } @else {
             <mat-icon class="text-md">play_arrow</mat-icon>
+          } @else {
+            <mat-icon class="text-md">pause</mat-icon>
           }
         </button>
         <button type="button" class="btn-default" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
@@ -97,6 +93,5 @@
         </div>
       </div>
     </div>
-
   </div>
 </section>

@@ -194,3 +194,25 @@ Checklist
   - Whitelist étendue à `ArrowUp`, `ArrowDown`, `Digit0..Digit9`, `A..Z`.
   - Normalisation des lettres basée sur `event.key` (AZERTY/QWERTY), transformées en majuscules (`a` -> `A`).
   - Modificateurs conservés (`Shift`, `Ctrl`, `Alt`, `Meta`) ; les conflits avec hotkeys vidéo réservées et hotkeys séquenceur existantes restent bloquants.
+
+## 16) Sequencing Panel - Step2 (liens + runtime minimal)
+- Chaque bouton (`event`/`label`) supporte désormais deux listes de liens persistées dans `SequencerBtn` : `deactivateIds` et `activateIds` (tableaux, initialisés à `[]`).
+- Les liens se configurent **uniquement en édition** (dialogs Event/Label, section “Liens”), avec :
+  - select des IDs existants,
+  - suppression par croix,
+  - affichage enrichi `ID · name`.
+- Règle suppression : **pas de cascade**.
+  - Si un bouton ciblé est supprimé, son ID reste dans les listes.
+  - L’UI l’affiche en état atténué + badge `missing`.
+  - Le runtime l’ignore sans erreur.
+- Runtime Step2 (`SequencerRuntimeService`) :
+  - état signal `activeIndefiniteIds` (IDs actifs en durée indéfinie),
+  - sur trigger run mode : toggle du bouton indéfini déclenché (START/ENDED),
+  - puis application des liens dans l’ordre strict : `deactivateIds` **puis** `activateIds`,
+  - uniquement pour des cibles existantes et de type indéfini.
+- Logs console lisibles (format constant) :
+  - `EVENT INDEFINITE <name> START|ENDED` (avec labels actifs lors du `ENDED`),
+  - `LABEL INDEFINITE <name> START|ENDED`,
+  - `EVENT <name> TRIGGERED | LabelsActive=[...]`,
+  - `LABEL <name> TRIGGERED | ApplyToEvents=[...]`.
+- UI liste verticale : les boutons indéfinis actifs sont marqués via la classe thème `.is-active`, en conservant le flash `.is-pressed` de Step1.

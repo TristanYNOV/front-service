@@ -88,6 +88,11 @@ export class SequencerRuntimeService {
     );
   }
 
+
+  private isOnceEvent(btn: SequencerBtn) {
+    return btn.type === 'event' && btn.eventProps.kind === 'limited';
+  }
+
   private getActiveIndefiniteLabels() {
     const ids = new Set(this.activeIndefiniteIdsSignal());
     return this.panelService
@@ -116,11 +121,22 @@ export class SequencerRuntimeService {
   private applyActivate(ids: string[]) {
     ids.forEach(id => {
       const target = this.panelService.getBtnById(id);
-      if (!target || !this.isIndefinite(target) || this.hasActiveId(id)) {
+      if (!target) {
         return;
       }
-      this.addActiveId(id);
-      this.logIndefiniteStart(target);
+
+      if (this.isIndefinite(target)) {
+        if (this.hasActiveId(id)) {
+          return;
+        }
+        this.addActiveId(id);
+        this.logIndefiniteStart(target);
+        return;
+      }
+
+      if (this.isOnceEvent(target)) {
+        this.logOnceEventActivation(target);
+      }
     });
   }
 
@@ -135,6 +151,15 @@ export class SequencerRuntimeService {
     this.logIndefiniteStart(btn);
   }
 
+
+
+  private logOnceEventActivation(btn: SequencerBtn) {
+    if (btn.type !== 'event') {
+      return;
+    }
+    const labels = this.getActiveIndefiniteLabels().map(item => item.name);
+    console.log(`[Sequencer] EVENT ONCE ${btn.name} ACTIVATED BY LINK | LabelsActive=[${labels.join(', ')}]`);
+  }
 
   private logIndefiniteStart(btn: SequencerBtn) {
     if (btn.type === 'event') {

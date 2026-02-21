@@ -39,6 +39,7 @@ export class SequencerPanelComponent {
   readonly recentTriggers = this.runtimeService.recentTriggers;
   readonly lastTriggeredBtnId = this.runtimeService.lastTriggeredBtnId;
   readonly triggerCountByBtnId = this.runtimeService.triggerCountByBtnId;
+  readonly activeIndefiniteIds = this.runtimeService.activeIndefiniteIds;
 
   readonly showRenameInput = signal(false);
   readonly renameDraft = signal(this.panelName());
@@ -114,6 +115,10 @@ export class SequencerPanelComponent {
 
   triggerCount(btnId: string) {
     return this.triggerCountByBtnId()[btnId] ?? 0;
+  }
+
+  isActiveIndefinite(btnId: string) {
+    return this.activeIndefiniteIds().includes(btnId);
   }
 
   formatTimestamp(timestamp: number) {

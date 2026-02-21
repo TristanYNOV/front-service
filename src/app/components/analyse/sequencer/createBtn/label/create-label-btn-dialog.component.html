@@ -20,6 +20,70 @@
       </mat-form-field>
     </div>
 
+    @if (isEdit) {
+      <div class="border-layer rounded-md border p-3">
+        <h4 class="mb-3 text-[13px] font-semibold">Liens</h4>
+
+        <div class="mb-4 flex flex-col gap-2">
+          <div class="text-muted text-[11px] uppercase">Deactivate IDs</div>
+          <div class="flex gap-2">
+            <mat-form-field class="flex-1" appearance="fill">
+              <mat-label>Ajouter un ID</mat-label>
+              <mat-select [value]="selectedDeactivateId()" (valueChange)="selectedDeactivateId.set($event)">
+                @for (id of availableBtnIds(); track id) {
+                  <mat-option [value]="id">{{ id }} · {{ getBtnName(id) }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <button mat-stroked-button type="button" (click)="addDeactivateLink()">Ajouter</button>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            @for (id of deactivateIds(); track id) {
+              <div class="border-layer bg-surface flex items-center gap-2 rounded-md border px-2 py-1 text-[11px]"
+                [class.opacity-50]="!getBtnName(id)">
+                <span>{{ id }} @if (getBtnName(id)) { · {{ getBtnName(id) }} }</span>
+                @if (!getBtnName(id)) {
+                  <span class="border-layer rounded border px-1 text-[10px] uppercase">missing</span>
+                }
+                <button mat-icon-button type="button" (click)="removeDeactivateLink(id)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="text-muted text-[11px] uppercase">Activate IDs</div>
+          <div class="flex gap-2">
+            <mat-form-field class="flex-1" appearance="fill">
+              <mat-label>Ajouter un ID</mat-label>
+              <mat-select [value]="selectedActivateId()" (valueChange)="selectedActivateId.set($event)">
+                @for (id of availableBtnIds(); track id) {
+                  <mat-option [value]="id">{{ id }} · {{ getBtnName(id) }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <button mat-stroked-button type="button" (click)="addActivateLink()">Ajouter</button>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            @for (id of activateIds(); track id) {
+              <div class="border-layer bg-surface flex items-center gap-2 rounded-md border px-2 py-1 text-[11px]"
+                [class.opacity-50]="!getBtnName(id)">
+                <span>{{ id }} @if (getBtnName(id)) { · {{ getBtnName(id) }} }</span>
+                @if (!getBtnName(id)) {
+                  <span class="border-layer rounded border px-1 text-[10px] uppercase">missing</span>
+                }
+                <button mat-icon-button type="button" (click)="removeActivateLink(id)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
     <div>
       <h4 class="mb-2 text-[13px] font-semibold">Hotkey</h4>
       <app-hotkey-picker

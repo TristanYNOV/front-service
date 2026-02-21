@@ -5,6 +5,8 @@ export interface SequencerBtnBase {
   name: string;
   type: 'event' | 'label';
   hotkeyNormalized?: string | null;
+  deactivateIds?: string[];
+  activateIds?: string[];
 }
 
 export interface EventBtn extends SequencerBtnBase {

@@ -127,7 +127,7 @@ export class SequencerRuntimeService {
   }
 
   private applyDeactivate(ids: string[]) {
-    this.sortLinkIdsByTargetType(ids).forEach(id => {
+    this.sortLinkIdsByTargetType(ids, 'events-first').forEach(id => {
       const target = this.panelService.getBtnById(id);
       if (!target || !this.isIndefinite(target) || !this.hasActiveId(id)) {
         return;
@@ -138,7 +138,7 @@ export class SequencerRuntimeService {
   }
 
   private applyActivate(ids: string[]) {
-    this.sortLinkIdsByTargetType(ids).forEach(id => {
+    this.sortLinkIdsByTargetType(ids, 'labels-first').forEach(id => {
       const target = this.panelService.getBtnById(id);
       if (!target || !this.isIndefinite(target) || this.hasActiveId(id)) {
         return;
@@ -192,7 +192,7 @@ export class SequencerRuntimeService {
     this.appliedLabelsByEventId.get(eventId)?.add(labelId);
   }
 
-  private sortLinkIdsByTargetType(ids: string[]) {
+  private sortLinkIdsByTargetType(ids: string[], order: 'labels-first' | 'events-first') {
     const labelIds: string[] = [];
     const eventIds: string[] = [];
 
@@ -208,7 +208,7 @@ export class SequencerRuntimeService {
       eventIds.push(id);
     });
 
-    return [...labelIds, ...eventIds];
+    return order === 'events-first' ? [...eventIds, ...labelIds] : [...labelIds, ...eventIds];
   }
 
   private getBtnDisplayName(id: string) {

@@ -17,7 +17,7 @@ describe('SequencerRuntimeService', () => {
     logSpy = spyOn(console, 'log');
   });
 
-  it('applies trigger own action first, then deactivates and activates links in label/event order', () => {
+  it('applies trigger own action first, then deactivates events-before-labels and activates labels-before-events', () => {
     panel.addEventBtn({ id: 'evt-main', name: 'main', eventProps: { kind: 'indefinite', preMs: 0, postMs: 0 }, deactivateIds: ['evt-old', 'lbl-old', 'missing'], activateIds: ['evt-next', 'lbl-next', 'evt-once'] });
     panel.addEventBtn({ id: 'evt-old', name: 'oldEvent', eventProps: { kind: 'indefinite', preMs: 0, postMs: 0 } });
     panel.addEventBtn({ id: 'evt-next', name: 'nextEvent', eventProps: { kind: 'indefinite', preMs: 0, postMs: 0 } });
@@ -34,8 +34,8 @@ describe('SequencerRuntimeService', () => {
     const messages = logSpy.calls.allArgs().map(args => String(args[0]));
     expect(messages).toEqual([
       '[Sequencer] EVENT INDEFINITE main START',
-      '[Sequencer] LABEL INDEFINITE oldLabel ENDED',
       '[Sequencer] EVENT INDEFINITE oldEvent ENDED | Labels=[]',
+      '[Sequencer] LABEL INDEFINITE oldLabel ENDED',
       '[Sequencer] LABEL INDEFINITE nextLabel START',
       '[Sequencer] EVENT INDEFINITE nextEvent START',
       '[Sequencer] EVENT main TRIGGERED | LabelsActive=[nextLabel]',

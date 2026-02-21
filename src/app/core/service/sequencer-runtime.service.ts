@@ -28,6 +28,8 @@ export class SequencerRuntimeService {
   private readonly activeIndefiniteIdsSignal = signal<string[]>([]);
   readonly activeIndefiniteIds = this.activeIndefiniteIdsSignal.asReadonly();
 
+  private readonly appliedLabelsByEventId = new Map<string, Set<string>>();
+
   private lastTriggerTimeout?: ReturnType<typeof setTimeout>;
 
   trigger(btnId: string, source: 'hotkey' | 'click') {
@@ -60,9 +62,7 @@ export class SequencerRuntimeService {
       }
     }, 200);
 
-    if (this.isIndefinite(btn)) {
-      this.toggleIndefinite(btn);
-    }
+    const applyToEventsAtOwnStep = this.applyOwnFunction(btn);
 
     this.applyDeactivate(btn.deactivateIds ?? []);
     this.applyActivate(btn.activateIds ?? []);
@@ -73,7 +73,7 @@ export class SequencerRuntimeService {
       return;
     }
 
-    const events = this.getActiveIndefiniteEvents().map(item => item.name);
+    const events = applyToEventsAtOwnStep.map(eventId => this.getBtnDisplayName(eventId));
     console.log(`[Sequencer] LABEL ${btn.name} TRIGGERED | ApplyToEvents=[${events.join(', ')}]`);
   }
 
@@ -89,10 +89,6 @@ export class SequencerRuntimeService {
   }
 
 
-  private isOnceEvent(btn: SequencerBtn) {
-    return btn.type === 'event' && btn.eventProps.kind === 'limited';
-  }
-
   private getActiveIndefiniteLabels() {
     const ids = new Set(this.activeIndefiniteIdsSignal());
     return this.panelService
@@ -107,8 +103,31 @@ export class SequencerRuntimeService {
       .filter(btn => btn.type === 'event' && btn.eventProps.kind === 'indefinite' && ids.has(btn.id));
   }
 
+  private applyOwnFunction(btn: SequencerBtn) {
+    if (btn.type === 'event' && btn.eventProps.kind === 'indefinite') {
+      this.toggleIndefinite(btn);
+      return this.getActiveIndefiniteEvents().map(eventBtn => eventBtn.id);
+    }
+
+    if (btn.type === 'label' && btn.labelProps.mode === 'indefinite') {
+      const eventsAtLabelTrigger = this.getActiveIndefiniteEvents().map(eventBtn => eventBtn.id);
+      this.toggleIndefinite(btn);
+      return eventsAtLabelTrigger;
+    }
+
+    if (btn.type === 'label' && btn.labelProps.mode === 'once') {
+      const eventsAtLabelTrigger = this.getActiveIndefiniteEvents().map(eventBtn => eventBtn.id);
+      const eventNames = eventsAtLabelTrigger.map(eventId => this.getBtnDisplayName(eventId));
+      console.log(`[Sequencer] LABEL ONCE ${btn.name} TRIGGERED | ApplyToEvents=[${eventNames.join(', ')}]`);
+      eventsAtLabelTrigger.forEach(eventId => this.attachLabelToEvent(eventId, btn.id));
+      return eventsAtLabelTrigger;
+    }
+
+    return this.getActiveIndefiniteEvents().map(eventBtn => eventBtn.id);
+  }
+
   private applyDeactivate(ids: string[]) {
-    ids.forEach(id => {
+    this.sortLinkIdsByTargetType(ids).forEach(id => {
       const target = this.panelService.getBtnById(id);
       if (!target || !this.isIndefinite(target) || !this.hasActiveId(id)) {
         return;
@@ -119,24 +138,14 @@ export class SequencerRuntimeService {
   }
 
   private applyActivate(ids: string[]) {
-    ids.forEach(id => {
+    this.sortLinkIdsByTargetType(ids).forEach(id => {
       const target = this.panelService.getBtnById(id);
-      if (!target) {
+      if (!target || !this.isIndefinite(target) || this.hasActiveId(id)) {
         return;
       }
 
-      if (this.isIndefinite(target)) {
-        if (this.hasActiveId(id)) {
-          return;
-        }
-        this.addActiveId(id);
-        this.logIndefiniteStart(target);
-        return;
-      }
-
-      if (this.isOnceEvent(target)) {
-        this.logOnceEventActivation(target);
-      }
+      this.addActiveId(id);
+      this.logIndefiniteStart(target);
     });
   }
 
@@ -151,16 +160,6 @@ export class SequencerRuntimeService {
     this.logIndefiniteStart(btn);
   }
 
-
-
-  private logOnceEventActivation(btn: SequencerBtn) {
-    if (btn.type !== 'event') {
-      return;
-    }
-    const labels = this.getActiveIndefiniteLabels().map(item => item.name);
-    console.log(`[Sequencer] EVENT ONCE ${btn.name} ACTIVATED BY LINK | LabelsActive=[${labels.join(', ')}]`);
-  }
-
   private logIndefiniteStart(btn: SequencerBtn) {
     if (btn.type === 'event') {
       console.log(`[Sequencer] EVENT INDEFINITE ${btn.name} START`);
@@ -171,11 +170,49 @@ export class SequencerRuntimeService {
 
   private logIndefiniteEnded(btn: SequencerBtn) {
     if (btn.type === 'event') {
-      const labels = this.getActiveIndefiniteLabels().map(item => item.name);
+      const labels = this.getLabelsForEventEndLog(btn.id);
       console.log(`[Sequencer] EVENT INDEFINITE ${btn.name} ENDED | Labels=[${labels.join(', ')}]`);
+      this.appliedLabelsByEventId.delete(btn.id);
       return;
     }
     console.log(`[Sequencer] LABEL INDEFINITE ${btn.name} ENDED`);
+  }
+
+  private getLabelsForEventEndLog(eventId: string) {
+    const labelsOnce = [...(this.appliedLabelsByEventId.get(eventId) ?? new Set<string>())];
+    const labelsIndefiniteActive = this.getActiveIndefiniteLabels().map(label => label.id);
+    const uniqueLabels = [...new Set([...labelsOnce, ...labelsIndefiniteActive])];
+    return uniqueLabels.map(labelId => this.getBtnDisplayName(labelId));
+  }
+
+  private attachLabelToEvent(eventId: string, labelId: string) {
+    if (!this.appliedLabelsByEventId.has(eventId)) {
+      this.appliedLabelsByEventId.set(eventId, new Set<string>());
+    }
+    this.appliedLabelsByEventId.get(eventId)?.add(labelId);
+  }
+
+  private sortLinkIdsByTargetType(ids: string[]) {
+    const labelIds: string[] = [];
+    const eventIds: string[] = [];
+
+    ids.forEach(id => {
+      const btn = this.panelService.getBtnById(id);
+      if (!btn || !this.isIndefinite(btn)) {
+        return;
+      }
+      if (btn.type === 'label') {
+        labelIds.push(id);
+        return;
+      }
+      eventIds.push(id);
+    });
+
+    return [...labelIds, ...eventIds];
+  }
+
+  private getBtnDisplayName(id: string) {
+    return this.panelService.getBtnById(id)?.name ?? id;
   }
 
   private addActiveId(id: string) {

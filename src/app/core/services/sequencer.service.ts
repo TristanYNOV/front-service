@@ -4,7 +4,11 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class SequencerService {
-  addClip() {}
+  addClip() {
+    // TODO: implement sequencing timeline clips.
+  }
 
-  splitClip() {}
+  splitClip() {
+    // TODO: implement split operation.
+  }
 }

@@ -1,67 +1,59 @@
-<div class="bg-elevated text-default flex h-full flex-col gap-3 p-3 text-xs">
-  <div class="grid grid-cols-[repeat(4,auto)_1fr_auto] items-center gap-2">
-    <button mat-stroked-button [matMenuTriggerFor]="menu">A</button>
+<div #panelRoot class="bg-elevated text-default flex h-full min-h-0 flex-col gap-3 p-3 text-xs">
+  @if (compactMode()) {
+    <div class="grid grid-cols-[auto_1fr] items-center gap-2">
+      <button mat-stroked-button [matMenuTriggerFor]="menu">A</button>
+      <div class="text-muted text-[11px]">Agrandir pour éditer le Sequencer Canvas.</div>
+    </div>
     <mat-menu #menu="matMenu">
       <button mat-menu-item disabled>Export</button>
       <button mat-menu-item disabled>Import</button>
       <button mat-menu-item disabled>Save</button>
       <button mat-menu-item disabled>SeeAllMyPanels</button>
     </mat-menu>
+  } @else {
+    <div class="grid grid-cols-[repeat(4,auto)_1fr_auto] items-center gap-2">
+      <button mat-stroked-button [matMenuTriggerFor]="menu">A</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item disabled>Export</button>
+        <button mat-menu-item disabled>Import</button>
+        <button mat-menu-item disabled>Save</button>
+        <button mat-menu-item disabled>SeeAllMyPanels</button>
+      </mat-menu>
 
-    <button mat-stroked-button type="button" (click)="openEventDialog()">E</button>
-    <button mat-stroked-button type="button" (click)="openLabelDialog()">L</button>
-    <button mat-stroked-button type="button" (click)="toggleRename()">N</button>
+      <button mat-stroked-button type="button" (click)="openEventDialog()">E</button>
+      <button mat-stroked-button type="button" (click)="openLabelDialog()">L</button>
+      <button mat-stroked-button type="button" (click)="toggleRename()">N</button>
 
-    <div class="flex min-w-0 items-center">
-      @if (showRenameInput()) {
-        <input
-          matInput
-          [value]="renameDraft()"
-          (input)="onRenameInput($event)"
-          (blur)="saveRename()"
-          (keydown.enter)="saveRename()"
-          class="text-default w-full text-[13px] font-semibold"
-        />
-      } @else {
-        <span class="text-default w-full text-[13px] font-semibold">{{ panelName() }}</span>
-      }
+      <div class="flex min-w-0 items-center">
+        @if (showRenameInput()) {
+          <input
+            matInput
+            [value]="renameDraft()"
+            (input)="onRenameInput($event)"
+            (blur)="saveRename()"
+            (keydown.enter)="saveRename()"
+            class="text-default w-full text-[13px] font-semibold"
+          />
+        } @else {
+          <span class="text-default w-full text-[13px] font-semibold">{{ panelName() }}</span>
+        }
+      </div>
+
+      <button mat-stroked-button type="button" (click)="toggleEditMode()">M</button>
     </div>
+  }
 
-    <button mat-stroked-button type="button" (click)="toggleEditMode()">M</button>
-  </div>
-
-  <div class="flex flex-col gap-2 overflow-auto">
-    @for (btn of sortedBtnList(); track btn.id) {
-      <button
-        type="button"
-        class="bg-surface border-layer flex items-center justify-between gap-3 rounded-lg border p-2.5 text-left transition-colors duration-200"
-        [class.is-pressed]="lastTriggeredBtnId() === btn.id"
-        [class.is-active]="isActiveIndefinite(btn.id)"
-        (click)="onBtnClick(btn)"
-      >
-        <div class="flex flex-col gap-1">
-          <div class="flex items-center gap-2">
-            <span class="font-semibold">{{ btn.name }}</span>
-            <span class="text-muted text-[10px] uppercase">{{ btn.type }}</span>
-          </div>
-          <div class="text-muted flex flex-wrap gap-2 text-[11px]">
-            <span>ID: {{ btn.id }}</span>
-            <span>Hotkey: {{ formatHotkey(btn.hotkeyNormalized) }}</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <span class="accent-text font-bold">×{{ triggerCount(btn.id) }}</span>
-          @if (showEditIcons()) {
-            <button mat-icon-button type="button" (click)="openEditDialog(btn); $event.stopPropagation()">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button type="button" (click)="deleteBtn($event, btn)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          }
-        </div>
-      </button>
-    }
+  <div class="min-h-0 flex-1">
+    <app-sequencer-canvas
+      [btnList]="sortedBtnList()"
+      [editMode]="showEditIcons()"
+      [activeIndefiniteIds]="activeIndefiniteIds()"
+      [lastTriggeredBtnId]="lastTriggeredBtnId()"
+      [triggerCountByBtnId]="triggerCountByBtnId()"
+      (triggerBtn)="onBtnClick($event)"
+      (editBtn)="openEditDialog($event)"
+      (deleteBtn)="deleteBtn($event)"
+    ></app-sequencer-canvas>
   </div>
 
   <div class="border-layer border-t pt-2">

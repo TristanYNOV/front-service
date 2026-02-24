@@ -1,3 +1,5 @@
+import { SequencerBtnLayout } from './sequencer-btn-layout.interface';
+
 export type SequencerBtn = EventBtn | LabelBtn;
 
 export interface SequencerBtnBase {
@@ -7,6 +9,7 @@ export interface SequencerBtnBase {
   hotkeyNormalized?: string | null;
   deactivateIds?: string[];
   activateIds?: string[];
+  layout?: SequencerBtnLayout;
 }
 
 export interface EventBtn extends SequencerBtnBase {

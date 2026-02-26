@@ -20,9 +20,8 @@
         @if (editMode) {
           <div class="absolute left-1 top-1 z-20">
             <button
-              mat-icon-button
               type="button"
-              class="border-layer bg-layer-0 flex h-4 w-4 min-h-4 min-w-4 items-center justify-center rounded border"
+              class="flex h-4 w-4 min-h-4 min-w-4 items-center justify-center"
               (click)="onEditIconClick($event, btn)"
             >
               <mat-icon class="h-3 w-3 text-[12px]">edit</mat-icon>
@@ -30,9 +29,8 @@
           </div>
           <div class="absolute right-1 top-1 z-20">
             <button
-              mat-icon-button
               type="button"
-              class="border-layer bg-layer-0 flex h-4 w-4 min-h-4 min-w-4 items-center justify-center rounded border"
+              class="flex h-4 w-4 min-h-4 min-w-4 items-center justify-center"
               (click)="onDeleteIconClick($event, btn)"
             >
               <mat-icon class="h-3 w-3 text-[12px]">delete</mat-icon>

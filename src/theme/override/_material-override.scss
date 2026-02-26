@@ -48,6 +48,10 @@
   --mat-sys-surface-container: var(--bg-layer-3);
   --mdc-dialog-supporting-text-color: var(--light);
 
+  .mdc-button {
+   background: none;
+  }
+
   .mat-icon {
     @apply items-center justify-center;
     display: flex !important;

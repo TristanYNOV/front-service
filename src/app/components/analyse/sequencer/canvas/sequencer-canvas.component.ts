@@ -39,7 +39,6 @@ export class SequencerCanvasComponent {
   @Input({ required: true }) editMode = false;
   @Input({ required: true }) activeIndefiniteIds: string[] = [];
   @Input() lastTriggeredBtnId: string | null = null;
-  @Input() triggerCountByBtnId: Record<string, number> = {};
 
   @Output() triggerBtn = new EventEmitter<SequencerBtn>();
   @Output() editBtn = new EventEmitter<SequencerBtn>();
@@ -237,10 +236,6 @@ export class SequencerCanvasComponent {
 
   isActive(btnId: string) {
     return this.activeIndefiniteIds.includes(btnId);
-  }
-
-  triggerCount(btnId: string) {
-    return this.triggerCountByBtnId[btnId] ?? 0;
   }
 
   formatHotkey(normalized?: string | null) {

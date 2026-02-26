@@ -8,7 +8,9 @@
       <div
         role="button"
         tabindex="0"
-        class="bg-surface border-layer absolute flex select-none flex-col items-center justify-center gap-1 overflow-hidden rounded-md border p-2 text-center"
+        class="absolute flex select-none flex-col items-center justify-center gap-1 overflow-hidden rounded-md border p-2 text-center"
+        [class.seq-btn-event]="btn.type === 'event'"
+        [class.seq-btn-label]="btn.type === 'label'"
         [ngStyle]="btnStyle(btn)"
         [class.is-active]="isActive(btn.id)"
         [class.is-pressed]="lastTriggeredBtnId === btn.id"
@@ -16,33 +18,34 @@
         (click)="onBtnClick($event, btn)"
       >
         @if (editMode) {
-          <div class="absolute right-1 top-1 z-20 flex items-center gap-1">
+          <div class="absolute left-1 top-1 z-20">
             <button
               mat-icon-button
               type="button"
-              class="border-layer bg-layer-0 flex h-5 w-5 min-h-5 min-w-5 items-center justify-center rounded border"
+              class="border-layer bg-layer-0 flex h-4 w-4 min-h-4 min-w-4 items-center justify-center rounded border"
               (click)="onEditIconClick($event, btn)"
             >
-              <mat-icon class="h-3.5 w-3.5 text-[14px]">edit</mat-icon>
+              <mat-icon class="h-3 w-3 text-[12px]">edit</mat-icon>
             </button>
+          </div>
+          <div class="absolute right-1 top-1 z-20">
             <button
               mat-icon-button
               type="button"
-              class="border-layer bg-layer-0 flex h-5 w-5 min-h-5 min-w-5 items-center justify-center rounded border"
+              class="border-layer bg-layer-0 flex h-4 w-4 min-h-4 min-w-4 items-center justify-center rounded border"
               (click)="onDeleteIconClick($event, btn)"
             >
-              <mat-icon class="h-3.5 w-3.5 text-[14px]">delete</mat-icon>
+              <mat-icon class="h-3 w-3 text-[12px]">delete</mat-icon>
             </button>
           </div>
         }
 
         <div class="min-w-0 max-w-full px-1">
-            <div class="truncate text-xs font-semibold">{{ btn.name }}</div>
-            <div class="text-muted text-[10px] uppercase">{{ btn.type }}</div>
+          <div class="text-[10px] font-medium">{{ btn.id }}</div>
+          <div class="truncate text-xs font-semibold">{{ btn.name }}</div>
         </div>
 
-        <div class="text-muted w-full text-[10px]">{{ formatHotkey(btn.hotkeyNormalized) }}</div>
-        <div class="accent-text w-full text-[10px] font-semibold">×{{ triggerCount(btn.id) }}</div>
+        <div class="w-full text-[10px]">{{ formatHotkey(btn.hotkeyNormalized) }}</div>
 
         @if (editMode) {
           <span

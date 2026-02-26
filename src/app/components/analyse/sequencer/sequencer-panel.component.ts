@@ -52,7 +52,6 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   readonly editMode = this.panelService.editMode;
   readonly recentTriggers = this.runtimeService.recentTriggers;
   readonly lastTriggeredBtnId = this.runtimeService.lastTriggeredBtnId;
-  readonly triggerCountByBtnId = this.runtimeService.triggerCountByBtnId;
   readonly activeIndefiniteIds = this.runtimeService.activeIndefiniteIds;
 
   readonly showRenameInput = signal(false);

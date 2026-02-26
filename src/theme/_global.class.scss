@@ -53,6 +53,18 @@
   display: none;
 }
 
+.seq-btn-event {
+  background-color: var(--sequencer-event-bg);
+  border-color: var(--sequencer-event-border);
+  color: var(--sequencer-event-text);
+}
+
+.seq-btn-label {
+  background-color: var(--sequencer-label-bg);
+  border-color: var(--sequencer-label-border);
+  color: var(--sequencer-label-text);
+}
+
 .light-text {
   color: var(--light);
 }

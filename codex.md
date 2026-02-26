@@ -232,3 +232,4 @@ Checklist
 - Mode édition : drag + resize coin bas-droite, bring-to-front automatique, hotkeys séquenceur toujours ignorées via `HotkeysService`.
 - Mode run : clic canvas/hotkeys déclenchent `SequencerRuntimeService.trigger`, états visuels `.is-active` et `.is-pressed` conservés.
 - Export JSON futur : il suffira de sérialiser chaque bouton avec `layout.x/y/w/h/z`; l’import reconstruira directement le canvas en réinjectant ces valeurs dans `btnList`.
+- Ajustements UX post-Step3 : boutons clampés dans les bornes du canvas (toujours accessibles), scrollbar masquée (`hide-scrollbar`) au profit du pan click&drag, fond visuel en grille (`bg-canvas-grid`), contenu des cartes centré avec actions edit/delete compactes en haut-droite.

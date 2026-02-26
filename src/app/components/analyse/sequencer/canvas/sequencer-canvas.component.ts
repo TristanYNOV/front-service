@@ -62,6 +62,14 @@ export class SequencerCanvasComponent {
     };
   });
 
+  readonly contentBounds = computed(() => {
+    const style = this.contentStyle();
+    return {
+      width: Number.parseInt(style.width, 10) || contentMinWidthPx,
+      height: Number.parseInt(style.height, 10) || contentMinHeightPx,
+    };
+  });
+
   private readonly panState = signal<{
     viewport: HTMLElement;
     startClientX: number;
@@ -146,20 +154,22 @@ export class SequencerCanvasComponent {
     if (drag) {
       const deltaX = event.clientX - drag.startX;
       const deltaY = event.clientY - drag.startY;
-      this.panelService.updateLayout(drag.btnId, {
+      const next = this.clampLayoutWithinCanvas(drag.btnId, {
         x: drag.originX + deltaX,
         y: drag.originY + deltaY,
       });
+      this.panelService.updateLayout(drag.btnId, next);
     }
 
     const resize = this.resizeState();
     if (resize) {
       const deltaX = event.clientX - resize.startX;
       const deltaY = event.clientY - resize.startY;
-      this.panelService.updateLayout(resize.btnId, {
+      const next = this.clampLayoutWithinCanvas(resize.btnId, {
         w: Math.max(minButtonWidthPx, resize.originW + deltaX),
         h: Math.max(minButtonHeightPx, resize.originH + deltaY),
       });
+      this.panelService.updateLayout(resize.btnId, next);
     }
   }
 
@@ -235,5 +245,24 @@ export class SequencerCanvasComponent {
 
   formatHotkey(normalized?: string | null) {
     return formatNormalizedHotkey(normalized) || '—';
+  }
+
+  private clampLayoutWithinCanvas(btnId: string, patch: { x?: number; y?: number; w?: number; h?: number }) {
+    const target = this.btnList.find(btn => btn.id === btnId);
+    if (!target) {
+      return patch;
+    }
+
+    const base = this.ensureBtnLayout(target);
+    const bounds = this.contentBounds();
+
+    const w = Math.max(minButtonWidthPx, Math.min(patch.w ?? base.w, bounds.width));
+    const h = Math.max(minButtonHeightPx, Math.min(patch.h ?? base.h, bounds.height));
+    const maxX = Math.max(0, bounds.width - w);
+    const maxY = Math.max(0, bounds.height - h);
+    const x = Math.min(Math.max(patch.x ?? base.x, 0), maxX);
+    const y = Math.min(Math.max(patch.y ?? base.y, 0), maxY);
+
+    return { x, y, w, h };
   }
 }

@@ -65,6 +65,10 @@
   color: var(--sequencer-label-text);
 }
 
+.seq-btn-event-active {
+  opacity: 0.88;
+}
+
 .light-text {
   color: var(--light);
 }

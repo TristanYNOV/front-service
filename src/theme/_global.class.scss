@@ -37,6 +37,38 @@
   background-color: var(--bg-overlay);
 }
 
+.bg-canvas-grid {
+  background-image:
+    linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.seq-btn-event {
+  background-color: var(--sequencer-event-bg) !important;
+  border-color: var(--sequencer-event-border) !important;
+  color: var(--sequencer-event-text);
+}
+
+.seq-btn-label {
+  background-color: var(--sequencer-label-bg) !important;
+  border-color: var(--sequencer-label-border) !important;
+  color: var(--sequencer-label-text);
+}
+
+.seq-btn-event-active {
+  opacity: 0.88;
+}
+
 .light-text {
   color: var(--light);
 }
@@ -84,5 +116,5 @@
 .is-pressed,
 .is-active {
   border-color: var(--interactive-active-border);
-  background-color: var(--interactive-active);
+  opacity: 0.88;
 }

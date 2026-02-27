@@ -216,3 +216,22 @@ Checklist
   - `EVENT <name> TRIGGERED | LabelsActive=[...]`,
   - `LABEL <name> TRIGGERED | ApplyToEvents=[...]`.
 - UI liste verticale : les boutons indéfinis actifs sont marqués via la classe thème `.is-active`, en conservant le flash `.is-pressed` de Step1.
+
+## 17) Sequencing Panel - Step3 (canvas + layout)
+- La liste verticale est remplacée par `SequencerCanvasComponent` (`src/app/components/analyse/sequencer/canvas/*`) :
+  - viewport scrollable natif (`overflow-auto`),
+  - content layer relative avec dimensions dynamiques (`max(contentMinWidthPx/contentMinHeightPx, max(x+w|y+h)+padding)`),
+  - pan “grab” uniquement sur le fond avec seuil `panDragThresholdPx`.
+- Les layouts de boutons sont désormais stockés sur chaque `SequencerBtn.layout` via l’interface `SequencerBtnLayout` (`x`, `y`, `w`, `h`, `z`).
+- Les constantes de canvas/modification sont centralisées dans `src/app/utils/sequencer/sequencer-canvas-defaults.util.ts` (min content, min button size, spirale, seuil pan).
+- `SequencerPanelService` assure la persistance du layout :
+  - `ensureLayout` + `ensureAllLayouts` pour initialiser les boutons sans layout,
+  - placement initial en spirale (anti-overlap au spawn uniquement),
+  - `updateLayout` pour drag/resize,
+  - `bringBtnToFront` pour gérer le z-index auto.
+- Mode édition : drag + resize coin bas-droite, bring-to-front automatique, hotkeys séquenceur toujours ignorées via `HotkeysService`.
+- Mode run : clic canvas/hotkeys déclenchent `SequencerRuntimeService.trigger`, états visuels `.is-active` et `.is-pressed` conservés.
+- Export JSON futur : il suffira de sérialiser chaque bouton avec `layout.x/y/w/h/z`; l’import reconstruira directement le canvas en réinjectant ces valeurs dans `btnList`.
+- Ajustements UX post-Step3 : boutons clampés dans les bornes du canvas (toujours accessibles), scrollbar masquée (`hide-scrollbar`) au profit du pan click&drag, fond visuel en grille (`bg-canvas-grid`), contenu des cartes centré avec actions edit/delete compactes en haut-droite.
+- Raffinement visuel des cartes canvas : code couleur par type (`.seq-btn-event` vert forêt / `.seq-btn-label` brun), texte contraste élevé, suppression du badge de type et du compteur, affichage focalisé sur `id`, `name`, `hotkey`; actions d’édition déplacées en coins supérieurs (edit gauche, delete droite) avec icônes réduites.
+- Cohérence topbar/canvas : les actions `E` et `L` reprennent les mêmes classes couleur que les cartes Event/Label ; l’état actif des Event sur canvas utilise désormais une variation d’opacité (`.seq-btn-event-active`) plutôt qu’un swap de couleur.

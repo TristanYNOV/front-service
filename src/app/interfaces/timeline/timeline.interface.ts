@@ -12,6 +12,7 @@ export interface TimelineMetadata {
 
 export interface TimelineEventDef {
   id: string;
+  sourceSequencerBtnId: string;
   name: string;
   timingMode: TimelineTimingMode;
   preMs: number;
@@ -20,6 +21,7 @@ export interface TimelineEventDef {
 
 export interface TimelineLabelDef {
   id: string;
+  sourceSequencerBtnId: string;
   name: string;
   behavior: TimelineLabelBehavior;
 }

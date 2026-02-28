@@ -2,7 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import {
   TIMELINE_SCHEMA_VERSION,
 } from '../../interfaces/timeline/timeline-defaults.constants';
-import { TimelineMetadata, TimelineOccurrence, TimelineUiState } from '../../interfaces/timeline/timeline.interface';
+import { TimelineDefinitions, TimelineMetadata, TimelineOccurrence, TimelineUiState } from '../../interfaces/timeline/timeline.interface';
 import {
   addLabelToSelection,
   addOccurrence,
@@ -23,10 +23,7 @@ import { normalizeTiming, shiftOccurrences } from '../../utils/timeline/timeline
 export interface TimelineState {
   schemaVersion: string;
   meta: TimelineMetadata;
-  definitions: {
-    eventDefs: { id: string; name: string; timingMode: 'once' | 'indefinite'; preMs: number; postMs: number }[];
-    labelDefs: { id: string; name: string; behavior: 'once' | 'indefinite' }[];
-  };
+  definitions: TimelineDefinitions;
   occurrences: TimelineOccurrence[];
   ui: TimelineUiState;
   lastShiftDeltaMs: number | null;

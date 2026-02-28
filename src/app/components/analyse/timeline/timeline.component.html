@@ -1,77 +1,77 @@
 <div
   tabindex="0"
-  class="timeline-root bg-layer-1 text-default flex h-full w-full flex-col"
+  class="bg-layer-1 text-default flex h-full w-full flex-col"
   (focusin)="focused.set(true)"
   (focusout)="focused.set(false)"
-  (keydown)="onKeydown($event)"
 >
-  <div class="timeline-toolbar border-subtle bg-layer-2 flex items-center gap-2 border-b p-2 text-xs">
-    <select class="timeline-input border-subtle bg-layer-0 text-default rounded border px-2 py-1" [value]="currentEventDefId()" (change)="currentEventDefId.set($any($event.target).value)">
-      @for (eventDef of eventDefs(); track eventDef.id) {
-        <option [value]="eventDef.id">{{ eventDef.name }}</option>
-      }
-    </select>
-    <button class="btn-primary" (click)="tryMarkIn()">Mark In (I)</button>
-    <button class="btn-secondary" (click)="tryMarkOut()">Mark Out (O)</button>
-    <button class="btn-secondary" (click)="facade.shift(1000, 'SELECTION')">Shift +1s</button>
-    <button class="btn-secondary" (click)="facade.undoShiftOrAlign()">Undo</button>
-    <button class="btn-secondary" (click)="facade.playSelection()">Play selection</button>
+  <div class="border-subtle bg-layer-2 flex items-center gap-2 border-b p-2 text-xs">
     <button class="btn-secondary" (click)="timebase.togglePlayPause()">{{ timebase.isPlaying() ? 'Pause' : 'Play' }}</button>
     <button class="btn-secondary" (click)="timebase.play()" *ngIf="timebase.mode() === 'clock'">Démarrer un chrono</button>
     <button class="btn-secondary" (click)="facade.setAutoFollow(!facade.autoFollow())">Auto-follow {{ facade.autoFollow() ? 'ON' : 'OFF' }}</button>
     <button class="btn-secondary" (click)="recenter()">Recentrer</button>
+    <button class="btn-secondary" (click)="facade.playSelection()">Play selection</button>
+    <button class="btn-secondary" (click)="facade.undoShiftOrAlign()">Undo</button>
   </div>
 
-  @if (timebase.mode() === 'clock' && !timebase.isPlaying() && timebase.currentTimeMs() === 0) {
-    <div class="timeline-empty text-muted flex h-full flex-col items-center justify-center gap-3">
-      <p>Sélectionnez une vidéo pour commencer</p>
-      <button class="btn-primary" (click)="timebase.play()">Démarrer un chrono</button>
+  @if (facade.eventDefs().length === 0) {
+    <div class="text-muted flex h-full flex-col items-center justify-center gap-2">
+      <p>Ajoutez des boutons Event/Label dans le séquenceur pour alimenter la timeline.</p>
     </div>
   } @else {
-    <div class="timeline-ruler border-subtle bg-layer-2 sticky top-0 z-20 border-b">
-      <div class="relative h-8" [style.width.px]="contentWidthPx()">
-        @for (tick of rulerTicks(); track tick) {
-          <span class="timeline-tick border-subtle absolute top-0 h-full border-l text-[10px] text-muted" [style.left.px]="tick * 80">{{ tick }}s</span>
-        }
-        <span class="timeline-playhead bg-timeline-playhead absolute top-0 h-full w-0.5" [style.left.px]="playheadPx()"></span>
+    <div class="flex min-h-0 flex-1">
+      <div class="border-subtle bg-layer-2 w-48 border-r">
+        <div class="border-subtle bg-layer-2 sticky top-0 h-8 border-b"></div>
+        <div #eventListViewport class="hide-scrollbar h-[calc(100%-2rem)] overflow-y-auto overflow-x-hidden" (scroll)="onEventListViewportScroll($event)">
+          @for (eventDef of facade.eventDefs(); track eventDef.id) {
+            <div class="border-subtle flex items-center border-b px-2 text-xs" [style.height.px]="rowHeightPx">{{ eventDef.name }}</div>
+          }
+        </div>
       </div>
-    </div>
 
-    <div #viewport class="timeline-viewport hide-scrollbar relative flex-1 overflow-auto" (scroll)="onViewportScroll($event)">
-      <div class="relative" [style.width.px]="contentWidthPx()" [style.height.px]="eventDefs().length * rowHeightPx + 40">
-        @for (eventDef of eventDefs(); track eventDef.id; let rowIndex = $index) {
-          <div class="timeline-row border-subtle absolute left-0 right-0 border-b" [style.top.px]="rowIndex * rowHeightPx" [style.height.px]="rowHeightPx">
-            <div class="timeline-row-label bg-layer-2 border-subtle sticky left-0 z-10 inline-flex h-full w-44 items-center border-r px-2 text-xs">{{ eventDef.name }}</div>
-            @for (occurrence of rowOccurrences(eventDef.id); track occurrence.id) {
-              <div
-                class="timeline-occurrence border-timeline-occurrence bg-timeline-occurrence absolute top-1 h-8 cursor-pointer rounded border"
-                [class.is-active]="facade.selectionIds().includes(occurrence.id)"
-                [style.left.px]="occurrenceLeftPx(occurrence)"
-                [style.width.px]="occurrenceWidthPx(occurrence)"
-                tabindex="0"
-                (click)="onOccurrenceClick(occurrence.id, $event)"
-                (keydown.enter)="onOccurrenceKeydown(occurrence.id, $event)"
-              >
-                <span class="timeline-resize-handle left" (mousedown)="startResize(occurrence, 'start', $event)"></span>
-                <span class="timeline-resize-handle right" (mousedown)="startResize(occurrence, 'end', $event)"></span>
+      <div class="min-w-0 flex-1">
+        <div class="border-subtle bg-layer-2 sticky top-0 z-20 border-b">
+          <div class="relative h-8" [style.width.px]="contentWidthPx()">
+            @for (tick of rulerTicks(); track tick) {
+              <span class="border-subtle absolute top-0 h-full border-l text-[10px] text-muted" [style.left.px]="tick * 80">{{ tick }}s</span>
+            }
+            <span class="bg-timeline-playhead absolute top-0 h-full w-0.5" [style.left.px]="playheadPx()"></span>
+          </div>
+        </div>
+
+        <div #timeViewport class="hide-scrollbar relative h-[calc(100%-2rem)] overflow-auto" (scroll)="onTimeViewportScroll($event)">
+          <div class="relative" [style.width.px]="contentWidthPx()" [style.height.px]="facade.eventDefs().length * rowHeightPx + 8">
+            @for (eventDef of facade.eventDefs(); track eventDef.id; let rowIndex = $index) {
+              <div class="border-subtle absolute left-0 right-0 border-b" [style.top.px]="rowIndex * rowHeightPx" [style.height.px]="rowHeightPx">
+                @for (occurrence of rowOccurrences(eventDef.id); track occurrence.id) {
+                  <div
+                    class="timeline-occurrence border-timeline-occurrence bg-timeline-occurrence absolute top-1 h-8 cursor-pointer rounded border"
+                    [class.is-active]="facade.selectionIds().includes(occurrence.id)"
+                    [style.left.px]="occurrenceLeftPx(occurrence)"
+                    [style.width.px]="occurrenceWidthPx(occurrence)"
+                    tabindex="0"
+                    (click)="onOccurrenceClick(occurrence.id, $event)"
+                    (keydown.enter)="onOccurrenceKeydown(occurrence.id, $event)"
+                  >
+                    <span class="timeline-resize-handle left" (mousedown)="startResize(occurrence, 'start', $event)"></span>
+                    <span class="timeline-resize-handle right" (mousedown)="startResize(occurrence, 'end', $event)"></span>
+                  </div>
+                }
               </div>
             }
+            <span class="bg-timeline-playhead absolute top-0 h-full w-0.5" [style.left.px]="playheadPx()"></span>
           </div>
-        }
-        <span class="timeline-playhead bg-timeline-playhead absolute top-0 h-full w-0.5" [style.left.px]="playheadPx()"></span>
+        </div>
       </div>
     </div>
 
-    <div class="timeline-inspector border-subtle bg-layer-2 flex items-center gap-2 border-t p-2 text-xs">
+    <div class="border-subtle bg-layer-2 flex items-center gap-2 border-t p-2 text-xs">
       <span>Selection: {{ facade.selectionIds().length }}</span>
       <button class="btn-secondary" (click)="nudgeSelection(-100)">-100ms</button>
       <button class="btn-secondary" (click)="nudgeSelection(100)">+100ms</button>
       <button class="btn-secondary" (click)="nudgeSelection(-1000)">-1s</button>
       <button class="btn-secondary" (click)="nudgeSelection(1000)">+1s</button>
-      @for (labelDef of labelDefs(); track labelDef.id) {
-        <button class="btn-secondary" (click)="facade.addLabelToSelection(labelDef.id)">+{{ labelDef.name }}</button>
-        <button class="btn-secondary" (click)="facade.removeLabelFromSelection(labelDef.id)">-{{ labelDef.name }}</button>
-      }
+      <button class="btn-secondary" (click)="facade.shift(1000, 'SELECTION')">Shift +1s</button>
+      <button class="btn-secondary" (click)="facade.shift(1000, 'ALL')">Shift all +1s</button>
     </div>
   }
 </div>

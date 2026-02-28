@@ -239,7 +239,7 @@ Checklist
 ## 18) Timeline MVP (/analyse)
 - Feature NgRx `timelineState` ajoutée (`src/app/store/Timeline/*`) avec actions Init/Definitions/Occurrences/Sélection/Labels/Shift/Align/Undo.
 - Le playhead n'est **pas** dispatché au store : `TimebaseService` expose des Signals (`currentTimeMs`, `isPlaying`, `durationMs`) et bascule entre mode vidéo (délégation `VideoService`) et mode chrono interne.
-- `TimelineFacadeService` centralise Mark In/Out, labels bulk, Shift/Align/Undo, nudge/resize timing et play selection (fusion d'intervalles + lecture séquentielle).
-- UI Timeline (`src/app/components/analyse/timeline/*`) : ruler sticky, viewport scrollable X/Y, colonne event sticky, sélection simple/multi, handles resize, inspector nudge/labels, auto-follow contextuel + recenter.
+- `TimelineFacadeService` consomme les événements runtime du séquenceur (once/indefinite start/end) pour créer/fermer les occurrences, puis gère Shift/Align/Undo, nudge/resize timing et play selection (fusion d'intervalles + lecture séquentielle).
+- UI Timeline (`src/app/components/analyse/timeline/*`) : layout 2 colonnes (liste events fixe + zone temps), ruler sticky, viewport scrollable X/Y, sélection simple/multi, handles resize, selection tools en footer, auto-follow contextuel + recenter.
 - Mode sans vidéo : empty state + CTA chrono ; work duration tamponnée (`bufferWorkDurationMs`) pour conserver un espace de travail en faux live.
 - Schéma/version : utilitaires dédiés (`src/app/utils/timeline/timeline-version.utils.ts`) avec regex stricte `^\d+\.\d+\.\d+$` et helpers validate/format/compare.

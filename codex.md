@@ -235,3 +235,11 @@ Checklist
 - Ajustements UX post-Step3 : boutons clampés dans les bornes du canvas (toujours accessibles), scrollbar masquée (`hide-scrollbar`) au profit du pan click&drag, fond visuel en grille (`bg-canvas-grid`), contenu des cartes centré avec actions edit/delete compactes en haut-droite.
 - Raffinement visuel des cartes canvas : code couleur par type (`.seq-btn-event` vert forêt / `.seq-btn-label` brun), texte contraste élevé, suppression du badge de type et du compteur, affichage focalisé sur `id`, `name`, `hotkey`; actions d’édition déplacées en coins supérieurs (edit gauche, delete droite) avec icônes réduites.
 - Cohérence topbar/canvas : les actions `E` et `L` reprennent les mêmes classes couleur que les cartes Event/Label ; l’état actif des Event sur canvas utilise désormais une variation d’opacité (`.seq-btn-event-active`) plutôt qu’un swap de couleur.
+
+## 18) Timeline MVP (/analyse)
+- Feature NgRx `timelineState` ajoutée (`src/app/store/Timeline/*`) avec actions Init/Definitions/Occurrences/Sélection/Labels/Shift/Align/Undo.
+- Le playhead n'est **pas** dispatché au store : `TimebaseService` expose des Signals (`currentTimeMs`, `isPlaying`, `durationMs`) et bascule entre mode vidéo (délégation `VideoService`) et mode chrono interne.
+- `TimelineFacadeService` centralise Mark In/Out, labels bulk, Shift/Align/Undo, nudge/resize timing et play selection (fusion d'intervalles + lecture séquentielle).
+- UI Timeline (`src/app/components/analyse/timeline/*`) : ruler sticky, viewport scrollable X/Y, colonne event sticky, sélection simple/multi, handles resize, inspector nudge/labels, auto-follow contextuel + recenter.
+- Mode sans vidéo : empty state + CTA chrono ; work duration tamponnée (`bufferWorkDurationMs`) pour conserver un espace de travail en faux live.
+- Schéma/version : utilitaires dédiés (`src/app/utils/timeline/timeline-version.utils.ts`) avec regex stricte `^\d+\.\d+\.\d+$` et helpers validate/format/compare.

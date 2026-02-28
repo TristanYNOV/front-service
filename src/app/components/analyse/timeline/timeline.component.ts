@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import {
   TIMELINE_AUTO_FOLLOW_COMFORT_ZONE,
   TIMELINE_AUTO_FOLLOW_TARGET_RATIO,
@@ -17,7 +17,7 @@ import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interf
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })
-export class TimelineComponent {
+export class TimelineComponent implements OnDestroy {
   @ViewChild('eventListViewport', { static: false }) eventListViewportRef?: ElementRef<HTMLDivElement>;
   @ViewChild('timeViewport', { static: false }) timeViewportRef?: ElementRef<HTMLDivElement>;
 
@@ -25,7 +25,10 @@ export class TimelineComponent {
   readonly timebase = inject(TimebaseService);
 
   readonly focused = signal(false);
-  readonly isProgrammaticScroll = signal(false);
+
+  private readonly isProgrammaticScrollSignal = signal(false);
+  readonly isProgrammaticScroll = this.isProgrammaticScrollSignal.asReadonly();
+  private programmaticScrollReleaseTimeout?: number;
 
   readonly pxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
   readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
@@ -71,9 +74,17 @@ export class TimelineComponent {
       const targetLeft = Math.max(0, playheadX - viewport.clientWidth * TIMELINE_AUTO_FOLLOW_TARGET_RATIO);
       this.setProgrammaticScroll(() => {
         viewport.scrollTo({ left: targetLeft, behavior: 'smooth' });
-      });
+      }, 900);
       this.facade.setScroll(targetLeft, viewport.scrollTop);
     });
+  }
+
+
+  ngOnDestroy() {
+    if (this.programmaticScrollReleaseTimeout !== undefined) {
+      window.clearTimeout(this.programmaticScrollReleaseTimeout);
+      this.programmaticScrollReleaseTimeout = undefined;
+    }
   }
 
   onTimeViewportScroll(event: Event) {
@@ -167,16 +178,22 @@ export class TimelineComponent {
     const nextLeft = Math.max(0, this.playheadPx() - viewport.clientWidth * 0.5);
     this.setProgrammaticScroll(() => {
       viewport.scrollTo({ left: nextLeft, behavior: 'smooth' });
-    });
+    }, 900);
     this.facade.setScroll(nextLeft, viewport.scrollTop);
     this.facade.setAutoFollow(true);
   }
 
-  private setProgrammaticScroll(callback: () => void) {
-    this.isProgrammaticScroll.set(true);
+  private setProgrammaticScroll(callback: () => void, holdMs = 500) {
+    this.isProgrammaticScrollSignal.set(true);
     callback();
-    requestAnimationFrame(() => {
-      this.isProgrammaticScroll.set(false);
-    });
+
+    if (this.programmaticScrollReleaseTimeout !== undefined) {
+      window.clearTimeout(this.programmaticScrollReleaseTimeout);
+    }
+
+    this.programmaticScrollReleaseTimeout = window.setTimeout(() => {
+      this.isProgrammaticScrollSignal.set(false);
+      this.programmaticScrollReleaseTimeout = undefined;
+    }, holdMs);
   }
 }

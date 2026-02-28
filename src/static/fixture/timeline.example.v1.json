@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0.0",
+  "meta": {
+    "analysisName": "Match amical - Faux live",
+    "createdAtIso": "2026-02-28T08:00:00.000Z",
+    "updatedAtIso": "2026-02-28T08:10:00.000Z",
+    "userId": "user_123",
+    "team": "Athenes FC",
+    "players": ["P1", "P2", "P3"]
+  },
+  "definitions": {
+    "eventDefs": [
+      {
+        "id": "evt_kickoff",
+        "name": "Coup d’envoi",
+        "timingMode": "once",
+        "preMs": 1500,
+        "postMs": 1500
+      },
+      {
+        "id": "evt_attack",
+        "name": "Phase offensive",
+        "timingMode": "indefinite",
+        "preMs": 1000,
+        "postMs": 2000
+      },
+      {
+        "id": "evt_shot",
+        "name": "Tir",
+        "timingMode": "once",
+        "preMs": 800,
+        "postMs": 1200
+      }
+    ],
+    "labelDefs": [
+      { "id": "lbl_important", "name": "Important", "behavior": "once" },
+      { "id": "lbl_error", "name": "Erreur", "behavior": "once" },
+      { "id": "lbl_review", "name": "À revoir", "behavior": "indefinite" }
+    ]
+  },
+  "occurrences": [
+    {
+      "id": "occ_001",
+      "eventDefId": "evt_kickoff",
+      "startMs": 0,
+      "endMs": 3000,
+      "labelIds": ["lbl_important"],
+      "createdAtIso": "2026-02-28T08:00:05.000Z",
+      "updatedAtIso": "2026-02-28T08:00:05.000Z"
+    },
+    {
+      "id": "occ_002",
+      "eventDefId": "evt_attack",
+      "startMs": 120000,
+      "endMs": 120000,
+      "labelIds": ["lbl_review"],
+      "createdAtIso": "2026-02-28T08:02:10.000Z",
+      "updatedAtIso": "2026-02-28T08:02:10.000Z",
+      "isOpen": true
+    },
+    {
+      "id": "occ_003",
+      "eventDefId": "evt_shot",
+      "startMs": 132000,
+      "endMs": 134000,
+      "labelIds": [],
+      "createdAtIso": "2026-02-28T08:02:40.000Z",
+      "updatedAtIso": "2026-02-28T08:02:40.000Z"
+    }
+  ],
+  "ui": {
+    "scrollX": 0,
+    "scrollY": 0,
+    "selectedOccurrenceIds": ["occ_003"]
+  }
+}

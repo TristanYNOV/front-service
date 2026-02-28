@@ -57,12 +57,12 @@ export class TimebaseService {
     this.stopClockTicker();
   }
 
-  togglePlayPause() {
+  playPause() {
     if (this.isPlaying()) {
       this.pause();
-    } else {
-      this.play();
+      return;
     }
+    this.play();
   }
 
   seekTo(ms: number) {
@@ -74,6 +74,10 @@ export class TimebaseService {
     this.clockCurrentTimeMs.set(clamped);
     this.clockStartValueMs = clamped;
     this.clockStartEpochMs = performance.now();
+  }
+
+  seekDelta(deltaMs: number) {
+    this.seekTo(this.currentTimeMs() + deltaMs);
   }
 
   private startClockTicker() {

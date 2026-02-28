@@ -18,42 +18,28 @@ import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interf
   styleUrl: './timeline.component.scss',
 })
 export class TimelineComponent implements OnDestroy {
-  @ViewChild('eventListViewport', { static: false }) eventListViewportRef?: ElementRef<HTMLDivElement>;
-  @ViewChild('timeViewport', { static: false }) timeViewportRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('timeScrollEl', { static: false }) timeScrollElRef?: ElementRef<HTMLDivElement>;
 
   readonly facade = inject(TimelineFacadeService);
   readonly timebase = inject(TimebaseService);
 
-  readonly focused = signal(false);
+  readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
+  readonly rulerHeightPx = 36;
+  readonly leftColumnWidthPx = 220;
+  readonly pxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
+
+  readonly scrollTopPx = signal(0);
 
   private readonly isProgrammaticScrollSignal = signal(false);
-  readonly isProgrammaticScroll = this.isProgrammaticScrollSignal.asReadonly();
-  private programmaticScrollReleaseTimeout?: number;
-
-  readonly pxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
-  readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
+  private programmaticScrollTimeoutId?: number;
 
   readonly contentWidthPx = computed(() => Math.max(1200, Math.ceil(this.facade.workDurationMs() * this.pxPerMs)));
+  readonly contentHeightPx = computed(() => this.rulerHeightPx + this.facade.eventDefs().length * this.rowHeightPx);
   readonly rulerTicks = computed(() => Array.from({ length: Math.ceil(this.contentWidthPx() / 80) }, (_, index) => index));
+
   readonly selectedOccurrences = computed(() => {
     const selectedIds = new Set(this.facade.selectionIds());
     return this.facade.occurrences().filter(occurrence => selectedIds.has(occurrence.id));
-  });
-
-  readonly visibleOccurrencesByEvent = computed(() => {
-    const scroll = this.facade.uiScroll();
-    const visibleStart = Math.max(0, scroll.scrollX / this.pxPerMs - 2000);
-    const visibleEnd = visibleStart + 20000;
-    const byEvent = new Map<string, TimelineOccurrence[]>();
-    this.facade.occurrences().forEach(occurrence => {
-      if (occurrence.endMs < visibleStart || occurrence.startMs > visibleEnd) {
-        return;
-      }
-      const list = byEvent.get(occurrence.eventDefId) ?? [];
-      list.push(occurrence);
-      byEvent.set(occurrence.eventDefId, list);
-    });
-    return byEvent;
   });
 
   constructor() {
@@ -61,52 +47,74 @@ export class TimelineComponent implements OnDestroy {
       if (!this.facade.autoFollow() || !this.timebase.isPlaying()) {
         return;
       }
-      const viewport = this.timeViewportRef?.nativeElement;
-      if (!viewport) {
+
+      const timeScrollEl = this.timeScrollElRef?.nativeElement;
+      if (!timeScrollEl) {
         return;
       }
+
       const playheadX = this.timebase.currentTimeMs() * this.pxPerMs;
-      const leftComfort = viewport.scrollLeft + viewport.clientWidth * TIMELINE_AUTO_FOLLOW_COMFORT_ZONE[0];
-      const rightComfort = viewport.scrollLeft + viewport.clientWidth * TIMELINE_AUTO_FOLLOW_COMFORT_ZONE[1];
+      const leftComfort = timeScrollEl.scrollLeft + timeScrollEl.clientWidth * TIMELINE_AUTO_FOLLOW_COMFORT_ZONE[0];
+      const rightComfort = timeScrollEl.scrollLeft + timeScrollEl.clientWidth * TIMELINE_AUTO_FOLLOW_COMFORT_ZONE[1];
       if (playheadX >= leftComfort && playheadX <= rightComfort) {
         return;
       }
-      const targetLeft = Math.max(0, playheadX - viewport.clientWidth * TIMELINE_AUTO_FOLLOW_TARGET_RATIO);
+
+      const targetLeft = Math.max(0, playheadX - timeScrollEl.clientWidth * TIMELINE_AUTO_FOLLOW_TARGET_RATIO);
       this.setProgrammaticScroll(() => {
-        viewport.scrollTo({ left: targetLeft, behavior: 'smooth' });
-      }, 900);
-      this.facade.setScroll(targetLeft, viewport.scrollTop);
+        timeScrollEl.scrollTo({ left: targetLeft, top: timeScrollEl.scrollTop, behavior: 'auto' });
+      });
+      this.facade.setScroll(targetLeft, timeScrollEl.scrollTop);
     });
   }
 
-
   ngOnDestroy() {
-    if (this.programmaticScrollReleaseTimeout !== undefined) {
-      window.clearTimeout(this.programmaticScrollReleaseTimeout);
-      this.programmaticScrollReleaseTimeout = undefined;
+    if (this.programmaticScrollTimeoutId !== undefined) {
+      window.clearTimeout(this.programmaticScrollTimeoutId);
+      this.programmaticScrollTimeoutId = undefined;
     }
   }
 
-  onTimeViewportScroll(event: Event) {
+  onMainScroll(event: Event) {
     const target = event.target as HTMLDivElement;
-    const eventListViewport = this.eventListViewportRef?.nativeElement;
-    if (eventListViewport && eventListViewport.scrollTop !== target.scrollTop) {
-      eventListViewport.scrollTop = target.scrollTop;
-    }
-
+    this.scrollTopPx.set(target.scrollTop);
     this.facade.setScroll(target.scrollLeft, target.scrollTop);
 
-    if (!this.isProgrammaticScroll() && this.timebase.isPlaying()) {
+    if (!this.isProgrammaticScrollSignal() && this.timebase.isPlaying() && this.facade.autoFollow()) {
       this.facade.setAutoFollow(false);
     }
   }
 
-  onEventListViewportScroll(event: Event) {
-    const target = event.target as HTMLDivElement;
-    const timeViewport = this.timeViewportRef?.nativeElement;
-    if (timeViewport && timeViewport.scrollTop !== target.scrollTop) {
-      timeViewport.scrollTop = target.scrollTop;
+  onRulerPointerDown(event: MouseEvent) {
+    if (event.button !== 0) {
+      return;
     }
+    event.preventDefault();
+
+    const seekFromPointer = (pointerEvent: MouseEvent) => {
+      const timeScrollEl = this.timeScrollElRef?.nativeElement;
+      if (!timeScrollEl) {
+        return;
+      }
+      const rulerRect = timeScrollEl.getBoundingClientRect();
+      const xWithinViewport = Math.max(0, pointerEvent.clientX - rulerRect.left);
+      const absoluteX = xWithinViewport + timeScrollEl.scrollLeft;
+      const targetMs = Math.max(0, absoluteX / this.pxPerMs);
+      this.timebase.seekTo(targetMs);
+    };
+
+    seekFromPointer(event);
+
+    const move = (moveEvent: MouseEvent) => {
+      seekFromPointer(moveEvent);
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
   }
 
   onOccurrenceClick(occurrenceId: string, event: MouseEvent) {
@@ -121,6 +129,7 @@ export class TimelineComponent implements OnDestroy {
   startResize(occurrence: TimelineOccurrence, edge: 'start' | 'end', event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
+
     const startX = event.clientX;
     const initialStart = occurrence.startMs;
     const initialEnd = occurrence.endMs;
@@ -137,6 +146,7 @@ export class TimelineComponent implements OnDestroy {
       window.removeEventListener('mousemove', move);
       window.removeEventListener('mouseup', up);
     };
+
     window.addEventListener('mousemove', move);
     window.addEventListener('mouseup', up);
   }
@@ -153,7 +163,7 @@ export class TimelineComponent implements OnDestroy {
   }
 
   rowOccurrences(eventDefId: string) {
-    return this.visibleOccurrencesByEvent().get(eventDefId) ?? [];
+    return this.facade.occurrences().filter(occurrence => occurrence.eventDefId === eventDefId);
   }
 
   occurrenceWidthPx(occurrence: TimelineOccurrence) {
@@ -166,34 +176,34 @@ export class TimelineComponent implements OnDestroy {
     return occurrence.startMs * this.pxPerMs;
   }
 
-  playheadPx() {
+  playheadLeftPx() {
     return this.timebase.currentTimeMs() * this.pxPerMs;
   }
 
   recenter() {
-    const viewport = this.timeViewportRef?.nativeElement;
-    if (!viewport) {
+    const timeScrollEl = this.timeScrollElRef?.nativeElement;
+    if (!timeScrollEl) {
       return;
     }
-    const nextLeft = Math.max(0, this.playheadPx() - viewport.clientWidth * 0.5);
+    const targetLeft = Math.max(0, this.playheadLeftPx() - timeScrollEl.clientWidth * 0.5);
     this.setProgrammaticScroll(() => {
-      viewport.scrollTo({ left: nextLeft, behavior: 'smooth' });
-    }, 900);
-    this.facade.setScroll(nextLeft, viewport.scrollTop);
+      timeScrollEl.scrollTo({ left: targetLeft, top: timeScrollEl.scrollTop, behavior: 'auto' });
+    });
+    this.facade.setScroll(targetLeft, timeScrollEl.scrollTop);
     this.facade.setAutoFollow(true);
   }
 
-  private setProgrammaticScroll(callback: () => void, holdMs = 500) {
+  private setProgrammaticScroll(callback: () => void) {
     this.isProgrammaticScrollSignal.set(true);
     callback();
 
-    if (this.programmaticScrollReleaseTimeout !== undefined) {
-      window.clearTimeout(this.programmaticScrollReleaseTimeout);
+    if (this.programmaticScrollTimeoutId !== undefined) {
+      window.clearTimeout(this.programmaticScrollTimeoutId);
     }
 
-    this.programmaticScrollReleaseTimeout = window.setTimeout(() => {
+    this.programmaticScrollTimeoutId = window.setTimeout(() => {
       this.isProgrammaticScrollSignal.set(false);
-      this.programmaticScrollReleaseTimeout = undefined;
-    }, holdMs);
+      this.programmaticScrollTimeoutId = undefined;
+    }, 120);
   }
 }

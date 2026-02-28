@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { VideoService } from './video.service';
+import { TimebaseService } from './timebase.service';
 import { HotkeyChord } from '../../interfaces/hotkey-chord.interface';
 import { SEQUENCER_BASE_KEYS } from '../../utils/sequencer/sequencer-hotkey-options.util';
 import { SequencerPanelService } from '../service/sequencer-panel.service';
@@ -51,6 +52,7 @@ const CODE_PREFIXES = ['Digit', 'Numpad'];
 })
 export class HotkeysService {
   private readonly videoService = inject(VideoService);
+  private readonly timebaseService = inject(TimebaseService);
   private readonly sequencerPanelService = inject(SequencerPanelService);
   private readonly enabledSignal = signal(false);
   readonly enabled = this.enabledSignal.asReadonly();
@@ -84,7 +86,7 @@ export class HotkeysService {
     this.reservedBindings.clear();
     this.registerReserved(
       { key: ' ', code: 'Space' },
-      () => this.videoService.togglePlayPause(),
+      () => this.timebaseService.playPause(),
       { label: 'Play/Pause', allowRepeat: false },
     );
     this.registerReserved(

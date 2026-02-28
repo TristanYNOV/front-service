@@ -1,0 +1,11 @@
+export const TIMELINE_SCHEMA_VERSION = '1.0.0';
+export const TIMELINE_SNAP_STEP_MS = 100;
+export const TIMELINE_MIN_DURATION_MS = 200;
+export const TIMELINE_DEFAULT_PRE_MS = 1000;
+export const TIMELINE_DEFAULT_POST_MS = 1000;
+export const TIMELINE_BUFFER_WORK_DURATION_MS = 120000;
+export const TIMELINE_AUTO_FOLLOW_COMFORT_ZONE: readonly [number, number] = [0.3, 0.7] as const;
+export const TIMELINE_AUTO_FOLLOW_TARGET_RATIO = 0.5;
+export const TIMELINE_PLAYHEAD_UPDATE_HZ_MAX = 30;
+export const TIMELINE_PIXELS_PER_SECOND = 80;
+export const TIMELINE_ROW_HEIGHT_PX = 40;

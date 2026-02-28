@@ -1,0 +1,29 @@
+@use './variables/timeline.variables';
+
+.bg-timeline-occurrence {
+  background-color: var(--timeline-occurrence-bg);
+}
+
+.border-timeline-occurrence {
+  border-color: var(--timeline-occurrence-border);
+}
+
+.bg-timeline-playhead {
+  background-color: var(--timeline-playhead);
+}
+
+.timeline-resize-handle {
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.timeline-resize-handle.left {
+  left: 0;
+}
+
+.timeline-resize-handle.right {
+  right: 0;
+}

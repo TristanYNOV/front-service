@@ -43,3 +43,13 @@ export const alignToCurrentTimebase = createAction(
 export const undoLastShiftOrAlign = createAction('[Timeline] Undo Last ShiftOrAlign (1 niveau)');
 
 export const setAutoFollow = createAction('[Timeline] Set Auto Follow', props<{ enabled: boolean }>());
+
+export const timelineRuntimeIndefiniteStart = createAction(
+  '[Timeline Runtime] Indefinite Start',
+  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+);
+
+export const timelineRuntimeIndefiniteEnd = createAction(
+  '[Timeline Runtime] Indefinite End',
+  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+);

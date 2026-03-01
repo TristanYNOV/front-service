@@ -20,6 +20,7 @@ export interface SequencerRuntimeEvent {
   type: SequencerRuntimeEventType;
   btnId: string;
   timestamp: number;
+  seq: number;
   applyToEventBtnIds?: string[];
 }
 
@@ -47,6 +48,7 @@ export class SequencerRuntimeService {
   private readonly appliedLabelsByEventId = new Map<string, Set<string>>();
 
   private lastTriggerTimeout?: ReturnType<typeof setTimeout>;
+  private runtimeSeq = 0;
 
   trigger(btnId: string, source: 'hotkey' | 'click') {
     const btn = this.panelService.getBtnById(btnId);
@@ -107,8 +109,9 @@ export class SequencerRuntimeService {
     return this.hasActiveId(btnId);
   }
 
-  private pushRuntimeEvent(event: SequencerRuntimeEvent) {
-    this.recentRuntimeEventsSignal.set([event, ...this.recentRuntimeEventsSignal()].slice(0, 200));
+  private pushRuntimeEvent(event: Omit<SequencerRuntimeEvent, 'seq'>) {
+    const enrichedEvent: SequencerRuntimeEvent = { ...event, seq: ++this.runtimeSeq };
+    this.recentRuntimeEventsSignal.set([enrichedEvent, ...this.recentRuntimeEventsSignal()].slice(0, 200));
   }
 
   private isIndefinite(btn: SequencerBtn) {

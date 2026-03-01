@@ -54,4 +54,36 @@ describe('SequencerRuntimeService', () => {
     expect(messages).toContain('[Sequencer] LABEL ONCE success TRIGGERED | ApplyToEvents=[2a]');
     expect(messages).toContain('[Sequencer] EVENT INDEFINITE 2a ENDED | Labels=[success]');
   });
+
+
+  it('emits sequenced runtime events for activate/deactivate links triggered by labels', () => {
+    panel.addEventBtn({ id: 'evt-main', name: 'main', eventProps: { kind: 'indefinite', preMs: 0, postMs: 0 } });
+    panel.addLabelBtn({
+      id: 'lbl-activate',
+      name: 'activate',
+      labelProps: { mode: 'once' },
+      activateIds: ['evt-main'],
+    });
+    panel.addLabelBtn({
+      id: 'lbl-deactivate',
+      name: 'deactivate',
+      labelProps: { mode: 'once' },
+      deactivateIds: ['evt-main'],
+    });
+
+    runtime.trigger('lbl-activate', 'click');
+    runtime.trigger('lbl-deactivate', 'click');
+
+    const indefiniteEvents = runtime.recentRuntimeEvents().filter(event =>
+      event.type === 'EVENT_INDEFINITE_START' || event.type === 'EVENT_INDEFINITE_END',
+    );
+
+    expect(indefiniteEvents.length).toBe(2);
+    expect(indefiniteEvents[0].type).toBe('EVENT_INDEFINITE_END');
+    expect(indefiniteEvents[1].type).toBe('EVENT_INDEFINITE_START');
+    expect(indefiniteEvents[1].seq).toBeLessThan(indefiniteEvents[0].seq);
+    expect(indefiniteEvents[0].btnId).toBe('evt-main');
+    expect(indefiniteEvents[1].btnId).toBe('evt-main');
+  });
+
 });

@@ -14,7 +14,6 @@ import {
   selectTimelineSelectionIds,
 } from '../../store/Timeline/timeline.selectors';
 import { SequencerPanelService } from '../service/sequencer-panel.service';
-import { SequencerRuntimeService } from '../service/sequencer-runtime.service';
 
 class MockTimebaseService {
   readonly current = signal(5000);
@@ -37,15 +36,10 @@ class MockSequencerPanelService {
   ] as const);
 }
 
-class MockSequencerRuntimeService {
-  readonly recentRuntimeEvents = signal<{ type: 'EVENT_ONCE_TRIGGERED' | 'EVENT_INDEFINITE_START' | 'EVENT_INDEFINITE_END' | 'LABEL_TRIGGERED'; btnId: string; timestamp: number }[]>([]);
-}
-
 describe('TimelineFacadeService', () => {
   let service: TimelineFacadeService;
   let store: MockStore;
   let timebase: MockTimebaseService;
-  let runtime: MockSequencerRuntimeService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -55,13 +49,11 @@ describe('TimelineFacadeService', () => {
         { provide: TimebaseService, useClass: MockTimebaseService },
         { provide: VideoService, useClass: MockVideoService },
         { provide: SequencerPanelService, useClass: MockSequencerPanelService },
-        { provide: SequencerRuntimeService, useClass: MockSequencerRuntimeService },
       ],
     });
 
     store = TestBed.inject(MockStore);
     timebase = TestBed.inject(TimebaseService) as unknown as MockTimebaseService;
-    runtime = TestBed.inject(SequencerRuntimeService) as unknown as MockSequencerRuntimeService;
 
     store.overrideSelector(selectTimelineEventDefs, [
       { id: 'evt_once', sourceSequencerBtnId: 'evt_once', name: 'Once', timingMode: 'once', preMs: 1000, postMs: 800 },
@@ -84,29 +76,7 @@ describe('TimelineFacadeService', () => {
     expect(actionTypes).toContain(TimelineActions.upsertDefinitions.type);
   });
 
-  it('creates occurrence when runtime emits EVENT_ONCE_TRIGGERED', () => {
-    runtime.recentRuntimeEvents.set([{ type: 'EVENT_ONCE_TRIGGERED', btnId: 'evt_once', timestamp: 1 }]);
-    store.refreshState();
 
-    const action = (store.dispatch as jasmine.Spy).calls.mostRecent().args[0] as ReturnType<typeof TimelineActions.addOccurrence>;
-    expect(action.type).toBe(TimelineActions.addOccurrence.type);
-    expect(action.occurrence.isOpen).toBeFalse();
-  });
-
-  it('creates and closes occurrence on indefinite start/end runtime events', () => {
-    runtime.recentRuntimeEvents.set([{ type: 'EVENT_INDEFINITE_START', btnId: 'evt_indef', timestamp: 2 }]);
-    store.refreshState();
-    const addAction = (store.dispatch as jasmine.Spy).calls.mostRecent().args[0] as ReturnType<typeof TimelineActions.addOccurrence>;
-    expect(addAction.type).toBe(TimelineActions.addOccurrence.type);
-    expect(addAction.occurrence.isOpen).toBeTrue();
-
-    runtime.recentRuntimeEvents.set([{ type: 'EVENT_INDEFINITE_END', btnId: 'evt_indef', timestamp: 3 }]);
-    store.refreshState();
-
-    const updateAction = (store.dispatch as jasmine.Spy).calls.mostRecent().args[0] as ReturnType<typeof TimelineActions.updateOccurrenceTiming>;
-    expect(updateAction.type).toBe(TimelineActions.updateOccurrenceTiming.type);
-    expect(updateAction.isOpen).toBeFalse();
-  });
 
   it('dispatches shift/align/undo actions', () => {
     service.shift(1000, 'ALL');

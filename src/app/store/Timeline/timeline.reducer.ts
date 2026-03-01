@@ -1,5 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
 import {
+  TIMELINE_DEFAULT_POST_MS,
+  TIMELINE_DEFAULT_PRE_MS,
+  TIMELINE_MIN_DURATION_MS,
   TIMELINE_SCHEMA_VERSION,
 } from '../../interfaces/timeline/timeline-defaults.constants';
 import { TimelineDefinitions, TimelineMetadata, TimelineOccurrence, TimelineUiState } from '../../interfaces/timeline/timeline.interface';
@@ -14,6 +17,8 @@ import {
   setSelection,
   setUiScroll,
   shiftTimeline,
+  timelineRuntimeIndefiniteEnd,
+  timelineRuntimeIndefiniteStart,
   undoLastShiftOrAlign,
   updateOccurrenceTiming,
   upsertDefinitions,
@@ -27,6 +32,7 @@ export interface TimelineState {
   occurrences: TimelineOccurrence[];
   ui: TimelineUiState;
   lastShiftDeltaMs: number | null;
+  openOccurrenceByEventBtnId: Record<string, string>;
 }
 
 export const initialTimelineState: TimelineState = {
@@ -49,11 +55,18 @@ export const initialTimelineState: TimelineState = {
     autoFollow: true,
   },
   lastShiftDeltaMs: null,
+  openOccurrenceByEventBtnId: {},
 };
 
 export const timelineReducer = createReducer(
   initialTimelineState,
-  on(initTimeline, (state, payload) => ({ ...state, ...payload, ui: { ...state.ui }, lastShiftDeltaMs: null })),
+  on(initTimeline, (state, payload) => ({
+    ...state,
+    ...payload,
+    ui: { ...state.ui },
+    lastShiftDeltaMs: null,
+    openOccurrenceByEventBtnId: {},
+  })),
   on(upsertDefinitions, (state, { definitions }) => ({ ...state, definitions })),
   on(addOccurrence, (state, { occurrence }) => ({ ...state, occurrences: [...state.occurrences, occurrence] })),
   on(updateOccurrenceTiming, (state, { id, startMs, endMs, isOpen }) => ({
@@ -127,6 +140,70 @@ export const timelineReducer = createReducer(
       ...state,
       occurrences: shiftOccurrences(state.occurrences, -state.lastShiftDeltaMs, 'ALL', state.ui.selectedOccurrenceIds),
       lastShiftDeltaMs: null,
+    };
+  }),
+  on(timelineRuntimeIndefiniteStart, (state, { eventBtnId, atMs }) => {
+    if (state.openOccurrenceByEventBtnId[eventBtnId]) {
+      return state;
+    }
+
+    const eventDef = state.definitions.eventDefs.find(definition => definition.sourceSequencerBtnId === eventBtnId);
+    const preMs = eventDef?.preMs ?? TIMELINE_DEFAULT_PRE_MS;
+    const startMs = Math.max(0, atMs - preMs);
+    const endMs = Math.max(startMs + TIMELINE_MIN_DURATION_MS, startMs);
+    const createdAtIso = new Date().toISOString();
+    const occurrenceId = `occ_${Math.random().toString(36).slice(2, 10)}`;
+    const nextOccurrence: TimelineOccurrence = {
+      id: occurrenceId,
+      eventDefId: eventDef?.id ?? eventBtnId,
+      startMs,
+      endMs,
+      labelIds: [],
+      createdAtIso,
+      updatedAtIso: createdAtIso,
+      isOpen: true,
+    };
+
+    return {
+      ...state,
+      occurrences: [...state.occurrences, nextOccurrence],
+      openOccurrenceByEventBtnId: {
+        ...state.openOccurrenceByEventBtnId,
+        [eventBtnId]: occurrenceId,
+      },
+    };
+  }),
+  on(timelineRuntimeIndefiniteEnd, (state, { eventBtnId, atMs }) => {
+    const occurrenceId = state.openOccurrenceByEventBtnId[eventBtnId];
+    if (!occurrenceId) {
+      return state;
+    }
+
+    const occurrence = state.occurrences.find(item => item.id === occurrenceId);
+    if (!occurrence) {
+      const nextMap = { ...state.openOccurrenceByEventBtnId };
+      delete nextMap[eventBtnId];
+      return {
+        ...state,
+        openOccurrenceByEventBtnId: nextMap,
+      };
+    }
+
+    const eventDef = state.definitions.eventDefs.find(definition => definition.sourceSequencerBtnId === eventBtnId);
+    const postMs = eventDef?.postMs ?? TIMELINE_DEFAULT_POST_MS;
+    const normalized = normalizeTiming(occurrence.startMs, atMs + postMs);
+    const endMs = Math.max(normalized.endMs, occurrence.startMs + TIMELINE_MIN_DURATION_MS);
+    const nextMap = { ...state.openOccurrenceByEventBtnId };
+    delete nextMap[eventBtnId];
+
+    return {
+      ...state,
+      occurrences: state.occurrences.map(item =>
+        item.id === occurrenceId
+          ? { ...item, startMs: normalized.startMs, endMs, isOpen: false, updatedAtIso: new Date().toISOString() }
+          : item,
+      ),
+      openOccurrenceByEventBtnId: nextMap,
     };
   }),
 );

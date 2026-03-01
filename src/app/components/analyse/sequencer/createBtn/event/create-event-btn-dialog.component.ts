@@ -70,6 +70,7 @@ export class CreateEventBtnDialogComponent {
       [Validators.required],
     ),
     name: new FormControl(this.data.btn?.name ?? '', [Validators.required]),
+    colorHex: new FormControl(this.data.btn?.colorHex ?? '#1F3D28', { nonNullable: true }),
     kind: new FormControl<'limited' | 'indefinite'>(this.data.btn?.eventProps.kind ?? 'limited', {
       nonNullable: true,
     }),
@@ -137,6 +138,7 @@ export class CreateEventBtnDialogComponent {
 
     const id = (this.form.controls.id.value ?? '').trim();
     const name = (this.form.controls.name.value ?? '').trim();
+    const colorHex = this.form.controls.colorHex.value;
     const kind = this.form.controls.kind.value ?? 'limited';
     const preMs = Math.max(0, Math.round((this.form.controls.preSec.value ?? 0) * 1000));
     const postMs = Math.max(0, Math.round((this.form.controls.postSec.value ?? 0) * 1000));
@@ -166,6 +168,7 @@ export class CreateEventBtnDialogComponent {
     if (this.isEdit) {
       this.panelService.updateBtn(id, {
         name,
+        colorHex,
         hotkeyNormalized,
         deactivateIds,
         activateIds,
@@ -175,6 +178,7 @@ export class CreateEventBtnDialogComponent {
       const created = this.panelService.addEventBtn({
         id,
         name,
+        colorHex,
         hotkeyNormalized,
         deactivateIds,
         activateIds,

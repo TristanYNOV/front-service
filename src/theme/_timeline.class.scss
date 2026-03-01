@@ -12,6 +12,28 @@
   background-color: var(--timeline-playhead);
 }
 
+.timeline-occurrence {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-inline: 8px;
+}
+
+.timeline-occurrence-selected {
+  outline: 1px solid var(--interactive-active-border);
+  outline-offset: 1px;
+}
+
+.timeline-occurrence-label {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .timeline-resize-handle {
   position: absolute;
   top: 0;

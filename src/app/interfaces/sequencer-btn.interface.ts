@@ -14,6 +14,7 @@ export interface SequencerBtnBase {
 
 export interface EventBtn extends SequencerBtnBase {
   type: 'event';
+  colorHex?: string;
   eventProps: {
     kind: 'limited' | 'indefinite';
     preMs: number;

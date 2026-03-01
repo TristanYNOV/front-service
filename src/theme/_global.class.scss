@@ -65,6 +65,10 @@
   color: var(--sequencer-label-text);
 }
 
+.seq-btn-event-card {
+  border-color: var(--sequencer-event-border) !important;
+}
+
 .seq-btn-event-active {
   opacity: 0.88;
 }

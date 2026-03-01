@@ -9,7 +9,7 @@
         role="button"
         tabindex="0"
         class="absolute flex select-none flex-col items-center justify-center gap-1 overflow-hidden rounded-md border p-2 text-center"
-        [class.seq-btn-event]="btn.type === 'event'"
+        [class.seq-btn-event-card]="btn.type === 'event'"
         [class.seq-btn-label]="btn.type === 'label'"
         [class.seq-btn-event-active]="btn.type === 'event' && isActive(btn.id)"
         [ngStyle]="btnStyle(btn)"

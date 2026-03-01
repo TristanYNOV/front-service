@@ -4,6 +4,7 @@ import { TimebaseService } from './timebase.service';
 import { VideoService } from './video.service';
 import { SequencerPanelService } from '../service/sequencer-panel.service';
 import { SequencerRuntimeEvent, SequencerRuntimeService } from '../service/sequencer-runtime.service';
+import { EventBtn } from '../../interfaces/sequencer-btn.interface';
 import {
   TIMELINE_BUFFER_WORK_DURATION_MS,
   TIMELINE_DEFAULT_POST_MS,
@@ -22,7 +23,9 @@ import {
   upsertDefinitions,
 } from '../../store/Timeline/timeline.actions';
 import {
+  selectTimelineAllOccurrencesSelected,
   selectTimelineAutoFollow,
+  selectTimelineCanUndoShiftAlign,
   selectTimelineEventDefs,
   selectTimelineOccurrences,
   selectTimelineScroll,
@@ -43,6 +46,8 @@ export class TimelineFacadeService {
   readonly selectionIds = this.store.selectSignal(selectTimelineSelectionIds);
   readonly uiScroll = this.store.selectSignal(selectTimelineScroll);
   readonly autoFollow = this.store.selectSignal(selectTimelineAutoFollow);
+  readonly canUndoShiftOrAlign = this.store.selectSignal(selectTimelineCanUndoShiftAlign);
+  readonly allOccurrencesSelected = this.store.selectSignal(selectTimelineAllOccurrencesSelected);
 
   readonly hasChronoOrVideo: Signal<boolean> = computed(
     () => this.timebase.mode() === 'video' || this.timebase.currentTimeMs() > 0,
@@ -81,6 +86,16 @@ export class TimelineFacadeService {
 
   setSelection(ids: string[]) {
     this.store.dispatch(setSelection({ ids }));
+  }
+
+
+  toggleAllSelections() {
+    if (this.allOccurrencesSelected()) {
+      this.setSelection([]);
+      return;
+    }
+
+    this.setSelection(this.occurrences().map(occurrence => occurrence.id));
   }
 
   toggleSelection(id: string, additive: boolean) {
@@ -236,11 +251,12 @@ export class TimelineFacadeService {
   private buildDefinitionsFromSequencer(): TimelineDefinitions {
     const btnList = this.sequencerPanelService.btnList();
     const eventDefs: TimelineDefinitions['eventDefs'] = btnList
-      .filter(btn => btn.type === 'event')
+      .filter((btn): btn is EventBtn => btn.type === 'event')
       .map((btn): TimelineEventDef => ({
         id: btn.id,
         sourceSequencerBtnId: btn.id,
         name: btn.name,
+        colorHex: btn.colorHex,
         timingMode: btn.eventProps.kind === 'indefinite' ? 'indefinite' : 'once',
         preMs: btn.eventProps.preMs || TIMELINE_DEFAULT_PRE_MS,
         postMs: btn.eventProps.postMs || TIMELINE_DEFAULT_POST_MS,

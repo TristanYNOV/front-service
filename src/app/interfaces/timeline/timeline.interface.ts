@@ -14,6 +14,7 @@ export interface TimelineEventDef {
   id: string;
   sourceSequencerBtnId: string;
   name: string;
+  colorHex?: string;
   timingMode: TimelineTimingMode;
   preMs: number;
   postMs: number;

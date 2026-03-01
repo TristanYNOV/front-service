@@ -9,6 +9,7 @@ import {
 import { TimelineFacadeService } from '../../../core/services/timeline-facade.service';
 import { TimebaseService } from '../../../core/services/timebase.service';
 import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interface';
+import { getReadableTextColor } from '../../../utils/color/color-contrast.utils';
 
 @Component({
   selector: 'app-timeline',
@@ -32,6 +33,7 @@ export class TimelineComponent implements OnDestroy {
 
   private readonly isProgrammaticScrollSignal = signal(false);
   private programmaticScrollTimeoutId?: number;
+  private readonly defaultEventColor = '#1F3D28';
 
   readonly contentWidthPx = computed(() => Math.max(1200, Math.ceil(this.facade.workDurationMs() * this.pxPerMs)));
   readonly contentHeightPx = computed(() => this.rulerHeightPx + this.facade.eventDefs().length * this.rowHeightPx);
@@ -176,6 +178,17 @@ export class TimelineComponent implements OnDestroy {
     return occurrence.startMs * this.pxPerMs;
   }
 
+  occurrenceStyle(occurrence: TimelineOccurrence) {
+    const eventDef = this.facade.eventDefs().find(definition => definition.id === occurrence.eventDefId);
+    const background = eventDef?.colorHex ?? this.defaultEventColor;
+    const isSelected = this.facade.selectionIds().includes(occurrence.id);
+
+    return {
+      backgroundColor: isSelected ? this.withOpacity(background, 0.8) : background,
+      color: getReadableTextColor(background),
+    };
+  }
+
   playheadLeftPx() {
     return this.timebase.currentTimeMs() * this.pxPerMs;
   }
@@ -191,6 +204,15 @@ export class TimelineComponent implements OnDestroy {
     });
     this.facade.setScroll(targetLeft, timeScrollEl.scrollTop);
     this.facade.setAutoFollow(true);
+  }
+
+  private withOpacity(hex: string, opacity: number) {
+    const value = hex.trim();
+    const normalized = /^#?[0-9a-fA-F]{6}$/.test(value) ? (value.startsWith('#') ? value : `#${value}`) : this.defaultEventColor;
+    const r = Number.parseInt(normalized.slice(1, 3), 16);
+    const g = Number.parseInt(normalized.slice(3, 5), 16);
+    const b = Number.parseInt(normalized.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
 
   private setProgrammaticScroll(callback: () => void) {

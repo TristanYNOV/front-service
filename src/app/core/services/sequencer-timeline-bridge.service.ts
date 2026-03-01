@@ -2,7 +2,7 @@ import { Injectable, effect, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { SequencerRuntimeService } from '../service/sequencer-runtime.service';
 import { TimebaseService } from './timebase.service';
-import { timelineRuntimeIndefiniteEnd, timelineRuntimeIndefiniteStart } from '../../store/Timeline/timeline.actions';
+import { timelineRuntimeIndefiniteEnd, timelineRuntimeIndefiniteStart, timelineRuntimeOnceTriggered } from '../../store/Timeline/timeline.actions';
 
 @Injectable()
 export class SequencerTimelineBridgeService {
@@ -24,6 +24,16 @@ export class SequencerTimelineBridgeService {
       }
 
       newEvents.forEach(event => {
+        if (event.type === 'EVENT_ONCE_TRIGGERED') {
+          this.store.dispatch(
+            timelineRuntimeOnceTriggered({
+              eventBtnId: event.btnId,
+              atMs: this.timebase.currentTimeMs(),
+              timestamp: event.timestamp,
+            }),
+          );
+        }
+
         if (event.type === 'EVENT_INDEFINITE_START') {
           this.store.dispatch(
             timelineRuntimeIndefiniteStart({

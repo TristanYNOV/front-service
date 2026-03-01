@@ -86,4 +86,21 @@ describe('SequencerRuntimeService', () => {
     expect(indefiniteEvents[1].btnId).toBe('evt-main');
   });
 
+
+  it('emits EVENT_ONCE_TRIGGERED when a limited event is activated via link', () => {
+    panel.addEventBtn({ id: 'evt-limited', name: 'limited', eventProps: { kind: 'limited', preMs: 0, postMs: 0 } });
+    panel.addLabelBtn({
+      id: 'lbl-activate-once',
+      name: 'activate once',
+      labelProps: { mode: 'once' },
+      activateIds: ['evt-limited'],
+    });
+
+    runtime.trigger('lbl-activate-once', 'click');
+
+    const onceEvent = runtime.recentRuntimeEvents().find(event => event.type === 'EVENT_ONCE_TRIGGERED' && event.btnId === 'evt-limited');
+    expect(onceEvent).toBeDefined();
+    expect(onceEvent?.seq).toBeGreaterThan(0);
+  });
+
 });

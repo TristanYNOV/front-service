@@ -53,3 +53,8 @@ export const timelineRuntimeIndefiniteEnd = createAction(
   '[Timeline Runtime] Indefinite End',
   props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
 );
+
+export const timelineRuntimeOnceTriggered = createAction(
+  '[Timeline Runtime] Once Triggered',
+  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+);

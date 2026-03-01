@@ -19,6 +19,7 @@ import {
   shiftTimeline,
   timelineRuntimeIndefiniteEnd,
   timelineRuntimeIndefiniteStart,
+  timelineRuntimeOnceTriggered,
   undoLastShiftOrAlign,
   updateOccurrenceTiming,
   upsertDefinitions,
@@ -140,6 +141,31 @@ export const timelineReducer = createReducer(
       ...state,
       occurrences: shiftOccurrences(state.occurrences, -state.lastShiftDeltaMs, 'ALL', state.ui.selectedOccurrenceIds),
       lastShiftDeltaMs: null,
+    };
+  }),
+
+  on(timelineRuntimeOnceTriggered, (state, { eventBtnId, atMs }) => {
+    const eventDef = state.definitions.eventDefs.find(definition => definition.sourceSequencerBtnId === eventBtnId);
+    const preMs = eventDef?.preMs ?? TIMELINE_DEFAULT_PRE_MS;
+    const postMs = eventDef?.postMs ?? TIMELINE_DEFAULT_POST_MS;
+    const normalized = normalizeTiming(Math.max(0, atMs - preMs), atMs + postMs);
+    const endMs = Math.max(normalized.endMs, normalized.startMs + TIMELINE_MIN_DURATION_MS);
+    const createdAtIso = new Date().toISOString();
+
+    const occurrence: TimelineOccurrence = {
+      id: `occ_${Math.random().toString(36).slice(2, 10)}`,
+      eventDefId: eventDef?.id ?? eventBtnId,
+      startMs: normalized.startMs,
+      endMs,
+      labelIds: [],
+      createdAtIso,
+      updatedAtIso: createdAtIso,
+      isOpen: false,
+    };
+
+    return {
+      ...state,
+      occurrences: [...state.occurrences, occurrence],
     };
   }),
   on(timelineRuntimeIndefiniteStart, (state, { eventBtnId, atMs }) => {

@@ -172,7 +172,16 @@ export class SequencerRuntimeService {
   private applyActivate(ids: string[]) {
     this.sortLinkIdsByTargetType(ids, 'labels-first').forEach(id => {
       const target = this.panelService.getBtnById(id);
-      if (!target || !this.isIndefinite(target) || this.hasActiveId(id)) {
+      if (!target) {
+        return;
+      }
+
+      if (target.type === 'event' && target.eventProps.kind === 'limited') {
+        this.pushRuntimeEvent({ type: 'EVENT_ONCE_TRIGGERED', btnId: target.id, timestamp: Date.now() });
+        return;
+      }
+
+      if (!this.isIndefinite(target) || this.hasActiveId(id)) {
         return;
       }
 
@@ -232,9 +241,15 @@ export class SequencerRuntimeService {
 
     ids.forEach(id => {
       const btn = this.panelService.getBtnById(id);
-      if (!btn || !this.isIndefinite(btn)) {
+      if (!btn) {
         return;
       }
+
+      const isActivatableLimitedEvent = btn.type === 'event' && btn.eventProps.kind === 'limited';
+      if (!this.isIndefinite(btn) && !isActivatableLimitedEvent) {
+        return;
+      }
+
       if (btn.type === 'label') {
         labelIds.push(id);
         return;

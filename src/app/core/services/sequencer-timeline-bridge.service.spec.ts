@@ -5,11 +5,11 @@ import { SequencerTimelineBridgeService } from './sequencer-timeline-bridge.serv
 import { SequencerRuntimeService } from '../service/sequencer-runtime.service';
 import { TimebaseService } from './timebase.service';
 import { initialTimelineState } from '../../store/Timeline/timeline.reducer';
-import { timelineRuntimeIndefiniteEnd, timelineRuntimeIndefiniteStart } from '../../store/Timeline/timeline.actions';
+import { timelineRuntimeIndefiniteEnd, timelineRuntimeIndefiniteStart, timelineRuntimeOnceTriggered } from '../../store/Timeline/timeline.actions';
 
 class MockSequencerRuntimeService {
   readonly recentRuntimeEvents = signal<
-    { type: 'EVENT_INDEFINITE_START' | 'EVENT_INDEFINITE_END' | 'LABEL_TRIGGERED'; btnId: string; timestamp: number; seq: number }[]
+    { type: 'EVENT_ONCE_TRIGGERED' | 'EVENT_INDEFINITE_START' | 'EVENT_INDEFINITE_END' | 'LABEL_TRIGGERED'; btnId: string; timestamp: number; seq: number }[]
   >([]);
 }
 
@@ -39,21 +39,24 @@ describe('SequencerTimelineBridgeService', () => {
 
   it('dispatches runtime start/end actions in seq order once', () => {
     runtime.recentRuntimeEvents.set([
-      { type: 'EVENT_INDEFINITE_END', btnId: 'evt-1', timestamp: 20, seq: 3 },
-      { type: 'LABEL_TRIGGERED', btnId: 'lbl-1', timestamp: 15, seq: 2 },
-      { type: 'EVENT_INDEFINITE_START', btnId: 'evt-1', timestamp: 10, seq: 1 },
+      { type: 'EVENT_INDEFINITE_END', btnId: 'evt-1', timestamp: 30, seq: 4 },
+      { type: 'LABEL_TRIGGERED', btnId: 'lbl-1', timestamp: 15, seq: 3 },
+      { type: 'EVENT_INDEFINITE_START', btnId: 'evt-1', timestamp: 20, seq: 2 },
+      { type: 'EVENT_ONCE_TRIGGERED', btnId: 'evt-2', timestamp: 10, seq: 1 },
     ]);
 
     const actions = (store.dispatch as jasmine.Spy).calls.allArgs().map(call => call[0]);
-    expect(actions[0]).toEqual(timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 10 }));
-    expect(actions[1]).toEqual(timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 20 }));
-    expect(actions.length).toBe(2);
+    expect(actions[0]).toEqual(timelineRuntimeOnceTriggered({ eventBtnId: 'evt-2', atMs: 4200, timestamp: 10 }));
+    expect(actions[1]).toEqual(timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 20 }));
+    expect(actions[2]).toEqual(timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 30 }));
+    expect(actions.length).toBe(3);
 
     (store.dispatch as jasmine.Spy).calls.reset();
     runtime.recentRuntimeEvents.set([
-      { type: 'EVENT_INDEFINITE_END', btnId: 'evt-1', timestamp: 20, seq: 3 },
-      { type: 'LABEL_TRIGGERED', btnId: 'lbl-1', timestamp: 15, seq: 2 },
-      { type: 'EVENT_INDEFINITE_START', btnId: 'evt-1', timestamp: 10, seq: 1 },
+      { type: 'EVENT_INDEFINITE_END', btnId: 'evt-1', timestamp: 30, seq: 4 },
+      { type: 'LABEL_TRIGGERED', btnId: 'lbl-1', timestamp: 15, seq: 3 },
+      { type: 'EVENT_INDEFINITE_START', btnId: 'evt-1', timestamp: 20, seq: 2 },
+      { type: 'EVENT_ONCE_TRIGGERED', btnId: 'evt-2', timestamp: 10, seq: 1 },
     ]);
 
     expect(store.dispatch).not.toHaveBeenCalled();

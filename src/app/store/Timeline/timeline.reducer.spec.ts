@@ -1,6 +1,6 @@
 import { TIMELINE_MIN_DURATION_MS } from '../../interfaces/timeline/timeline-defaults.constants';
 import { TimelineState, initialTimelineState, timelineReducer } from './timeline.reducer';
-import { timelineRuntimeIndefiniteEnd, timelineRuntimeIndefiniteStart } from './timeline.actions';
+import { timelineRuntimeIndefiniteEnd, timelineRuntimeIndefiniteStart, timelineRuntimeOnceTriggered } from './timeline.actions';
 
 const baseState: TimelineState = {
   ...initialTimelineState,
@@ -22,6 +22,19 @@ const baseState: TimelineState = {
 };
 
 describe('timelineReducer runtime indefinite actions', () => {
+
+  it('creates closed occurrence on runtime once trigger', () => {
+    const next = timelineReducer(
+      baseState,
+      timelineRuntimeOnceTriggered({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1 }),
+    );
+
+    expect(next.occurrences.length).toBe(1);
+    expect(next.occurrences[0].isOpen).toBeFalse();
+    expect(next.occurrences[0].startMs).toBe(4000);
+    expect(next.occurrences[0].endMs).toBe(5700);
+  });
+
   it('creates open occurrence and records mapping on runtime start', () => {
     const next = timelineReducer(
       baseState,

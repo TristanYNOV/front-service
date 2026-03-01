@@ -11,3 +11,9 @@ export const selectTimelineUi = createSelector(selectTimelineState, state => sta
 export const selectTimelineSelectionIds = createSelector(selectTimelineUi, ui => ui.selectedOccurrenceIds);
 export const selectTimelineAutoFollow = createSelector(selectTimelineUi, ui => ui.autoFollow);
 export const selectTimelineScroll = createSelector(selectTimelineUi, ui => ({ scrollX: ui.scrollX, scrollY: ui.scrollY }));
+export const selectTimelineCanUndoShiftAlign = createSelector(selectTimelineState, state => state.lastShiftDeltaMs !== null);
+export const selectTimelineAllOccurrencesSelected = createSelector(
+  selectTimelineOccurrences,
+  selectTimelineSelectionIds,
+  (occurrences, selectionIds) => occurrences.length > 0 && selectionIds.length === occurrences.length,
+);

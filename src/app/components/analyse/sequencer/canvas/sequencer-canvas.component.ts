@@ -23,6 +23,7 @@ import {
   panDragThresholdPx,
 } from '../../../../utils/sequencer/sequencer-canvas-defaults.util';
 import { formatNormalizedHotkey } from '../../../../utils/sequencer/sequencer-hotkey-options.util';
+import { getReadableTextColor } from '../../../../utils/color/color-contrast.utils';
 
 @Component({
   selector: 'app-sequencer-canvas',
@@ -33,6 +34,7 @@ import { formatNormalizedHotkey } from '../../../../utils/sequencer/sequencer-ho
   imports: [CommonModule, MatButtonModule, MatIconModule],
 })
 export class SequencerCanvasComponent {
+  private readonly defaultEventColor = '#1F3D28';
   private readonly panelService = inject(SequencerPanelService);
 
   @Input({ required: true }) btnList: SequencerBtn[] = [];
@@ -100,13 +102,21 @@ export class SequencerCanvasComponent {
 
   btnStyle(btn: SequencerBtn) {
     const layout = this.ensureBtnLayout(btn);
-    return {
+    const style: Record<string, string> = {
       left: `${layout.x}px`,
       top: `${layout.y}px`,
       width: `${layout.w}px`,
       height: `${layout.h}px`,
       zIndex: `${layout.z ?? 1}`,
     };
+
+    if (btn.type === 'event') {
+      const background = btn.colorHex || this.defaultEventColor;
+      style['backgroundColor'] = background;
+      style['color'] = getReadableTextColor(background);
+    }
+
+    return style;
   }
 
   onViewportMouseDown(event: MouseEvent) {

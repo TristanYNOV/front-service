@@ -31,6 +31,11 @@
       </mat-form-field>
     </div>
 
+    <div class="flex items-center gap-3">
+      <label for="event-color" class="text-xs font-semibold">Couleur</label>
+      <input id="event-color" type="color" formControlName="colorHex" class="timeline-color-input" />
+    </div>
+
     @if (isEdit) {
       <div class="border-layer rounded-md border p-3">
         <h4 class="mb-3 text-[13px] font-semibold">Liens</h4>

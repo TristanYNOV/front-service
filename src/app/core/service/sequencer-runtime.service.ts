@@ -20,6 +20,7 @@ export interface SequencerRuntimeEvent {
   type: SequencerRuntimeEventType;
   btnId: string;
   timestamp: number;
+  seq: number;
   applyToEventBtnIds?: string[];
 }
 
@@ -47,6 +48,7 @@ export class SequencerRuntimeService {
   private readonly appliedLabelsByEventId = new Map<string, Set<string>>();
 
   private lastTriggerTimeout?: ReturnType<typeof setTimeout>;
+  private runtimeSeq = 0;
 
   trigger(btnId: string, source: 'hotkey' | 'click') {
     const btn = this.panelService.getBtnById(btnId);
@@ -107,8 +109,9 @@ export class SequencerRuntimeService {
     return this.hasActiveId(btnId);
   }
 
-  private pushRuntimeEvent(event: SequencerRuntimeEvent) {
-    this.recentRuntimeEventsSignal.set([event, ...this.recentRuntimeEventsSignal()].slice(0, 200));
+  private pushRuntimeEvent(event: Omit<SequencerRuntimeEvent, 'seq'>) {
+    const enrichedEvent: SequencerRuntimeEvent = { ...event, seq: ++this.runtimeSeq };
+    this.recentRuntimeEventsSignal.set([enrichedEvent, ...this.recentRuntimeEventsSignal()].slice(0, 200));
   }
 
   private isIndefinite(btn: SequencerBtn) {
@@ -169,7 +172,16 @@ export class SequencerRuntimeService {
   private applyActivate(ids: string[]) {
     this.sortLinkIdsByTargetType(ids, 'labels-first').forEach(id => {
       const target = this.panelService.getBtnById(id);
-      if (!target || !this.isIndefinite(target) || this.hasActiveId(id)) {
+      if (!target) {
+        return;
+      }
+
+      if (target.type === 'event' && target.eventProps.kind === 'limited') {
+        this.pushRuntimeEvent({ type: 'EVENT_ONCE_TRIGGERED', btnId: target.id, timestamp: Date.now() });
+        return;
+      }
+
+      if (!this.isIndefinite(target) || this.hasActiveId(id)) {
         return;
       }
 
@@ -229,9 +241,15 @@ export class SequencerRuntimeService {
 
     ids.forEach(id => {
       const btn = this.panelService.getBtnById(id);
-      if (!btn || !this.isIndefinite(btn)) {
+      if (!btn) {
         return;
       }
+
+      const isActivatableLimitedEvent = btn.type === 'event' && btn.eventProps.kind === 'limited';
+      if (!this.isIndefinite(btn) && !isActivatableLimitedEvent) {
+        return;
+      }
+
       if (btn.type === 'label') {
         labelIds.push(id);
         return;

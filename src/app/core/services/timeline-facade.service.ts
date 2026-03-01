@@ -1,18 +1,16 @@
-import { Injectable, Signal, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, Signal, computed, effect, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TimebaseService } from './timebase.service';
 import { VideoService } from './video.service';
 import { SequencerPanelService } from '../service/sequencer-panel.service';
-import { SequencerRuntimeEvent, SequencerRuntimeService } from '../service/sequencer-runtime.service';
 import { EventBtn } from '../../interfaces/sequencer-btn.interface';
 import {
   TIMELINE_BUFFER_WORK_DURATION_MS,
   TIMELINE_DEFAULT_POST_MS,
   TIMELINE_DEFAULT_PRE_MS,
 } from '../../interfaces/timeline/timeline-defaults.constants';
-import { TimelineDefinitions, TimelineEventDef, TimelineOccurrence, TimelineShiftScope } from '../../interfaces/timeline/timeline.interface';
+import { TimelineDefinitions, TimelineEventDef, TimelineShiftScope } from '../../interfaces/timeline/timeline.interface';
 import {
-  addOccurrence,
   alignToCurrentTimebase,
   setAutoFollow,
   setSelection,
@@ -39,7 +37,6 @@ export class TimelineFacadeService {
   private readonly timebase = inject(TimebaseService);
   private readonly videoService = inject(VideoService);
   private readonly sequencerPanelService = inject(SequencerPanelService);
-  private readonly sequencerRuntimeService = inject(SequencerRuntimeService);
 
   readonly eventDefs = this.store.selectSignal(selectTimelineEventDefs);
   readonly occurrences = this.store.selectSignal(selectTimelineOccurrences);
@@ -60,8 +57,6 @@ export class TimelineFacadeService {
     ),
   );
 
-  private readonly openOccurrenceByEventDef = signal<Record<string, string>>({});
-  private readonly handledRuntimeEventKeys = new Set<string>();
   private playSelectionTimer?: number;
 
   constructor() {
@@ -69,25 +64,11 @@ export class TimelineFacadeService {
       const definitions = this.buildDefinitionsFromSequencer();
       this.store.dispatch(upsertDefinitions({ definitions }));
     });
-
-    effect(() => {
-      const latestEvent = this.sequencerRuntimeService.recentRuntimeEvents()[0];
-      if (!latestEvent) {
-        return;
-      }
-      const eventKey = `${latestEvent.type}:${latestEvent.btnId}:${latestEvent.timestamp}`;
-      if (this.handledRuntimeEventKeys.has(eventKey)) {
-        return;
-      }
-      this.handledRuntimeEventKeys.add(eventKey);
-      this.consumeRuntimeEvent(latestEvent);
-    });
   }
 
   setSelection(ids: string[]) {
     this.store.dispatch(setSelection({ ids }));
   }
-
 
   toggleAllSelections() {
     if (this.allOccurrencesSelected()) {
@@ -184,68 +165,6 @@ export class TimelineFacadeService {
       window.clearInterval(this.playSelectionTimer);
       this.playSelectionTimer = undefined;
     }
-  }
-
-  private consumeRuntimeEvent(event: SequencerRuntimeEvent) {
-    if (event.type === 'LABEL_TRIGGERED') {
-      return;
-    }
-    const eventDef = this.eventDefs().find(definition => definition.sourceSequencerBtnId === event.btnId);
-    if (!eventDef) {
-      return;
-    }
-    if (event.type === 'EVENT_ONCE_TRIGGERED') {
-      const occurrence = this.createOccurrence(eventDef, false);
-      this.store.dispatch(addOccurrence({ occurrence }));
-      return;
-    }
-
-    if (event.type === 'EVENT_INDEFINITE_START') {
-      const occurrence = this.createOccurrence(eventDef, true);
-      this.store.dispatch(addOccurrence({ occurrence }));
-      this.openOccurrenceByEventDef.set({ ...this.openOccurrenceByEventDef(), [eventDef.id]: occurrence.id });
-      return;
-    }
-
-    if (event.type === 'EVENT_INDEFINITE_END') {
-      this.closeOpenOccurrence(eventDef);
-    }
-  }
-
-  private closeOpenOccurrence(eventDef: TimelineEventDef) {
-    const occurrenceId = this.openOccurrenceByEventDef()[eventDef.id];
-    if (!occurrenceId) {
-      return;
-    }
-    const occurrence = this.occurrences().find(item => item.id === occurrenceId);
-    if (!occurrence) {
-      return;
-    }
-
-    const normalized = normalizeTiming(occurrence.startMs, this.timebase.currentTimeMs() + eventDef.postMs);
-    this.store.dispatch(updateOccurrenceTiming({ id: occurrence.id, ...normalized, isOpen: false }));
-
-    const nextMap = { ...this.openOccurrenceByEventDef() };
-    delete nextMap[eventDef.id];
-    this.openOccurrenceByEventDef.set(nextMap);
-  }
-
-  private createOccurrence(eventDef: TimelineEventDef, isOpen: boolean): TimelineOccurrence {
-    const nowMs = this.timebase.currentTimeMs();
-    const start = nowMs - (eventDef.preMs || TIMELINE_DEFAULT_PRE_MS);
-    const rawEnd = isOpen ? start : nowMs + (eventDef.postMs || TIMELINE_DEFAULT_POST_MS);
-    const normalized = normalizeTiming(start, rawEnd);
-    const createdAtIso = new Date().toISOString();
-    return {
-      id: `occ_${Math.random().toString(36).slice(2, 10)}`,
-      eventDefId: eventDef.id,
-      startMs: normalized.startMs,
-      endMs: normalized.endMs,
-      labelIds: [],
-      createdAtIso,
-      updatedAtIso: createdAtIso,
-      isOpen,
-    };
   }
 
   private buildDefinitionsFromSequencer(): TimelineDefinitions {

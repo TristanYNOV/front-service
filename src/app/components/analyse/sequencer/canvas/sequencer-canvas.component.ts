@@ -13,6 +13,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SequencerPanelService } from '../../../../core/service/sequencer-panel.service';
+import { SequencerZoomService } from '../../../../core/services/sequencer-zoom.service';
 import { SequencerBtn } from '../../../../interfaces/sequencer-btn.interface';
 import {
   contentMinHeightPx,
@@ -24,6 +25,7 @@ import {
 } from '../../../../utils/sequencer/sequencer-canvas-defaults.util';
 import { formatNormalizedHotkey } from '../../../../utils/sequencer/sequencer-hotkey-options.util';
 import { getReadableTextColor } from '../../../../utils/color/color-contrast.utils';
+import { ZoomControlsComponent } from '../../../shared/zoom-controls/zoom-controls.component';
 
 @Component({
   selector: 'app-sequencer-canvas',
@@ -31,11 +33,12 @@ import { getReadableTextColor } from '../../../../utils/color/color-contrast.uti
   templateUrl: './sequencer-canvas.component.html',
   styleUrl: './sequencer-canvas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ZoomControlsComponent],
 })
 export class SequencerCanvasComponent {
   private readonly defaultEventColor = '#1F3D28';
   private readonly panelService = inject(SequencerPanelService);
+  readonly sequencerZoom = inject(SequencerZoomService);
 
   @Input({ required: true }) btnList: SequencerBtn[] = [];
   @Input({ required: true }) editMode = false;
@@ -63,11 +66,23 @@ export class SequencerCanvasComponent {
     };
   });
 
+  readonly zoom = this.sequencerZoom.zoom;
+
   readonly contentBounds = computed(() => {
     const style = this.contentStyle();
     return {
       width: Number.parseInt(style.width, 10) || contentMinWidthPx,
       height: Number.parseInt(style.height, 10) || contentMinHeightPx,
+    };
+  });
+
+
+  readonly zoomedCanvasStyle = computed(() => {
+    const bounds = this.contentBounds();
+    const zoom = this.zoom();
+    return {
+      width: `${bounds.width * zoom}px`,
+      height: `${bounds.height * zoom}px`,
     };
   });
 
@@ -163,9 +178,10 @@ export class SequencerCanvasComponent {
     if (drag) {
       const deltaX = event.clientX - drag.startX;
       const deltaY = event.clientY - drag.startY;
+      const zoom = this.zoom();
       const next = this.clampLayoutWithinCanvas(drag.btnId, {
-        x: drag.originX + deltaX,
-        y: drag.originY + deltaY,
+        x: drag.originX + deltaX / zoom,
+        y: drag.originY + deltaY / zoom,
       });
       this.panelService.updateLayout(drag.btnId, next);
     }
@@ -174,9 +190,10 @@ export class SequencerCanvasComponent {
     if (resize) {
       const deltaX = event.clientX - resize.startX;
       const deltaY = event.clientY - resize.startY;
+      const zoom = this.zoom();
       const next = this.clampLayoutWithinCanvas(resize.btnId, {
-        w: Math.max(minButtonWidthPx, resize.originW + deltaX),
-        h: Math.max(minButtonHeightPx, resize.originH + deltaY),
+        w: Math.max(minButtonWidthPx, resize.originW + deltaX / zoom),
+        h: Math.max(minButtonHeightPx, resize.originH + deltaY / zoom),
       });
       this.panelService.updateLayout(resize.btnId, next);
     }

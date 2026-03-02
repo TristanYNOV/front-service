@@ -31,6 +31,18 @@
     <button class="btn-secondary" (click)="recenter()">Recentrer</button>
     <button class="btn-secondary" (click)="facade.playSelection()">Play selection</button>
 
+    <app-zoom-controls
+      class="mx-2"
+      [value]="timelineZoom.zoom()"
+      [min]="timelineZoom.min"
+      [max]="timelineZoom.max"
+      [step]="timelineZoom.step"
+      [invert]="true"
+      [ariaLabel]="'Zoom timeline'"
+      [showPercent]="true"
+      (valueChange)="timelineZoom.setZoom($event)"
+    ></app-zoom-controls>
+
     <button
       class="btn-secondary ml-auto flex items-center justify-center"
       type="button"

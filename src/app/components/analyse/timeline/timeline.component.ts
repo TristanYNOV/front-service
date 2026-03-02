@@ -14,11 +14,13 @@ import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interf
 import { TimelineLabelsDialogComponent } from './timeline-labels-dialog.component';
 import { getReadableTextColor } from '../../../utils/color/color-contrast.utils';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { TimelineZoomService } from '../../../core/services/timeline-zoom.service';
+import { ZoomControlsComponent } from '../../shared/zoom-controls/zoom-controls.component';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, ZoomControlsComponent],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })
@@ -30,11 +32,13 @@ export class TimelineComponent implements OnDestroy {
   readonly timebase = inject(TimebaseService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialogService = inject(ConfirmDialogService);
+  readonly timelineZoom = inject(TimelineZoomService);
 
   readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
   readonly rulerHeightPx = 36;
   readonly leftColumnWidthPx = 220;
-  readonly pxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
+  readonly basePxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
+  readonly pxPerMs = computed(() => this.basePxPerMs * this.timelineZoom.zoom());
 
   readonly scrollTopPx = signal(0);
   readonly timelineHasFocus = signal(false);
@@ -45,7 +49,7 @@ export class TimelineComponent implements OnDestroy {
   private programmaticScrollTimeoutId?: number;
   private readonly defaultEventColor = '#1F3D28';
 
-  readonly contentWidthPx = computed(() => Math.max(1200, Math.ceil(this.facade.workDurationMs() * this.pxPerMs)));
+  readonly contentWidthPx = computed(() => Math.max(1200, Math.ceil(this.facade.workDurationMs() * this.pxPerMs())));
   readonly contentHeightPx = computed(() => this.rulerHeightPx + this.facade.eventDefs().length * this.rowHeightPx);
   readonly rulerTicks = computed(() => Array.from({ length: Math.ceil(this.contentWidthPx() / 80) }, (_, index) => index));
 
@@ -82,7 +86,7 @@ export class TimelineComponent implements OnDestroy {
         return;
       }
 
-      const playheadX = this.timebase.currentTimeMs() * this.pxPerMs;
+      const playheadX = this.timebase.currentTimeMs() * this.pxPerMs();
       const leftComfort = timeScrollEl.scrollLeft + timeScrollEl.clientWidth * TIMELINE_AUTO_FOLLOW_COMFORT_ZONE[0];
       const rightComfort = timeScrollEl.scrollLeft + timeScrollEl.clientWidth * TIMELINE_AUTO_FOLLOW_COMFORT_ZONE[1];
       if (playheadX >= leftComfort && playheadX <= rightComfort) {
@@ -240,7 +244,7 @@ export class TimelineComponent implements OnDestroy {
       const rulerRect = timeScrollEl.getBoundingClientRect();
       const xWithinViewport = Math.max(0, pointerEvent.clientX - rulerRect.left);
       const absoluteX = xWithinViewport + timeScrollEl.scrollLeft;
-      const targetMs = Math.max(0, absoluteX / this.pxPerMs);
+      const targetMs = Math.max(0, absoluteX / this.pxPerMs());
       this.timebase.seekTo(targetMs);
     };
 
@@ -276,7 +280,7 @@ export class TimelineComponent implements OnDestroy {
     const initialEnd = occurrence.endMs;
 
     const move = (moveEvent: MouseEvent) => {
-      const deltaMs = (moveEvent.clientX - startX) / this.pxPerMs;
+      const deltaMs = (moveEvent.clientX - startX) / this.pxPerMs();
       if (edge === 'start') {
         this.facade.updateOccurrenceTiming(occurrence.id, initialStart + deltaMs, initialEnd);
       } else {
@@ -334,11 +338,11 @@ export class TimelineComponent implements OnDestroy {
   occurrenceWidthPx(occurrence: TimelineOccurrence) {
     const eventDef = this.facade.eventDefs().find(definition => definition.id === occurrence.eventDefId);
     const endMs = occurrence.isOpen ? this.timebase.currentTimeMs() + (eventDef?.postMs ?? 1000) : occurrence.endMs;
-    return Math.max(8, (endMs - occurrence.startMs) * this.pxPerMs);
+    return Math.max(8, (endMs - occurrence.startMs) * this.pxPerMs());
   }
 
   occurrenceLeftPx(occurrence: TimelineOccurrence) {
-    return occurrence.startMs * this.pxPerMs;
+    return occurrence.startMs * this.pxPerMs();
   }
 
   occurrenceLabelSummary(occurrence: TimelineOccurrence) {
@@ -367,7 +371,7 @@ export class TimelineComponent implements OnDestroy {
   }
 
   playheadLeftPx() {
-    return this.timebase.currentTimeMs() * this.pxPerMs;
+    return this.timebase.currentTimeMs() * this.pxPerMs();
   }
 
   recenter() {

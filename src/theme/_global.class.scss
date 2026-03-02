@@ -70,7 +70,21 @@
 }
 
 .seq-btn-event-active {
-  opacity: 0.88;
+  position: relative;
+  outline: 2px solid var(--sequencer-active-outline);
+  outline-offset: 0;
+  box-shadow: 0 0 0 1px var(--sequencer-active-outline), 0 0 12px var(--sequencer-active-glow);
+}
+
+.seq-btn-event-active::before,
+.is-active::before {
+  content: "";
+  position: absolute;
+  inset-block: 5px;
+  left: 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--sequencer-active-accent);
 }
 
 .light-text {
@@ -120,5 +134,4 @@
 .is-pressed,
 .is-active {
   border-color: var(--interactive-active-border);
-  opacity: 0.88;
 }

@@ -1,4 +1,4 @@
-<div class="bg-layer-1 text-default flex h-full w-full flex-col">
+<div #timelineRoot class="bg-layer-1 text-default flex h-full w-full flex-col" tabindex="0">
   <div class="border-subtle bg-layer-2 flex items-center gap-2 border-b p-2 text-xs">
     <button class="btn-secondary" (click)="timebase.playPause()">{{ timebase.isPlaying() ? 'Pause' : 'Play' }}</button>
     <button class="btn-secondary" (click)="timebase.play()" *ngIf="timebase.mode() === 'clock'">Démarrer un chrono</button>
@@ -8,6 +8,17 @@
 
     <button
       class="btn-secondary ml-auto flex items-center justify-center"
+      type="button"
+      aria-label="Supprimer la sélection"
+      [attr.title]="deleteSelectionTooltip()"
+      [disabled]="!canDeleteSelection()"
+      (click)="deleteSelection()"
+    >
+      <mat-icon>delete_outline</mat-icon>
+    </button>
+
+    <button
+      class="btn-secondary flex items-center justify-center"
       type="button"
       aria-label="Modifier les labels"
       [attr.title]="labelsEditTooltip()"
@@ -94,6 +105,7 @@
       <button class="btn-secondary" (click)="facade.shift(1000, 'SELECTION')">Shift +1s</button>
       <button class="btn-secondary" (click)="facade.shift(1000, 'ALL')">Shift all +1s</button>
       <button class="btn-secondary" (click)="facade.undoShiftOrAlign()" [disabled]="!facade.canUndoShiftOrAlign()">Annuler décalage</button>
+      <button class="btn-secondary" (click)="facade.undoRemove()" [disabled]="!facade.canUndoRemove()">Annuler suppression</button>
     </div>
   }
 </div>

@@ -13,17 +13,20 @@ import { TimelineDefinitions, TimelineEventDef, TimelineShiftScope } from '../..
 import {
   alignToCurrentTimebase,
   setAutoFollow,
+  removeOccurrences,
   setSelection,
   setUiScroll,
   shiftTimeline,
   toggleOccurrenceLabel,
   undoLastShiftOrAlign,
+  undoRemoveOccurrences,
   updateOccurrenceTiming,
   upsertDefinitions,
 } from '../../store/Timeline/timeline.actions';
 import {
   selectTimelineAllOccurrencesSelected,
   selectTimelineAutoFollow,
+  selectTimelineCanUndoRemove,
   selectTimelineCanUndoShiftAlign,
   selectTimelineEventDefs,
   selectTimelineLabelDefs,
@@ -47,6 +50,7 @@ export class TimelineFacadeService {
   readonly uiScroll = this.store.selectSignal(selectTimelineScroll);
   readonly autoFollow = this.store.selectSignal(selectTimelineAutoFollow);
   readonly canUndoShiftOrAlign = this.store.selectSignal(selectTimelineCanUndoShiftAlign);
+  readonly canUndoRemove = this.store.selectSignal(selectTimelineCanUndoRemove);
   readonly allOccurrencesSelected = this.store.selectSignal(selectTimelineAllOccurrencesSelected);
 
   readonly hasChronoOrVideo: Signal<boolean> = computed(
@@ -117,6 +121,14 @@ export class TimelineFacadeService {
 
   undoShiftOrAlign() {
     this.store.dispatch(undoLastShiftOrAlign());
+  }
+
+  removeSelectedOccurrences(occurrenceIds: string[]) {
+    this.store.dispatch(removeOccurrences({ occurrenceIds }));
+  }
+
+  undoRemove() {
+    this.store.dispatch(undoRemoveOccurrences());
   }
 
   setScroll(scrollX: number, scrollY: number) {

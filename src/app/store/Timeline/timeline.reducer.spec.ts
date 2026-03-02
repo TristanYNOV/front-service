@@ -7,6 +7,8 @@ import {
   timelineRuntimeLabelRemove,
   timelineRuntimeOnceTriggered,
   toggleOccurrenceLabel,
+  removeOccurrences,
+  undoRemoveOccurrences,
 } from './timeline.actions';
 
 const baseState: TimelineState = {
@@ -340,5 +342,71 @@ describe('timelineReducer active indefinite labels merge on runtime events', () 
     );
 
     expect(ended.occurrences[0].labelIds).toEqual(['lbl-existing', 'lbl-new']);
+  });
+});
+
+describe('timelineReducer remove occurrences and undo', () => {
+  const stateWithOccurrences: TimelineState = {
+    ...baseState,
+    occurrences: [
+      {
+        id: 'occ-1',
+        eventDefId: 'def-1',
+        startMs: 0,
+        endMs: 1000,
+        labelIds: [],
+        createdAtIso: '2024-01-01T00:00:00.000Z',
+        updatedAtIso: '2024-01-01T00:00:00.000Z',
+        isOpen: false,
+      },
+      {
+        id: 'occ-2',
+        eventDefId: 'def-1',
+        startMs: 1200,
+        endMs: 2000,
+        labelIds: [],
+        createdAtIso: '2024-01-01T00:00:00.000Z',
+        updatedAtIso: '2024-01-01T00:00:00.000Z',
+        isOpen: false,
+      },
+      {
+        id: 'occ-open',
+        eventDefId: 'def-1',
+        startMs: 2200,
+        endMs: 2800,
+        labelIds: [],
+        createdAtIso: '2024-01-01T00:00:00.000Z',
+        updatedAtIso: '2024-01-01T00:00:00.000Z',
+        isOpen: true,
+      },
+    ],
+    ui: {
+      ...baseState.ui,
+      selectedOccurrenceIds: ['occ-1', 'occ-2'],
+    },
+  };
+
+  it('removes multiple closed occurrences and stores undo payload', () => {
+    const removed = timelineReducer(stateWithOccurrences, removeOccurrences({ occurrenceIds: ['occ-1', 'occ-2'] }));
+
+    expect(removed.occurrences.map(item => item.id)).toEqual(['occ-open']);
+    expect(removed.lastRemoved?.occurrences.map(item => item.id)).toEqual(['occ-1', 'occ-2']);
+    expect(removed.lastRemoved?.selectionBefore).toEqual(['occ-1', 'occ-2']);
+  });
+
+  it('does not remove when an open occurrence is targeted', () => {
+    const removed = timelineReducer(stateWithOccurrences, removeOccurrences({ occurrenceIds: ['occ-1', 'occ-open'] }));
+
+    expect(removed).toEqual(stateWithOccurrences);
+  });
+
+  it('undoes removed occurrences and clears lastRemoved', () => {
+    const removed = timelineReducer(stateWithOccurrences, removeOccurrences({ occurrenceIds: ['occ-1', 'occ-2'] }));
+
+    const undone = timelineReducer(removed, undoRemoveOccurrences());
+
+    expect(undone.occurrences.map(item => item.id)).toEqual(['occ-open', 'occ-1', 'occ-2']);
+    expect(undone.ui.selectedOccurrenceIds).toEqual(['occ-1', 'occ-2']);
+    expect(undone.lastRemoved).toBeNull();
   });
 });

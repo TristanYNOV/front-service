@@ -13,6 +13,8 @@ import { TimebaseService } from '../../../core/services/timebase.service';
 import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interface';
 import { TimelineLabelsDialogComponent } from './timeline-labels-dialog.component';
 import { getReadableTextColor } from '../../../utils/color/color-contrast.utils';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { HotkeysService } from '../../../core/services/hotkeys.service';
 
 @Component({
   selector: 'app-timeline',
@@ -23,10 +25,13 @@ import { getReadableTextColor } from '../../../utils/color/color-contrast.utils'
 })
 export class TimelineComponent implements OnDestroy {
   @ViewChild('timeScrollEl', { static: false }) timeScrollElRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('timelineRoot', { static: false }) timelineRootRef?: ElementRef<HTMLDivElement>;
 
   readonly facade = inject(TimelineFacadeService);
   readonly timebase = inject(TimebaseService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmDialogService = inject(ConfirmDialogService);
+  private readonly hotkeysService = inject(HotkeysService);
 
   readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
   readonly rulerHeightPx = 36;
@@ -49,6 +54,8 @@ export class TimelineComponent implements OnDestroy {
   });
 
   readonly selectedCount = computed(() => this.facade.selectionIds().length);
+  readonly selectionContainsOpen = computed(() => this.selectedOccurrences().some(occurrence => occurrence.isOpen));
+  readonly canDeleteSelection = computed(() => this.selectedCount() > 0 && !this.selectionContainsOpen());
 
   private readonly labelNameById = computed(() =>
     this.facade.labelDefs().reduce<Record<string, string>>((accumulator, definition) => {
@@ -58,6 +65,8 @@ export class TimelineComponent implements OnDestroy {
   );
 
   constructor() {
+    this.registerDeleteHotkeys();
+
     effect(() => {
       if (!this.facade.autoFollow() || !this.timebase.isPlaying()) {
         return;
@@ -84,6 +93,8 @@ export class TimelineComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.hotkeysService.unregisterReservedHotkey('timeline.delete');
+    this.hotkeysService.unregisterReservedHotkey('timeline.backspace-delete');
     if (this.programmaticScrollTimeoutId !== undefined) {
       window.clearTimeout(this.programmaticScrollTimeoutId);
       this.programmaticScrollTimeoutId = undefined;
@@ -98,6 +109,46 @@ export class TimelineComponent implements OnDestroy {
     if (!this.isProgrammaticScrollSignal() && this.timebase.isPlaying() && this.facade.autoFollow()) {
       this.facade.setAutoFollow(false);
     }
+  }
+
+  async deleteSelection() {
+    if (!this.canDeleteSelection()) {
+      return;
+    }
+
+    const selectedIds = this.selectedOccurrences().map(occurrence => occurrence.id);
+    const count = selectedIds.length;
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Confirmer la suppression',
+      message:
+        count === 1
+          ? 'Voulez-vous supprimer cette occurrence ?'
+          : `Voulez-vous supprimer ces ${count} occurrences ?`,
+      confirmLabel: 'Supprimer',
+      cancelLabel: 'Annuler',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.facade.removeSelectedOccurrences(selectedIds);
+  }
+
+  async onTimelineDeleteShortcut() {
+    if (!this.isTimelineFocused()) {
+      return;
+    }
+
+    await this.deleteSelection();
+  }
+
+  deleteSelectionTooltip() {
+    if (this.selectionContainsOpen()) {
+      return 'Impossible de supprimer une occurrence en cours. Terminez l’événement d’abord.';
+    }
+
+    return `Supprimer la sélection (${this.selectedCount()})`;
   }
 
   onRulerPointerDown(event: MouseEvent) {
@@ -255,6 +306,39 @@ export class TimelineComponent implements OnDestroy {
     });
     this.facade.setScroll(targetLeft, timeScrollEl.scrollTop);
     this.facade.setAutoFollow(true);
+  }
+
+  private isTimelineFocused() {
+    if (typeof document === 'undefined') {
+      return false;
+    }
+    const timelineRoot = this.timelineRootRef?.nativeElement;
+    if (!timelineRoot) {
+      return false;
+    }
+
+    const activeElement = document.activeElement;
+    return activeElement instanceof HTMLElement && timelineRoot.contains(activeElement);
+  }
+
+  private registerDeleteHotkeys() {
+    this.hotkeysService.registerReservedHotkey(
+      'timeline.delete',
+      { key: 'Delete', code: 'Delete' },
+      () => {
+        void this.onTimelineDeleteShortcut();
+      },
+      { label: 'Timeline supprimer', allowRepeat: false },
+    );
+
+    this.hotkeysService.registerReservedHotkey(
+      'timeline.backspace-delete',
+      { key: 'Backspace', code: 'Backspace' },
+      () => {
+        void this.onTimelineDeleteShortcut();
+      },
+      { label: 'Timeline supprimer', allowRepeat: false },
+    );
   }
 
   private withOpacity(hex: string, opacity: number) {

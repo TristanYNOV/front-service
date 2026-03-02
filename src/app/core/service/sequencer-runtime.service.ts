@@ -2,13 +2,6 @@ import { Injectable, inject, signal } from '@angular/core';
 import { SequencerPanelService } from './sequencer-panel.service';
 import { SequencerBtn } from '../../interfaces/sequencer-btn.interface';
 
-export interface SequencerTriggerEntry {
-  timestamp: number;
-  source: 'hotkey' | 'click';
-  btnId: string;
-  name: string;
-  normalizedHotkey?: string | null;
-}
 
 export type SequencerRuntimeEventType =
   | 'EVENT_ONCE_TRIGGERED'
@@ -36,8 +29,6 @@ export class SequencerRuntimeService {
   private readonly lastTriggeredBtnIdSignal = signal<string | null>(null);
   readonly lastTriggeredBtnId = this.lastTriggeredBtnIdSignal.asReadonly();
 
-  private readonly recentTriggersSignal = signal<SequencerTriggerEntry[]>([]);
-  readonly recentTriggers = this.recentTriggersSignal.asReadonly();
 
   private readonly activeIndefiniteIdsSignal = signal<string[]>([]);
   readonly activeIndefiniteIds = this.activeIndefiniteIdsSignal.asReadonly();
@@ -51,6 +42,7 @@ export class SequencerRuntimeService {
   private runtimeSeq = 0;
 
   trigger(btnId: string, source: 'hotkey' | 'click') {
+    void source;
     const btn = this.panelService.getBtnById(btnId);
     if (!btn || this.panelService.editMode()) {
       return;
@@ -59,16 +51,6 @@ export class SequencerRuntimeService {
     const counts = { ...this.triggerCountByBtnIdSignal() };
     counts[btnId] = (counts[btnId] ?? 0) + 1;
     this.triggerCountByBtnIdSignal.set(counts);
-
-    const entry: SequencerTriggerEntry = {
-      timestamp: Date.now(),
-      source,
-      btnId,
-      name: btn.name,
-      normalizedHotkey: btn.hotkeyNormalized,
-    };
-    const updated = [entry, ...this.recentTriggersSignal()].slice(0, 10);
-    this.recentTriggersSignal.set(updated);
 
     this.lastTriggeredBtnIdSignal.set(btnId);
     if (this.lastTriggerTimeout) {

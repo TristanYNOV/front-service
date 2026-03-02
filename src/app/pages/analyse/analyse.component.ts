@@ -16,6 +16,7 @@ import { AnalysisPaneDirective, PaneRect } from './analysis-pane.directive';
 import { CdkDragResizeDirective } from '../../directives/cdk-drag-resize.directive';
 import { LayoutEditModeService } from '../../core/services/layout-edit-mode.service';
 import { HotkeysService } from '../../core/services/hotkeys.service';
+import { SequencerTimelineBridgeService } from '../../core/services/sequencer-timeline-bridge.service';
 
 type PaneKey = 'video' | 'sequencer' | 'timeline';
 
@@ -38,12 +39,14 @@ interface PaneState {
     AnalysisPaneDirective,
     CdkDragResizeDirective,
   ],
+  providers: [SequencerTimelineBridgeService],
 })
 export class AnalyseComponent implements AfterViewInit, OnDestroy {
   @ViewChild('analysisContainer', { static: true }) analysisContainer?: ElementRef<HTMLElement>;
   private readonly changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected readonly layoutEditMode = inject(LayoutEditModeService);
   private readonly hotkeysService = inject(HotkeysService);
+  private readonly sequencerTimelineBridge = inject(SequencerTimelineBridgeService);
 
   readonly minWidth = 160;
   readonly minHeight = 120;
@@ -55,6 +58,7 @@ export class AnalyseComponent implements AfterViewInit, OnDestroy {
   };
 
   ngAfterViewInit() {
+    void this.sequencerTimelineBridge;
     this.measureContainer();
     this.initializeLayout();
     this.hotkeysService.initReservedVideoHotkeys();

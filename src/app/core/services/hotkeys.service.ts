@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { VideoService } from './video.service';
+import { TimebaseService } from './timebase.service';
 import { HotkeyChord } from '../../interfaces/hotkey-chord.interface';
 import { SEQUENCER_BASE_KEYS } from '../../utils/sequencer/sequencer-hotkey-options.util';
 import { SequencerPanelService } from '../service/sequencer-panel.service';
@@ -51,6 +52,7 @@ const CODE_PREFIXES = ['Digit', 'Numpad'];
 })
 export class HotkeysService {
   private readonly videoService = inject(VideoService);
+  private readonly timebaseService = inject(TimebaseService);
   private readonly sequencerPanelService = inject(SequencerPanelService);
   private readonly enabledSignal = signal(false);
   readonly enabled = this.enabledSignal.asReadonly();
@@ -60,6 +62,7 @@ export class HotkeysService {
   private readonly sequencerBindings = new Map<string, SequencerBinding>();
   private readonly actionBindings = new Map<string, string>();
   private readonly sequencerBaseKeys = new Set<string>(SEQUENCER_BASE_KEYS);
+  private readonly reservedBindingIds = new Map<string, string>();
 
   enable() {
     if (this.subscription) {
@@ -82,9 +85,10 @@ export class HotkeysService {
 
   initReservedVideoHotkeys() {
     this.reservedBindings.clear();
+    this.reservedBindingIds.clear();
     this.registerReserved(
       { key: ' ', code: 'Space' },
-      () => this.videoService.togglePlayPause(),
+      () => this.timebaseService.playPause(),
       { label: 'Play/Pause', allowRepeat: false },
     );
     this.registerReserved(
@@ -117,6 +121,49 @@ export class HotkeysService {
       () => this.videoService.setRate(this.videoService.playbackRate() - 0.25),
       { label: 'Vitesse -', allowRepeat: true },
     );
+  }
+
+
+  registerReservedHotkey(
+    id: string,
+    chord: HotkeyChord,
+    handler: () => void,
+    options?: { label?: string; allowRepeat?: boolean },
+  ): boolean {
+    const normalization = this.normalizeChord(chord);
+    if (!normalization.isValid) {
+      return false;
+    }
+
+    const existingBindingId = this.reservedBindingIds.get(id);
+    if (existingBindingId) {
+      this.reservedBindings.delete(existingBindingId);
+      this.reservedBindingIds.delete(id);
+    }
+
+    const existingBinding = this.reservedBindings.get(normalization.normalized);
+    if (existingBinding) {
+      return false;
+    }
+
+    this.reservedBindings.set(normalization.normalized, {
+      normalized: normalization.normalized,
+      handler,
+      allowRepeat: options?.allowRepeat,
+      label: options?.label,
+    });
+    this.reservedBindingIds.set(id, normalization.normalized);
+    return true;
+  }
+
+  unregisterReservedHotkey(id: string): boolean {
+    const normalized = this.reservedBindingIds.get(id);
+    if (!normalized) {
+      return false;
+    }
+    this.reservedBindings.delete(normalized);
+    this.reservedBindingIds.delete(id);
+    return true;
   }
 
   registerSequencerHotkey(

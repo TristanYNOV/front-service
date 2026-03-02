@@ -1,3 +1,119 @@
-<div class="bg-elevated text-default flex h-full w-full items-center justify-center">
-  Timeline content placeholder
+<div
+  #timelineRoot
+  class="bg-layer-1 text-default flex h-full w-full flex-col"
+  tabindex="0"
+  (keydown)="onTimelineKeydown($event)"
+  (focusin)="onTimelineFocusIn()"
+  (focusout)="onTimelineFocusOut()"
+  (mousedown)="onTimelinePointerDown($event)"
+>
+  <div class="border-subtle bg-layer-2 flex items-center gap-2 border-b p-2 text-xs">
+    <button class="btn-secondary" (click)="timebase.playPause()">{{ timebase.isPlaying() ? 'Pause' : 'Play' }}</button>
+    <button class="btn-secondary" (click)="timebase.play()" *ngIf="timebase.mode() === 'clock'">Démarrer un chrono</button>
+    <button class="btn-secondary" (click)="facade.setAutoFollow(!facade.autoFollow())">Auto-follow {{ facade.autoFollow() ? 'ON' : 'OFF' }}</button>
+    <button class="btn-secondary" (click)="recenter()">Recentrer</button>
+    <button class="btn-secondary" (click)="facade.playSelection()">Play selection</button>
+
+    <button
+      class="btn-secondary ml-auto flex items-center justify-center"
+      type="button"
+      aria-label="Supprimer la sélection"
+      [attr.title]="deleteSelectionTooltip()"
+      [disabled]="!canDeleteSelection()"
+      (click)="deleteSelection()"
+    >
+      <mat-icon>delete_outline</mat-icon>
+    </button>
+
+    <button
+      class="btn-secondary flex items-center justify-center"
+      type="button"
+      aria-label="Modifier les labels"
+      [attr.title]="labelsEditTooltip()"
+      [disabled]="selectedCount() !== 1"
+      (click)="openLabelsDialog()"
+    >
+      <mat-icon>new_label</mat-icon>
+    </button>
+  </div>
+
+  @if (facade.eventDefs().length === 0) {
+    <div class="text-muted flex h-full flex-col items-center justify-center gap-2">
+      <p>Ajoutez des boutons Event/Label dans le séquenceur pour alimenter la timeline.</p>
+    </div>
+  } @else {
+    <div class="flex min-h-0 flex-1">
+      <div class="border-subtle bg-layer-2 border-r" [style.width.px]="leftColumnWidthPx">
+        <div class="border-subtle h-9 border-b"></div>
+        <div class="relative h-[calc(100%-2.25rem)] overflow-hidden">
+          <div [style.transform]="'translateY(' + (-scrollTopPx()) + 'px)'">
+            @for (eventDef of facade.eventDefs(); track eventDef.id) {
+              <div class="border-subtle flex items-center border-b px-2 text-xs" [style.height.px]="rowHeightPx">{{ eventDef.name }}</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <div #timeScrollEl class="hide-scrollbar h-full overflow-auto" (scroll)="onMainScroll($event)">
+          <div class="relative" [style.width.px]="contentWidthPx()" [style.height.px]="contentHeightPx()">
+            <div
+              class="border-subtle bg-layer-2 sticky top-0 z-20 h-9 cursor-ew-resize border-b"
+              (mousedown)="onRulerPointerDown($event)"
+            >
+              @for (tick of rulerTicks(); track tick) {
+                <span class="border-subtle absolute top-0 h-full border-l text-[10px] text-muted" [style.left.px]="tick * 80">{{ tick }}s</span>
+              }
+              <span class="bg-timeline-playhead absolute top-0 h-full w-0.5" [style.left.px]="playheadLeftPx()"></span>
+            </div>
+
+            @for (eventDef of facade.eventDefs(); track eventDef.id; let rowIndex = $index) {
+              <div class="border-subtle absolute left-0 right-0 border-b" [style.top.px]="rulerHeightPx + rowIndex * rowHeightPx" [style.height.px]="rowHeightPx">
+                @for (occurrence of rowOccurrences(eventDef.id); track occurrence.id) {
+                  <div
+                    class="timeline-occurrence border-timeline-occurrence absolute top-1 h-8 cursor-pointer rounded border"
+                    [class.timeline-occurrence-selected]="facade.selectionIds().includes(occurrence.id)"
+                    [style.left.px]="occurrenceLeftPx(occurrence)"
+                    [style.width.px]="occurrenceWidthPx(occurrence)"
+                    [ngStyle]="occurrenceStyle(occurrence)"
+                    tabindex="0"
+                    (click)="onOccurrenceClick(occurrence.id, $event)"
+                    (keydown.enter)="onOccurrenceKeydown(occurrence.id, $event)"
+                  >
+                    <span class="timeline-occurrence-label">{{ eventDef.name }}</span>
+                    @let labelSummary = occurrenceLabelSummary(occurrence);
+                    @if (labelSummary.visible.length > 0) {
+                      <span class="timeline-occurrence-meta" [attr.title]="labelSummary.tooltip">
+                        {{ labelSummary.visible.join(', ') }}
+                        @if (labelSummary.hiddenCount > 0) {
+                          <span>+{{ labelSummary.hiddenCount }}</span>
+                        }
+                      </span>
+                    }
+                    <span class="timeline-resize-handle left" (mousedown)="startResize(occurrence, 'start', $event)"></span>
+                    <span class="timeline-resize-handle right" (mousedown)="startResize(occurrence, 'end', $event)"></span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-subtle bg-layer-2 flex items-center gap-2 border-t p-2 text-xs">
+      <span>Sélection : {{ facade.selectionIds().length }}</span>
+      <button class="btn-secondary" (click)="facade.toggleAllSelections()">
+        {{ facade.allOccurrencesSelected() ? 'Tout désélectionner' : 'Tout sélectionner' }}
+      </button>
+      <button class="btn-secondary" (click)="nudgeSelection(-100)">-100ms</button>
+      <button class="btn-secondary" (click)="nudgeSelection(100)">+100ms</button>
+      <button class="btn-secondary" (click)="nudgeSelection(-1000)">-1s</button>
+      <button class="btn-secondary" (click)="nudgeSelection(1000)">+1s</button>
+      <button class="btn-secondary" (click)="facade.shift(1000, 'SELECTION')">Shift +1s</button>
+      <button class="btn-secondary" (click)="facade.shift(1000, 'ALL')">Shift all +1s</button>
+      <button class="btn-secondary" (click)="facade.undoShiftOrAlign()" [disabled]="!facade.canUndoShiftOrAlign()">Annuler décalage</button>
+      <button class="btn-secondary" (click)="facade.undoRemove()" [disabled]="!facade.canUndoRemove()">Annuler suppression</button>
+    </div>
+  }
 </div>

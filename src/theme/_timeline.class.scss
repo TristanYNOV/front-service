@@ -1,0 +1,63 @@
+@use './variables/timeline.variables';
+
+.bg-timeline-occurrence {
+  background-color: var(--timeline-occurrence-bg);
+}
+
+.border-timeline-occurrence {
+  border-color: var(--timeline-occurrence-border);
+}
+
+.bg-timeline-playhead {
+  background-color: var(--timeline-playhead);
+}
+
+.timeline-occurrence {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding-inline: 8px;
+}
+
+.timeline-occurrence-selected {
+  outline: 1px solid var(--interactive-active-border);
+  outline-offset: 1px;
+}
+
+.timeline-occurrence-label {
+  position: relative;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeline-resize-handle {
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.timeline-resize-handle.left {
+  left: 0;
+}
+
+.timeline-resize-handle.right {
+  right: 0;
+}
+
+.timeline-occurrence-meta {
+  position: relative;
+  z-index: 1;
+  font-size: 10px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

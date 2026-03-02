@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { HotkeysService } from './hotkeys.service';
 import { VideoService } from './video.service';
+import { TimebaseService } from './timebase.service';
 
 class MockVideoService {
   readonly playbackRate = signal(1);
 
-  togglePlayPause = jasmine.createSpy('togglePlayPause');
   seekMs = jasmine.createSpy('seekMs');
   stepFrames = jasmine.createSpy('stepFrames');
   setRate = jasmine.createSpy('setRate');
@@ -23,17 +23,18 @@ const dispatchKeydown = (options: KeyboardEventInit) => {
 
 describe('HotkeysService', () => {
   let service: HotkeysService;
-  let videoService: MockVideoService;
+  let timebaseService: { playPause: jasmine.Spy };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         HotkeysService,
         { provide: VideoService, useClass: MockVideoService },
+        { provide: TimebaseService, useValue: { playPause: jasmine.createSpy('playPause') } },
       ],
     });
     service = TestBed.inject(HotkeysService);
-    videoService = TestBed.inject(VideoService) as unknown as MockVideoService;
+    timebaseService = TestBed.inject(TimebaseService) as unknown as { playPause: jasmine.Spy };
   });
 
   afterEach(() => {
@@ -46,7 +47,7 @@ describe('HotkeysService', () => {
 
     dispatchKeydown({ key: ' ', code: 'Space' });
 
-    expect(videoService.togglePlayPause).toHaveBeenCalled();
+    expect(timebaseService.playPause).toHaveBeenCalled();
   });
 
   it('ignores hotkeys while typing in inputs or contenteditable', () => {
@@ -58,7 +59,7 @@ describe('HotkeysService', () => {
     input.focus();
 
     dispatchKeydown({ key: ' ', code: 'Space' });
-    expect(videoService.togglePlayPause).not.toHaveBeenCalled();
+    expect(timebaseService.playPause).not.toHaveBeenCalled();
 
     input.blur();
     input.remove();
@@ -69,7 +70,7 @@ describe('HotkeysService', () => {
     editable.focus();
 
     dispatchKeydown({ key: ' ', code: 'Space' });
-    expect(videoService.togglePlayPause).not.toHaveBeenCalled();
+    expect(timebaseService.playPause).not.toHaveBeenCalled();
 
     editable.remove();
   });
@@ -183,10 +184,10 @@ describe('HotkeysService', () => {
     service.enable();
 
     dispatchKeydown({ key: ' ', code: 'Space' });
-    expect(videoService.togglePlayPause).toHaveBeenCalledTimes(1);
+    expect(timebaseService.playPause).toHaveBeenCalledTimes(1);
 
     service.disable();
     dispatchKeydown({ key: ' ', code: 'Space' });
-    expect(videoService.togglePlayPause).toHaveBeenCalledTimes(1);
+    expect(timebaseService.playPause).toHaveBeenCalledTimes(1);
   });
 });

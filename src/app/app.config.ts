@@ -11,6 +11,7 @@ import { dataStateReducer } from './store/Data/dataState.reducers';
 import { userReducer } from './store/User/user.reducer';
 import { UserEffects } from './store/User/user.effects';
 import { DataEffects } from './store/Data/dataState.effects';
+import { timelineReducer } from './store/Timeline/timeline.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,7 +21,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideStore({
       dataState: dataStateReducer,
-      userState: userReducer
+      userState: userReducer,
+      timelineState: timelineReducer
     }),
     provideEffects(UserEffects, DataEffects),
     provideHttpClient()

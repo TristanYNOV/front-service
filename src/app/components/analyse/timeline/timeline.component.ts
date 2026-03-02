@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -13,6 +13,7 @@ import { TimebaseService } from '../../../core/services/timebase.service';
 import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interface';
 import { TimelineLabelsDialogComponent } from './timeline-labels-dialog.component';
 import { getReadableTextColor } from '../../../utils/color/color-contrast.utils';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-timeline',
@@ -23,10 +24,12 @@ import { getReadableTextColor } from '../../../utils/color/color-contrast.utils'
 })
 export class TimelineComponent implements OnDestroy {
   @ViewChild('timeScrollEl', { static: false }) timeScrollElRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('timelineRoot', { static: false }) timelineRootRef?: ElementRef<HTMLDivElement>;
 
   readonly facade = inject(TimelineFacadeService);
   readonly timebase = inject(TimebaseService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmDialogService = inject(ConfirmDialogService);
 
   readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
   readonly rulerHeightPx = 36;
@@ -34,6 +37,7 @@ export class TimelineComponent implements OnDestroy {
   readonly pxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
 
   readonly scrollTopPx = signal(0);
+  readonly timelineHasFocus = signal(false);
 
   private readonly isProgrammaticScrollSignal = signal(false);
   private programmaticScrollTimeoutId?: number;
@@ -49,6 +53,8 @@ export class TimelineComponent implements OnDestroy {
   });
 
   readonly selectedCount = computed(() => this.facade.selectionIds().length);
+  readonly selectionContainsOpen = computed(() => this.selectedOccurrences().some(occurrence => occurrence.isOpen));
+  readonly canDeleteSelection = computed(() => this.selectedCount() > 0 && !this.selectionContainsOpen());
 
   private readonly labelNameById = computed(() =>
     this.facade.labelDefs().reduce<Record<string, string>>((accumulator, definition) => {
@@ -90,6 +96,62 @@ export class TimelineComponent implements OnDestroy {
     }
   }
 
+  @HostListener('document:mousedown', ['$event'])
+  onDocumentMouseDown(event: MouseEvent) {
+    const timelineRoot = this.timelineRootRef?.nativeElement;
+    if (!timelineRoot) {
+      return;
+    }
+
+    const target = event.target;
+    if (!(target instanceof Node) || !timelineRoot.contains(target)) {
+      this.timelineHasFocus.set(false);
+    }
+  }
+
+  onTimelineFocusIn() {
+    this.timelineHasFocus.set(true);
+  }
+
+  onTimelineFocusOut() {
+    const timelineRoot = this.timelineRootRef?.nativeElement;
+    if (!timelineRoot || typeof document === 'undefined') {
+      this.timelineHasFocus.set(false);
+      return;
+    }
+
+    const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement) || !timelineRoot.contains(activeElement)) {
+      this.timelineHasFocus.set(false);
+    }
+  }
+
+  onTimelinePointerDown(event: MouseEvent) {
+    const timelineRoot = this.timelineRootRef?.nativeElement;
+    if (!timelineRoot || this.isTextInputTarget(event.target)) {
+      return;
+    }
+
+    timelineRoot.focus();
+    this.timelineHasFocus.set(true);
+  }
+
+  async onTimelineKeydown(event: KeyboardEvent) {
+    const isDeleteKey =
+      event.key === 'Backspace' ||
+      event.key === 'Delete' ||
+      event.code === 'Backspace' ||
+      event.code === 'Delete';
+
+    if (!isDeleteKey || !this.timelineHasFocus() || this.isTextInputTarget(event.target) || !this.canDeleteSelection()) {
+      return;
+    }
+
+    // Backspace = Delete sur clavier Mac.
+    event.preventDefault();
+    await this.deleteSelection();
+  }
+
   onMainScroll(event: Event) {
     const target = event.target as HTMLDivElement;
     this.scrollTopPx.set(target.scrollTop);
@@ -98,6 +160,38 @@ export class TimelineComponent implements OnDestroy {
     if (!this.isProgrammaticScrollSignal() && this.timebase.isPlaying() && this.facade.autoFollow()) {
       this.facade.setAutoFollow(false);
     }
+  }
+
+  async deleteSelection() {
+    if (!this.canDeleteSelection()) {
+      return;
+    }
+
+    const selectedIds = this.selectedOccurrences().map(occurrence => occurrence.id);
+    const count = selectedIds.length;
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Confirmer la suppression',
+      message:
+        count === 1
+          ? 'Voulez-vous supprimer cette occurrence ?'
+          : `Voulez-vous supprimer ces ${count} occurrences ?`,
+      confirmLabel: 'Supprimer',
+      cancelLabel: 'Annuler',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.facade.removeSelectedOccurrences(selectedIds);
+  }
+
+  deleteSelectionTooltip() {
+    if (this.selectionContainsOpen()) {
+      return 'Impossible de supprimer une occurrence en cours. Terminez l’événement d’abord.';
+    }
+
+    return `Supprimer la sélection (${this.selectedCount()})`;
   }
 
   onRulerPointerDown(event: MouseEvent) {
@@ -255,6 +349,17 @@ export class TimelineComponent implements OnDestroy {
     });
     this.facade.setScroll(targetLeft, timeScrollEl.scrollTop);
     this.facade.setAutoFollow(true);
+  }
+
+  private isTextInputTarget(target: EventTarget | null) {
+    if (!(target instanceof HTMLElement)) {
+      return false;
+    }
+    const tagName = target.tagName.toLowerCase();
+    if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
+      return true;
+    }
+    return target.isContentEditable;
   }
 
   private withOpacity(hex: string, opacity: number) {

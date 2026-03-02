@@ -25,6 +25,10 @@ export const updateOccurrenceTiming = createAction(
 
 export const removeOccurrence = createAction('[Timeline] Remove Occurrence', props<{ id: string }>());
 
+export const removeOccurrences = createAction('[Timeline] Remove Occurrences', props<{ occurrenceIds: string[] }>());
+
+export const undoRemoveOccurrences = createAction('[Timeline] Undo Remove Occurrences');
+
 export const setSelection = createAction('[Timeline] Set Selection', props<{ ids: string[] }>());
 
 export const setUiScroll = createAction('[Timeline] Set Ui Scroll', props<{ scrollX: number; scrollY: number }>());

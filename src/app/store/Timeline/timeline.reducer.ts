@@ -13,6 +13,7 @@ import {
   initTimeline,
   removeLabelFromSelection,
   removeOccurrence,
+  removeOccurrences,
   setAutoFollow,
   setSelection,
   setUiScroll,
@@ -24,6 +25,7 @@ import {
   timelineRuntimeLabelRemove,
   timelineRuntimeOnceTriggered,
   undoLastShiftOrAlign,
+  undoRemoveOccurrences,
   updateOccurrenceTiming,
   upsertDefinitions,
 } from './timeline.actions';
@@ -37,6 +39,10 @@ export interface TimelineState {
   ui: TimelineUiState;
   lastShiftDeltaMs: number | null;
   openOccurrenceByEventBtnId: Record<string, string>;
+  lastRemoved: {
+    occurrences: TimelineOccurrence[];
+    selectionBefore: string[];
+  } | null;
 }
 
 export const initialTimelineState: TimelineState = {
@@ -60,6 +66,7 @@ export const initialTimelineState: TimelineState = {
   },
   lastShiftDeltaMs: null,
   openOccurrenceByEventBtnId: {},
+  lastRemoved: null,
 };
 
 export const timelineReducer = createReducer(
@@ -71,6 +78,7 @@ export const timelineReducer = createReducer(
     ui: { ...state.ui },
     lastShiftDeltaMs: null,
     openOccurrenceByEventBtnId: {},
+    lastRemoved: null,
   })),
   on(upsertDefinitions, (state, { definitions }) => ({ ...state, definitions })),
   on(addOccurrence, (state, { occurrence }) => ({
@@ -92,14 +100,26 @@ export const timelineReducer = createReducer(
       };
     }),
   })),
-  on(removeOccurrence, (state, { id }) => ({
-    ...state,
-    occurrences: state.occurrences.filter(occurrence => occurrence.id !== id),
-    ui: {
-      ...state.ui,
-      selectedOccurrenceIds: state.ui.selectedOccurrenceIds.filter(selectedId => selectedId !== id),
-    },
-  })),
+  on(removeOccurrence, (state, { id }) => removeOccurrencesReducer(state, [id])),
+  on(removeOccurrences, (state, { occurrenceIds }) => removeOccurrencesReducer(state, occurrenceIds)),
+  on(undoRemoveOccurrences, state => {
+    if (!state.lastRemoved) {
+      return state;
+    }
+
+    const existingIds = new Set(state.occurrences.map(occurrence => occurrence.id));
+    const restoredOccurrences = state.lastRemoved.occurrences.filter(occurrence => !existingIds.has(occurrence.id));
+
+    return {
+      ...state,
+      occurrences: [...state.occurrences, ...restoredOccurrences],
+      ui: {
+        ...state.ui,
+        selectedOccurrenceIds: [...state.lastRemoved.selectionBefore],
+      },
+      lastRemoved: null,
+    };
+  }),
   on(setSelection, (state, { ids }) => ({ ...state, ui: { ...state.ui, selectedOccurrenceIds: ids } })),
   on(setUiScroll, (state, { scrollX, scrollY }) => ({ ...state, ui: { ...state.ui, scrollX, scrollY } })),
   on(setAutoFollow, (state, { enabled }) => ({ ...state, ui: { ...state.ui, autoFollow: enabled } })),
@@ -371,6 +391,48 @@ function resolveOccurrenceIdForEventBtnId(state: TimelineState, eventBtnId: stri
   }, intersectingOccurrences[0]);
 
   return latestIntersectingOccurrence.id;
+}
+
+function removeOccurrencesReducer(state: TimelineState, occurrenceIds: string[]): TimelineState {
+  if (!occurrenceIds.length) {
+    return state;
+  }
+
+  const targetIds = new Set(occurrenceIds);
+  const removedOccurrences = state.occurrences.filter(occurrence => targetIds.has(occurrence.id));
+  if (!removedOccurrences.length) {
+    return state;
+  }
+  if (removedOccurrences.some(occurrence => occurrence.isOpen)) {
+    return state;
+  }
+
+  const removedIdsSet = new Set(removedOccurrences.map(occurrence => occurrence.id));
+  const nextOccurrences = state.occurrences.filter(occurrence => !removedIdsSet.has(occurrence.id));
+
+  const nextOpenOccurrenceByEventBtnId = Object.entries(state.openOccurrenceByEventBtnId).reduce<Record<string, string>>(
+    (accumulator, [eventBtnId, occurrenceId]) => {
+      if (!removedIdsSet.has(occurrenceId)) {
+        accumulator[eventBtnId] = occurrenceId;
+      }
+      return accumulator;
+    },
+    {},
+  );
+
+  return {
+    ...state,
+    occurrences: nextOccurrences,
+    ui: {
+      ...state.ui,
+      selectedOccurrenceIds: state.ui.selectedOccurrenceIds.filter(selectedId => !removedIdsSet.has(selectedId)),
+    },
+    openOccurrenceByEventBtnId: nextOpenOccurrenceByEventBtnId,
+    lastRemoved: {
+      occurrences: removedOccurrences.map(occurrence => ({ ...occurrence, labelIds: [...occurrence.labelIds] })),
+      selectionBefore: [...state.ui.selectedOccurrenceIds],
+    },
+  };
 }
 
 

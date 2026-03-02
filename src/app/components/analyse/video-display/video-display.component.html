@@ -1,4 +1,4 @@
-<section class="bg-layer-0 text-default flex h-full w-full flex-col gap-1 p-2 text-xs">
+<section class="bg-layer-0 text-default flex h-full w-full min-h-0 min-w-0 flex-col gap-1 p-2 text-xs">
   <div class="flex justify-around">
     <p class="font-semibold">
       {{ videoName() ?? 'Aucune vidéo chargée' }}
@@ -8,11 +8,11 @@
     }
   </div>
 
-  <div class="flex flex-1 flex-col">
-    <div class="relative flex flex-1 items-center">
+  <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+    <div class="relative min-h-0 min-w-0 flex-1 overflow-hidden">
       <video
         #videoElement
-        class="h-full w-full object-contain"
+        class="absolute inset-0 block h-full w-full min-h-0 min-w-0 object-contain"
         (loadedmetadata)="onVideoLoaded()"
         (error)="onVideoError()"
       >
@@ -33,7 +33,7 @@
       }
     </div>
 
-    <div class="flex flex-wrap items-center">
+    <div class="flex min-w-0 flex-wrap items-center">
       <input
         #fileInput
         type="file"
@@ -65,9 +65,9 @@
         </button>
       </div>
 
-      <div class="flex flex-1 items-center gap-2">
+      <div class="flex min-w-0 flex-1 items-center gap-2">
         <p>{{ formatDuration(videoService.positionMs()) }}</p>
-        <div class="flex flex-1 items-center">
+        <div class="flex min-w-0 flex-1 items-center">
           <input
             type="range"
             class="w-full"

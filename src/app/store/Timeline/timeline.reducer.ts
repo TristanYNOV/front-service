@@ -17,8 +17,11 @@ import {
   setSelection,
   setUiScroll,
   shiftTimeline,
+  toggleOccurrenceLabel,
   timelineRuntimeIndefiniteEnd,
   timelineRuntimeIndefiniteStart,
+  timelineRuntimeLabelApply,
+  timelineRuntimeLabelRemove,
   timelineRuntimeOnceTriggered,
   undoLastShiftOrAlign,
   updateOccurrenceTiming,
@@ -64,12 +67,16 @@ export const timelineReducer = createReducer(
   on(initTimeline, (state, payload) => ({
     ...state,
     ...payload,
+    occurrences: payload.occurrences.map(occurrence => ({ ...occurrence, labelIds: occurrence.labelIds ?? [] })),
     ui: { ...state.ui },
     lastShiftDeltaMs: null,
     openOccurrenceByEventBtnId: {},
   })),
   on(upsertDefinitions, (state, { definitions }) => ({ ...state, definitions })),
-  on(addOccurrence, (state, { occurrence }) => ({ ...state, occurrences: [...state.occurrences, occurrence] })),
+  on(addOccurrence, (state, { occurrence }) => ({
+    ...state,
+    occurrences: [...state.occurrences, { ...occurrence, labelIds: occurrence.labelIds ?? [] }],
+  })),
   on(updateOccurrenceTiming, (state, { id, startMs, endMs, isOpen }) => ({
     ...state,
     occurrences: state.occurrences.map(occurrence => {
@@ -116,6 +123,27 @@ export const timelineReducer = createReducer(
         : occurrence,
     ),
   })),
+  on(toggleOccurrenceLabel, (state, { occurrenceId, labelId }) => ({
+    ...state,
+    occurrences: state.occurrences.map(occurrence => {
+      if (occurrence.id !== occurrenceId) {
+        return occurrence;
+      }
+
+      const hasLabel = occurrence.labelIds.includes(labelId);
+      return {
+        ...occurrence,
+        labelIds: hasLabel ? occurrence.labelIds.filter(id => id !== labelId) : [...occurrence.labelIds, labelId],
+        updatedAtIso: new Date().toISOString(),
+      };
+    }),
+  })),
+  on(timelineRuntimeLabelApply, (state, { labelBtnId, targetEventBtnIds, atMs }) =>
+    applyRuntimeLabelChange(state, labelBtnId, targetEventBtnIds, atMs, 'apply'),
+  ),
+  on(timelineRuntimeLabelRemove, (state, { labelBtnId, targetEventBtnIds, atMs }) =>
+    applyRuntimeLabelChange(state, labelBtnId, targetEventBtnIds, atMs, 'remove'),
+  ),
   on(shiftTimeline, (state, { deltaMs, scope }) => ({
     ...state,
     occurrences: shiftOccurrences(state.occurrences, deltaMs, scope, state.ui.selectedOccurrenceIds),
@@ -144,7 +172,7 @@ export const timelineReducer = createReducer(
     };
   }),
 
-  on(timelineRuntimeOnceTriggered, (state, { eventBtnId, atMs }) => {
+  on(timelineRuntimeOnceTriggered, (state, { eventBtnId, atMs, activeLabelBtnIds }) => {
     const eventDef = state.definitions.eventDefs.find(definition => definition.sourceSequencerBtnId === eventBtnId);
     const preMs = eventDef?.preMs ?? TIMELINE_DEFAULT_PRE_MS;
     const postMs = eventDef?.postMs ?? TIMELINE_DEFAULT_POST_MS;
@@ -157,7 +185,7 @@ export const timelineReducer = createReducer(
       eventDefId: eventDef?.id ?? eventBtnId,
       startMs: normalized.startMs,
       endMs,
-      labelIds: [],
+      labelIds: mergeLabelIds([], activeLabelBtnIds),
       createdAtIso,
       updatedAtIso: createdAtIso,
       isOpen: false,
@@ -168,7 +196,7 @@ export const timelineReducer = createReducer(
       occurrences: [...state.occurrences, occurrence],
     };
   }),
-  on(timelineRuntimeIndefiniteStart, (state, { eventBtnId, atMs }) => {
+  on(timelineRuntimeIndefiniteStart, (state, { eventBtnId, atMs, activeLabelBtnIds }) => {
     if (state.openOccurrenceByEventBtnId[eventBtnId]) {
       return state;
     }
@@ -184,7 +212,7 @@ export const timelineReducer = createReducer(
       eventDefId: eventDef?.id ?? eventBtnId,
       startMs,
       endMs,
-      labelIds: [],
+      labelIds: mergeLabelIds([], activeLabelBtnIds),
       createdAtIso,
       updatedAtIso: createdAtIso,
       isOpen: true,
@@ -199,7 +227,7 @@ export const timelineReducer = createReducer(
       },
     };
   }),
-  on(timelineRuntimeIndefiniteEnd, (state, { eventBtnId, atMs }) => {
+  on(timelineRuntimeIndefiniteEnd, (state, { eventBtnId, atMs, activeLabelBtnIds }) => {
     const occurrenceId = state.openOccurrenceByEventBtnId[eventBtnId];
     if (!occurrenceId) {
       return state;
@@ -226,10 +254,129 @@ export const timelineReducer = createReducer(
       ...state,
       occurrences: state.occurrences.map(item =>
         item.id === occurrenceId
-          ? { ...item, startMs: normalized.startMs, endMs, isOpen: false, updatedAtIso: new Date().toISOString() }
+          ? {
+              ...item,
+              startMs: normalized.startMs,
+              endMs,
+              labelIds: mergeLabelIds(item.labelIds, activeLabelBtnIds),
+              isOpen: false,
+              updatedAtIso: new Date().toISOString(),
+            }
           : item,
       ),
       openOccurrenceByEventBtnId: nextMap,
     };
   }),
 );
+
+
+type RuntimeLabelOperation = 'apply' | 'remove';
+
+function applyRuntimeLabelChange(
+  state: TimelineState,
+  labelBtnId: string,
+  targetEventBtnIds: string[],
+  atMs: number,
+  operation: RuntimeLabelOperation,
+): TimelineState {
+  if (!targetEventBtnIds.length) {
+    return state;
+  }
+
+  const targetOccurrenceIds = Array.from(
+    new Set(
+      targetEventBtnIds
+        .map(eventBtnId => resolveOccurrenceIdForEventBtnId(state, eventBtnId, atMs))
+        .filter((occurrenceId): occurrenceId is string => Boolean(occurrenceId)),
+    ),
+  );
+
+  if (!targetOccurrenceIds.length) {
+    return state;
+  }
+
+  const targetOccurrenceIdsSet = new Set(targetOccurrenceIds);
+  let hasChanges = false;
+
+  const nextOccurrences = state.occurrences.map(occurrence => {
+    if (!targetOccurrenceIdsSet.has(occurrence.id)) {
+      return occurrence;
+    }
+
+    const hasLabel = occurrence.labelIds.includes(labelBtnId);
+    if (operation === 'apply' && hasLabel) {
+      return occurrence;
+    }
+    if (operation === 'remove' && !hasLabel) {
+      return occurrence;
+    }
+
+    hasChanges = true;
+    return {
+      ...occurrence,
+      labelIds:
+        operation === 'apply'
+          ? [...occurrence.labelIds, labelBtnId]
+          : occurrence.labelIds.filter(labelId => labelId !== labelBtnId),
+      updatedAtIso: new Date().toISOString(),
+    };
+  });
+
+  if (!hasChanges) {
+    return state;
+  }
+
+  return {
+    ...state,
+    occurrences: nextOccurrences,
+  };
+}
+
+function resolveOccurrenceIdForEventBtnId(state: TimelineState, eventBtnId: string, atMs: number): string | undefined {
+  const openOccurrenceId = state.openOccurrenceByEventBtnId[eventBtnId];
+  if (openOccurrenceId && state.occurrences.some(occurrence => occurrence.id === openOccurrenceId)) {
+    return openOccurrenceId;
+  }
+
+  const eventDef = state.definitions.eventDefs.find(definition => definition.sourceSequencerBtnId === eventBtnId);
+  if (!eventDef) {
+    return undefined;
+  }
+
+  const intersectingOccurrences = state.occurrences.filter(
+    occurrence =>
+      occurrence.eventDefId === eventDef.id &&
+      occurrence.startMs <= atMs &&
+      atMs <= occurrence.endMs,
+  );
+
+  if (!intersectingOccurrences.length) {
+    return undefined;
+  }
+
+  const latestIntersectingOccurrence = intersectingOccurrences.reduce((latest, occurrence) => {
+    if (!latest) {
+      return occurrence;
+    }
+
+    if (occurrence.endMs > latest.endMs) {
+      return occurrence;
+    }
+
+    if (occurrence.endMs === latest.endMs && occurrence.startMs > latest.startMs) {
+      return occurrence;
+    }
+
+    return latest;
+  }, intersectingOccurrences[0]);
+
+  return latestIntersectingOccurrence.id;
+}
+
+
+function mergeLabelIds(baseLabelIds: string[], additionalLabelIds: string[]): string[] {
+  if (!additionalLabelIds.length) {
+    return baseLabelIds;
+  }
+  return Array.from(new Set([...baseLabelIds, ...additionalLabelIds]));
+}

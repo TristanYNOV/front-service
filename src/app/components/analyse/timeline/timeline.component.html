@@ -5,6 +5,17 @@
     <button class="btn-secondary" (click)="facade.setAutoFollow(!facade.autoFollow())">Auto-follow {{ facade.autoFollow() ? 'ON' : 'OFF' }}</button>
     <button class="btn-secondary" (click)="recenter()">Recentrer</button>
     <button class="btn-secondary" (click)="facade.playSelection()">Play selection</button>
+
+    <button
+      class="btn-secondary ml-auto flex items-center justify-center"
+      type="button"
+      aria-label="Modifier les labels"
+      [attr.title]="labelsEditTooltip()"
+      [disabled]="selectedCount() !== 1"
+      (click)="openLabelsDialog()"
+    >
+      <mat-icon>new_label</mat-icon>
+    </button>
   </div>
 
   @if (facade.eventDefs().length === 0) {
@@ -51,6 +62,15 @@
                     (keydown.enter)="onOccurrenceKeydown(occurrence.id, $event)"
                   >
                     <span class="timeline-occurrence-label">{{ eventDef.name }}</span>
+                    @let labelSummary = occurrenceLabelSummary(occurrence);
+                    @if (labelSummary.visible.length > 0) {
+                      <span class="timeline-occurrence-meta" [attr.title]="labelSummary.tooltip">
+                        {{ labelSummary.visible.join(', ') }}
+                        @if (labelSummary.hiddenCount > 0) {
+                          <span>+{{ labelSummary.hiddenCount }}</span>
+                        }
+                      </span>
+                    }
                     <span class="timeline-resize-handle left" (mousedown)="startResize(occurrence, 'start', $event)"></span>
                     <span class="timeline-resize-handle right" (mousedown)="startResize(occurrence, 'end', $event)"></span>
                   </div>

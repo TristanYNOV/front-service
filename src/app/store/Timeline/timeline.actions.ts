@@ -33,6 +33,22 @@ export const addLabelToSelection = createAction('[Timeline] Add Label To Selecti
 
 export const removeLabelFromSelection = createAction('[Timeline] Remove Label From Selection', props<{ labelId: string }>());
 
+export const toggleOccurrenceLabel = createAction(
+  '[Timeline] Toggle Occurrence Label',
+  props<{ occurrenceId: string; labelId: string }>(),
+);
+
+
+export const timelineRuntimeLabelApply = createAction(
+  '[Timeline Runtime] Label Apply',
+  props<{ labelBtnId: string; targetEventBtnIds: string[]; atMs: number; timestamp: number }>(),
+);
+
+export const timelineRuntimeLabelRemove = createAction(
+  '[Timeline Runtime] Label Remove',
+  props<{ labelBtnId: string; targetEventBtnIds: string[]; atMs: number; timestamp: number }>(),
+);
+
 export const shiftTimeline = createAction('[Timeline] Shift', props<{ deltaMs: number; scope: TimelineShiftScope }>());
 
 export const alignToCurrentTimebase = createAction(
@@ -46,15 +62,15 @@ export const setAutoFollow = createAction('[Timeline] Set Auto Follow', props<{ 
 
 export const timelineRuntimeIndefiniteStart = createAction(
   '[Timeline Runtime] Indefinite Start',
-  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+  props<{ eventBtnId: string; atMs: number; timestamp: number; activeLabelBtnIds: string[] }>(),
 );
 
 export const timelineRuntimeIndefiniteEnd = createAction(
   '[Timeline Runtime] Indefinite End',
-  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+  props<{ eventBtnId: string; atMs: number; timestamp: number; activeLabelBtnIds: string[] }>(),
 );
 
 export const timelineRuntimeOnceTriggered = createAction(
   '[Timeline Runtime] Once Triggered',
-  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+  props<{ eventBtnId: string; atMs: number; timestamp: number; activeLabelBtnIds: string[] }>(),
 );

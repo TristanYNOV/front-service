@@ -109,6 +109,15 @@ export class SequencerRuntimeService {
     return this.hasActiveId(btnId);
   }
 
+
+  getActiveIndefiniteLabelIds() {
+    const ids = new Set(this.activeIndefiniteIdsSignal());
+    return this.panelService
+      .btnList()
+      .filter(btn => btn.type === 'label' && btn.labelProps.mode === 'indefinite' && ids.has(btn.id))
+      .map(btn => btn.id);
+  }
+
   private pushRuntimeEvent(event: Omit<SequencerRuntimeEvent, 'seq'>) {
     const enrichedEvent: SequencerRuntimeEvent = { ...event, seq: ++this.runtimeSeq };
     this.recentRuntimeEventsSignal.set([enrichedEvent, ...this.recentRuntimeEventsSignal()].slice(0, 200));

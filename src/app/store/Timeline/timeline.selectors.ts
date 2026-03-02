@@ -17,3 +17,10 @@ export const selectTimelineAllOccurrencesSelected = createSelector(
   selectTimelineSelectionIds,
   (occurrences, selectionIds) => occurrences.length > 0 && selectionIds.length === occurrences.length,
 );
+
+export const selectTimelineLabelDefsById = createSelector(selectTimelineLabelDefs, labelDefs =>
+  labelDefs.reduce<Record<string, string>>((accumulator, definition) => {
+    accumulator[definition.id] = definition.name;
+    return accumulator;
+  }, {}),
+);

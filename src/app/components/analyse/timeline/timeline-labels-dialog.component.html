@@ -1,0 +1,27 @@
+<h2 mat-dialog-title class="bg-layer-3 text-default m-0 text-center">Labels</h2>
+
+<mat-dialog-content class="bg-layer-3 text-default flex flex-col gap-2 pt-3">
+  <input
+    class="bg-layer-2 border-subtle text-default w-full rounded border px-2 py-1 text-sm"
+    type="text"
+    placeholder="Rechercher un label"
+    [ngModel]="search()"
+    (ngModelChange)="search.set($event)"
+  />
+
+  <div class="timeline-labels-dialog-list border-subtle bg-layer-2 rounded border p-2">
+    @if (filteredLabelDefs().length === 0) {
+      <p class="text-muted m-0 text-xs">Aucun label trouvé.</p>
+    } @else {
+      @for (labelDef of filteredLabelDefs(); track labelDef.id) {
+        <mat-checkbox [checked]="isChecked(labelDef.id)" (change)="onToggleLabel(labelDef.id)">
+          {{ labelDef.name }}
+        </mat-checkbox>
+      }
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="bg-layer-3 pb-3 pr-3">
+  <button class="btn-secondary" type="button" (click)="close()">Fermer</button>
+</mat-dialog-actions>

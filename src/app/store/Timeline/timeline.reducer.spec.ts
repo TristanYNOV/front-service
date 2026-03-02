@@ -1,6 +1,11 @@
 import { TIMELINE_MIN_DURATION_MS } from '../../interfaces/timeline/timeline-defaults.constants';
 import { TimelineState, initialTimelineState, timelineReducer } from './timeline.reducer';
-import { timelineRuntimeIndefiniteEnd, timelineRuntimeIndefiniteStart, timelineRuntimeOnceTriggered } from './timeline.actions';
+import {
+  timelineRuntimeIndefiniteEnd,
+  timelineRuntimeIndefiniteStart,
+  timelineRuntimeOnceTriggered,
+  toggleOccurrenceLabel,
+} from './timeline.actions';
 
 const baseState: TimelineState = {
   ...initialTimelineState,
@@ -120,5 +125,38 @@ describe('timelineReducer runtime indefinite actions', () => {
     expect(closedEvt2.openOccurrenceByEventBtnId['evt-1']).toBeUndefined();
     expect(closedEvt2.openOccurrenceByEventBtnId['evt-2']).toBeUndefined();
     expect(closedEvt2.occurrences.every(item => item.isOpen === false)).toBeTrue();
+  });
+});
+
+
+describe('timelineReducer label toggle', () => {
+  it('adds and removes a label id on the targeted occurrence', () => {
+    const stateWithOccurrence: TimelineState = {
+      ...baseState,
+      occurrences: [
+        {
+          id: 'occ-1',
+          eventDefId: 'def-1',
+          startMs: 0,
+          endMs: 1000,
+          labelIds: [],
+          createdAtIso: '2024-01-01T00:00:00.000Z',
+          updatedAtIso: '2024-01-01T00:00:00.000Z',
+          isOpen: false,
+        },
+      ],
+    };
+
+    const added = timelineReducer(
+      stateWithOccurrence,
+      toggleOccurrenceLabel({ occurrenceId: 'occ-1', labelId: 'label-1' }),
+    );
+    expect(added.occurrences[0].labelIds).toEqual(['label-1']);
+
+    const removed = timelineReducer(
+      added,
+      toggleOccurrenceLabel({ occurrenceId: 'occ-1', labelId: 'label-1' }),
+    );
+    expect(removed.occurrences[0].labelIds).toEqual([]);
   });
 });

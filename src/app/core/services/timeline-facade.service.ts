@@ -16,6 +16,7 @@ import {
   setSelection,
   setUiScroll,
   shiftTimeline,
+  toggleOccurrenceLabel,
   undoLastShiftOrAlign,
   updateOccurrenceTiming,
   upsertDefinitions,
@@ -25,6 +26,7 @@ import {
   selectTimelineAutoFollow,
   selectTimelineCanUndoShiftAlign,
   selectTimelineEventDefs,
+  selectTimelineLabelDefs,
   selectTimelineOccurrences,
   selectTimelineScroll,
   selectTimelineSelectionIds,
@@ -39,6 +41,7 @@ export class TimelineFacadeService {
   private readonly sequencerPanelService = inject(SequencerPanelService);
 
   readonly eventDefs = this.store.selectSignal(selectTimelineEventDefs);
+  readonly labelDefs = this.store.selectSignal(selectTimelineLabelDefs);
   readonly occurrences = this.store.selectSignal(selectTimelineOccurrences);
   readonly selectionIds = this.store.selectSignal(selectTimelineSelectionIds);
   readonly uiScroll = this.store.selectSignal(selectTimelineScroll);
@@ -91,6 +94,10 @@ export class TimelineFacadeService {
       current.add(id);
     }
     this.setSelection(Array.from(current));
+  }
+
+  toggleOccurrenceLabel(occurrenceId: string, labelId: string) {
+    this.store.dispatch(toggleOccurrenceLabel({ occurrenceId, labelId }));
   }
 
   updateOccurrenceTiming(id: string, startMs: number, endMs: number, isOpen?: boolean) {

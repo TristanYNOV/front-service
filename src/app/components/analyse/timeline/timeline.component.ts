@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import {
   TIMELINE_AUTO_FOLLOW_COMFORT_ZONE,
   TIMELINE_AUTO_FOLLOW_TARGET_RATIO,
@@ -9,12 +11,13 @@ import {
 import { TimelineFacadeService } from '../../../core/services/timeline-facade.service';
 import { TimebaseService } from '../../../core/services/timebase.service';
 import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interface';
+import { TimelineLabelsDialogComponent } from './timeline-labels-dialog.component';
 import { getReadableTextColor } from '../../../utils/color/color-contrast.utils';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })
@@ -23,6 +26,7 @@ export class TimelineComponent implements OnDestroy {
 
   readonly facade = inject(TimelineFacadeService);
   readonly timebase = inject(TimebaseService);
+  private readonly dialog = inject(MatDialog);
 
   readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
   readonly rulerHeightPx = 36;
@@ -43,6 +47,15 @@ export class TimelineComponent implements OnDestroy {
     const selectedIds = new Set(this.facade.selectionIds());
     return this.facade.occurrences().filter(occurrence => selectedIds.has(occurrence.id));
   });
+
+  readonly selectedCount = computed(() => this.facade.selectionIds().length);
+
+  private readonly labelNameById = computed(() =>
+    this.facade.labelDefs().reduce<Record<string, string>>((accumulator, definition) => {
+      accumulator[definition.id] = definition.name;
+      return accumulator;
+    }, {}),
+  );
 
   constructor() {
     effect(() => {
@@ -153,6 +166,30 @@ export class TimelineComponent implements OnDestroy {
     window.addEventListener('mouseup', up);
   }
 
+  openLabelsDialog() {
+    if (this.selectedCount() !== 1) {
+      return;
+    }
+
+    const selectedOccurrence = this.selectedOccurrences()[0];
+    if (!selectedOccurrence) {
+      return;
+    }
+
+    this.dialog.open(TimelineLabelsDialogComponent, {
+      data: {
+        occurrenceId: selectedOccurrence.id,
+        selectedLabelIds: [...selectedOccurrence.labelIds],
+        labelDefs: this.facade.labelDefs().map(definition => ({ id: definition.id, name: definition.name })),
+        toggleLabel: (occurrenceId: string, labelId: string) => this.facade.toggleOccurrenceLabel(occurrenceId, labelId),
+      },
+    });
+  }
+
+  labelsEditTooltip() {
+    return this.selectedCount() === 1 ? 'Modifier les labels' : 'Disponible uniquement pour une sélection unique';
+  }
+
   nudgeSelection(deltaMs: number) {
     this.selectedOccurrences().forEach(occurrence => {
       this.facade.updateOccurrenceTiming(
@@ -176,6 +213,20 @@ export class TimelineComponent implements OnDestroy {
 
   occurrenceLeftPx(occurrence: TimelineOccurrence) {
     return occurrence.startMs * this.pxPerMs;
+  }
+
+  occurrenceLabelSummary(occurrence: TimelineOccurrence) {
+    const labelNames = this.occurrenceLabelNames(occurrence);
+    return {
+      visible: labelNames.slice(0, 2),
+      hiddenCount: Math.max(0, labelNames.length - 2),
+      tooltip: labelNames.join(', '),
+    };
+  }
+
+  private occurrenceLabelNames(occurrence: TimelineOccurrence) {
+    const labelNameById = this.labelNameById();
+    return occurrence.labelIds.map(id => labelNameById[id]).filter((name): name is string => Boolean(name));
   }
 
   occurrenceStyle(occurrence: TimelineOccurrence) {

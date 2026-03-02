@@ -33,6 +33,11 @@ export const addLabelToSelection = createAction('[Timeline] Add Label To Selecti
 
 export const removeLabelFromSelection = createAction('[Timeline] Remove Label From Selection', props<{ labelId: string }>());
 
+export const toggleOccurrenceLabel = createAction(
+  '[Timeline] Toggle Occurrence Label',
+  props<{ occurrenceId: string; labelId: string }>(),
+);
+
 export const shiftTimeline = createAction('[Timeline] Shift', props<{ deltaMs: number; scope: TimelineShiftScope }>());
 
 export const alignToCurrentTimebase = createAction(

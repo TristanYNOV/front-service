@@ -17,6 +17,7 @@ import {
   setSelection,
   setUiScroll,
   shiftTimeline,
+  toggleOccurrenceLabel,
   timelineRuntimeIndefiniteEnd,
   timelineRuntimeIndefiniteStart,
   timelineRuntimeOnceTriggered,
@@ -64,12 +65,16 @@ export const timelineReducer = createReducer(
   on(initTimeline, (state, payload) => ({
     ...state,
     ...payload,
+    occurrences: payload.occurrences.map(occurrence => ({ ...occurrence, labelIds: occurrence.labelIds ?? [] })),
     ui: { ...state.ui },
     lastShiftDeltaMs: null,
     openOccurrenceByEventBtnId: {},
   })),
   on(upsertDefinitions, (state, { definitions }) => ({ ...state, definitions })),
-  on(addOccurrence, (state, { occurrence }) => ({ ...state, occurrences: [...state.occurrences, occurrence] })),
+  on(addOccurrence, (state, { occurrence }) => ({
+    ...state,
+    occurrences: [...state.occurrences, { ...occurrence, labelIds: occurrence.labelIds ?? [] }],
+  })),
   on(updateOccurrenceTiming, (state, { id, startMs, endMs, isOpen }) => ({
     ...state,
     occurrences: state.occurrences.map(occurrence => {
@@ -115,6 +120,21 @@ export const timelineReducer = createReducer(
           }
         : occurrence,
     ),
+  })),
+  on(toggleOccurrenceLabel, (state, { occurrenceId, labelId }) => ({
+    ...state,
+    occurrences: state.occurrences.map(occurrence => {
+      if (occurrence.id !== occurrenceId) {
+        return occurrence;
+      }
+
+      const hasLabel = occurrence.labelIds.includes(labelId);
+      return {
+        ...occurrence,
+        labelIds: hasLabel ? occurrence.labelIds.filter(id => id !== labelId) : [...occurrence.labelIds, labelId],
+        updatedAtIso: new Date().toISOString(),
+      };
+    }),
   })),
   on(shiftTimeline, (state, { deltaMs, scope }) => ({
     ...state,

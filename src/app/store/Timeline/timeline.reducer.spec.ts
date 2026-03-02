@@ -3,6 +3,8 @@ import { TimelineState, initialTimelineState, timelineReducer } from './timeline
 import {
   timelineRuntimeIndefiniteEnd,
   timelineRuntimeIndefiniteStart,
+  timelineRuntimeLabelApply,
+  timelineRuntimeLabelRemove,
   timelineRuntimeOnceTriggered,
   toggleOccurrenceLabel,
 } from './timeline.actions';
@@ -158,5 +160,150 @@ describe('timelineReducer label toggle', () => {
       toggleOccurrenceLabel({ occurrenceId: 'occ-1', labelId: 'label-1' }),
     );
     expect(removed.occurrences[0].labelIds).toEqual([]);
+  });
+});
+
+
+describe('timelineReducer runtime label actions', () => {
+  const baseWithDefs: TimelineState = {
+    ...baseState,
+    definitions: {
+      ...baseState.definitions,
+      eventDefs: [
+        ...baseState.definitions.eventDefs,
+        {
+          id: 'def-2',
+          sourceSequencerBtnId: 'evt-2',
+          name: 'Event 2',
+          timingMode: 'once',
+          preMs: 0,
+          postMs: 0,
+        },
+      ],
+    },
+  };
+
+  it('APPLY adds label on open occurrence', () => {
+    const state: TimelineState = {
+      ...baseWithDefs,
+      occurrences: [
+        {
+          id: 'occ-open',
+          eventDefId: 'def-1',
+          startMs: 100,
+          endMs: 300,
+          labelIds: [],
+          createdAtIso: '2024-01-01T00:00:00.000Z',
+          updatedAtIso: '2024-01-01T00:00:00.000Z',
+          isOpen: true,
+        },
+      ],
+      openOccurrenceByEventBtnId: {
+        'evt-1': 'occ-open',
+      },
+    };
+
+    const next = timelineReducer(
+      state,
+      timelineRuntimeLabelApply({ labelBtnId: 'lbl-1', targetEventBtnIds: ['evt-1'], atMs: 200, timestamp: 1 }),
+    );
+
+    expect(next.occurrences[0].labelIds).toEqual(['lbl-1']);
+  });
+
+  it('REMOVE removes label from open occurrence', () => {
+    const state: TimelineState = {
+      ...baseWithDefs,
+      occurrences: [
+        {
+          id: 'occ-open',
+          eventDefId: 'def-1',
+          startMs: 100,
+          endMs: 300,
+          labelIds: ['lbl-1'],
+          createdAtIso: '2024-01-01T00:00:00.000Z',
+          updatedAtIso: '2024-01-01T00:00:00.000Z',
+          isOpen: true,
+        },
+      ],
+      openOccurrenceByEventBtnId: {
+        'evt-1': 'occ-open',
+      },
+    };
+
+    const next = timelineReducer(
+      state,
+      timelineRuntimeLabelRemove({ labelBtnId: 'lbl-1', targetEventBtnIds: ['evt-1'], atMs: 200, timestamp: 1 }),
+    );
+
+    expect(next.occurrences[0].labelIds).toEqual([]);
+  });
+
+  it('APPLY does not duplicate label', () => {
+    const state: TimelineState = {
+      ...baseWithDefs,
+      occurrences: [
+        {
+          id: 'occ-open',
+          eventDefId: 'def-1',
+          startMs: 100,
+          endMs: 300,
+          labelIds: ['lbl-1'],
+          createdAtIso: '2024-01-01T00:00:00.000Z',
+          updatedAtIso: '2024-01-01T00:00:00.000Z',
+          isOpen: true,
+        },
+      ],
+      openOccurrenceByEventBtnId: {
+        'evt-1': 'occ-open',
+      },
+    };
+
+    const next = timelineReducer(
+      state,
+      timelineRuntimeLabelApply({ labelBtnId: 'lbl-1', targetEventBtnIds: ['evt-1'], atMs: 200, timestamp: 1 }),
+    );
+
+    expect(next.occurrences[0].labelIds).toEqual(['lbl-1']);
+  });
+
+  it('fallback intersects by atMs and picks latest occurrence', () => {
+    const state: TimelineState = {
+      ...baseWithDefs,
+      occurrences: [
+        {
+          id: 'occ-old',
+          eventDefId: 'def-1',
+          startMs: 100,
+          endMs: 500,
+          labelIds: [],
+          createdAtIso: '2024-01-01T00:00:00.000Z',
+          updatedAtIso: '2024-01-01T00:00:00.000Z',
+          isOpen: false,
+        },
+        {
+          id: 'occ-new',
+          eventDefId: 'def-1',
+          startMs: 200,
+          endMs: 600,
+          labelIds: [],
+          createdAtIso: '2024-01-01T00:00:00.000Z',
+          updatedAtIso: '2024-01-01T00:00:00.000Z',
+          isOpen: false,
+        },
+      ],
+      openOccurrenceByEventBtnId: {},
+    };
+
+    const next = timelineReducer(
+      state,
+      timelineRuntimeLabelApply({ labelBtnId: 'lbl-2', targetEventBtnIds: ['evt-1'], atMs: 300, timestamp: 1 }),
+    );
+
+    const oldOccurrence = next.occurrences.find(item => item.id === 'occ-old');
+    const newOccurrence = next.occurrences.find(item => item.id === 'occ-new');
+
+    expect(oldOccurrence?.labelIds).toEqual([]);
+    expect(newOccurrence?.labelIds).toEqual(['lbl-2']);
   });
 });

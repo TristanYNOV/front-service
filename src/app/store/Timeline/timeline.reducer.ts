@@ -20,6 +20,8 @@ import {
   toggleOccurrenceLabel,
   timelineRuntimeIndefiniteEnd,
   timelineRuntimeIndefiniteStart,
+  timelineRuntimeLabelApply,
+  timelineRuntimeLabelRemove,
   timelineRuntimeOnceTriggered,
   undoLastShiftOrAlign,
   updateOccurrenceTiming,
@@ -136,6 +138,12 @@ export const timelineReducer = createReducer(
       };
     }),
   })),
+  on(timelineRuntimeLabelApply, (state, { labelBtnId, targetEventBtnIds, atMs }) =>
+    applyRuntimeLabelChange(state, labelBtnId, targetEventBtnIds, atMs, 'apply'),
+  ),
+  on(timelineRuntimeLabelRemove, (state, { labelBtnId, targetEventBtnIds, atMs }) =>
+    applyRuntimeLabelChange(state, labelBtnId, targetEventBtnIds, atMs, 'remove'),
+  ),
   on(shiftTimeline, (state, { deltaMs, scope }) => ({
     ...state,
     occurrences: shiftOccurrences(state.occurrences, deltaMs, scope, state.ui.selectedOccurrenceIds),
@@ -253,3 +261,107 @@ export const timelineReducer = createReducer(
     };
   }),
 );
+
+
+type RuntimeLabelOperation = 'apply' | 'remove';
+
+function applyRuntimeLabelChange(
+  state: TimelineState,
+  labelBtnId: string,
+  targetEventBtnIds: string[],
+  atMs: number,
+  operation: RuntimeLabelOperation,
+): TimelineState {
+  if (!targetEventBtnIds.length) {
+    return state;
+  }
+
+  const targetOccurrenceIds = Array.from(
+    new Set(
+      targetEventBtnIds
+        .map(eventBtnId => resolveOccurrenceIdForEventBtnId(state, eventBtnId, atMs))
+        .filter((occurrenceId): occurrenceId is string => Boolean(occurrenceId)),
+    ),
+  );
+
+  if (!targetOccurrenceIds.length) {
+    return state;
+  }
+
+  const targetOccurrenceIdsSet = new Set(targetOccurrenceIds);
+  let hasChanges = false;
+
+  const nextOccurrences = state.occurrences.map(occurrence => {
+    if (!targetOccurrenceIdsSet.has(occurrence.id)) {
+      return occurrence;
+    }
+
+    const hasLabel = occurrence.labelIds.includes(labelBtnId);
+    if (operation === 'apply' && hasLabel) {
+      return occurrence;
+    }
+    if (operation === 'remove' && !hasLabel) {
+      return occurrence;
+    }
+
+    hasChanges = true;
+    return {
+      ...occurrence,
+      labelIds:
+        operation === 'apply'
+          ? [...occurrence.labelIds, labelBtnId]
+          : occurrence.labelIds.filter(labelId => labelId !== labelBtnId),
+      updatedAtIso: new Date().toISOString(),
+    };
+  });
+
+  if (!hasChanges) {
+    return state;
+  }
+
+  return {
+    ...state,
+    occurrences: nextOccurrences,
+  };
+}
+
+function resolveOccurrenceIdForEventBtnId(state: TimelineState, eventBtnId: string, atMs: number): string | undefined {
+  const openOccurrenceId = state.openOccurrenceByEventBtnId[eventBtnId];
+  if (openOccurrenceId && state.occurrences.some(occurrence => occurrence.id === openOccurrenceId)) {
+    return openOccurrenceId;
+  }
+
+  const eventDef = state.definitions.eventDefs.find(definition => definition.sourceSequencerBtnId === eventBtnId);
+  if (!eventDef) {
+    return undefined;
+  }
+
+  const intersectingOccurrences = state.occurrences.filter(
+    occurrence =>
+      occurrence.eventDefId === eventDef.id &&
+      occurrence.startMs <= atMs &&
+      atMs <= occurrence.endMs,
+  );
+
+  if (!intersectingOccurrences.length) {
+    return undefined;
+  }
+
+  const latestIntersectingOccurrence = intersectingOccurrences.reduce((latest, occurrence) => {
+    if (!latest) {
+      return occurrence;
+    }
+
+    if (occurrence.endMs > latest.endMs) {
+      return occurrence;
+    }
+
+    if (occurrence.endMs === latest.endMs && occurrence.startMs > latest.startMs) {
+      return occurrence;
+    }
+
+    return latest;
+  }, intersectingOccurrences[0]);
+
+  return latestIntersectingOccurrence.id;
+}

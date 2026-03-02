@@ -2,13 +2,21 @@ import { Injectable, effect, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { SequencerRuntimeService } from '../service/sequencer-runtime.service';
 import { TimebaseService } from './timebase.service';
-import { timelineRuntimeIndefiniteEnd, timelineRuntimeIndefiniteStart, timelineRuntimeOnceTriggered } from '../../store/Timeline/timeline.actions';
+import { SequencerPanelService } from '../service/sequencer-panel.service';
+import {
+  timelineRuntimeIndefiniteEnd,
+  timelineRuntimeIndefiniteStart,
+  timelineRuntimeLabelApply,
+  timelineRuntimeLabelRemove,
+  timelineRuntimeOnceTriggered,
+} from '../../store/Timeline/timeline.actions';
 
 @Injectable()
 export class SequencerTimelineBridgeService {
   private readonly store = inject(Store);
   private readonly runtime = inject(SequencerRuntimeService);
   private readonly timebase = inject(TimebaseService);
+  private readonly panelService = inject(SequencerPanelService);
 
   private lastProcessedSeq = 0;
 
@@ -51,6 +59,48 @@ export class SequencerTimelineBridgeService {
               atMs: this.timebase.currentTimeMs(),
               timestamp: event.timestamp,
             }),
+          );
+        }
+
+        if (event.type === 'LABEL_TRIGGERED') {
+          const targetEventBtnIds = event.applyToEventBtnIds ?? [];
+          if (!targetEventBtnIds.length) {
+            return;
+          }
+
+          const labelBtn = this.panelService.getBtnById(event.btnId);
+          if (!labelBtn || labelBtn.type !== 'label') {
+            return;
+          }
+
+          const atMs = this.timebase.currentTimeMs();
+          if (labelBtn.labelProps.mode === 'once') {
+            this.store.dispatch(
+              timelineRuntimeLabelApply({
+                labelBtnId: event.btnId,
+                targetEventBtnIds,
+                atMs,
+                timestamp: event.timestamp,
+              }),
+            );
+            return;
+          }
+
+          const activeNow = this.runtime.activeIndefiniteIds().includes(event.btnId);
+          this.store.dispatch(
+            activeNow
+              ? timelineRuntimeLabelApply({
+                  labelBtnId: event.btnId,
+                  targetEventBtnIds,
+                  atMs,
+                  timestamp: event.timestamp,
+                })
+              : timelineRuntimeLabelRemove({
+                  labelBtnId: event.btnId,
+                  targetEventBtnIds,
+                  atMs,
+                  timestamp: event.timestamp,
+                }),
           );
         }
       });

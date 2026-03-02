@@ -8,6 +8,23 @@
   (mousedown)="onTimelinePointerDown($event)"
 >
   <div class="border-subtle bg-layer-2 flex items-center gap-2 border-b p-2 text-xs">
+    <div class="mr-2 min-w-[12rem]">
+      @if (isEditingTimelineName()) {
+        <input
+          class="w-full rounded border border-gray-500 bg-transparent px-2 py-1 text-xs font-semibold"
+          [value]="timelineNameDraft()"
+          (input)="onTimelineNameInput($event)"
+          (keydown.enter)="saveTimelineName()"
+          (keydown.escape)="cancelTimelineNameEdit()"
+          (blur)="saveTimelineName()"
+        />
+      } @else {
+        <button type="button" class="text-left text-sm font-semibold" (click)="startTimelineNameEdit()" aria-label="Renommer la timeline">
+          {{ facade.timelineName() }}
+        </button>
+      }
+    </div>
+
     <button class="btn-secondary" (click)="timebase.playPause()">{{ timebase.isPlaying() ? 'Pause' : 'Play' }}</button>
     <button class="btn-secondary" (click)="timebase.play()" *ngIf="timebase.mode() === 'clock'">Démarrer un chrono</button>
     <button class="btn-secondary" (click)="facade.setAutoFollow(!facade.autoFollow())">Auto-follow {{ facade.autoFollow() ? 'ON' : 'OFF' }}</button>

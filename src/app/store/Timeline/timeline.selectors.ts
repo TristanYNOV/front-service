@@ -25,3 +25,5 @@ export const selectTimelineLabelDefsById = createSelector(selectTimelineLabelDef
     return accumulator;
   }, {}),
 );
+
+export const selectTimelineName = createSelector(selectTimelineState, state => state.meta.timelineName ?? 'Timeline');

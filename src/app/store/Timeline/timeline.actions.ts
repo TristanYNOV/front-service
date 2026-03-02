@@ -33,6 +33,8 @@ export const setSelection = createAction('[Timeline] Set Selection', props<{ ids
 
 export const setUiScroll = createAction('[Timeline] Set Ui Scroll', props<{ scrollX: number; scrollY: number }>());
 
+export const setTimelineName = createAction('[Timeline] Set Timeline Name', props<{ name: string }>());
+
 export const addLabelToSelection = createAction('[Timeline] Add Label To Selection', props<{ labelId: string }>());
 
 export const removeLabelFromSelection = createAction('[Timeline] Remove Label From Selection', props<{ labelId: string }>());

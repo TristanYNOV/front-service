@@ -17,6 +17,7 @@ import {
   setAutoFollow,
   setSelection,
   setUiScroll,
+  setTimelineName,
   shiftTimeline,
   toggleOccurrenceLabel,
   timelineRuntimeIndefiniteEnd,
@@ -48,6 +49,7 @@ export interface TimelineState {
 export const initialTimelineState: TimelineState = {
   schemaVersion: TIMELINE_SCHEMA_VERSION,
   meta: {
+    timelineName: 'Timeline',
     analysisName: 'Analyse locale',
     createdAtIso: new Date().toISOString(),
     updatedAtIso: new Date().toISOString(),
@@ -74,6 +76,10 @@ export const timelineReducer = createReducer(
   on(initTimeline, (state, payload) => ({
     ...state,
     ...payload,
+    meta: {
+      ...payload.meta,
+      timelineName: payload.meta.timelineName?.trim() || 'Timeline',
+    },
     occurrences: payload.occurrences.map(occurrence => ({ ...occurrence, labelIds: occurrence.labelIds ?? [] })),
     ui: { ...state.ui },
     lastShiftDeltaMs: null,
@@ -81,6 +87,21 @@ export const timelineReducer = createReducer(
     lastRemoved: null,
   })),
   on(upsertDefinitions, (state, { definitions }) => ({ ...state, definitions })),
+  on(setTimelineName, (state, { name }) => {
+    const trimmedName = name.trim() || 'Timeline';
+    if (trimmedName === state.meta.timelineName) {
+      return state;
+    }
+
+    return {
+      ...state,
+      meta: {
+        ...state.meta,
+        timelineName: trimmedName,
+        updatedAtIso: new Date().toISOString(),
+      },
+    };
+  }),
   on(addOccurrence, (state, { occurrence }) => ({
     ...state,
     occurrences: [...state.occurrences, { ...occurrence, labelIds: occurrence.labelIds ?? [] }],

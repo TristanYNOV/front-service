@@ -18,7 +18,6 @@ import { SequencerPanelService } from '../../../core/service/sequencer-panel.ser
 import { SequencerRuntimeService } from '../../../core/service/sequencer-runtime.service';
 import { HotkeysService } from '../../../core/services/hotkeys.service';
 import { EventBtn, LabelBtn, SequencerBtn } from '../../../interfaces/sequencer-btn.interface';
-import { formatNormalizedHotkey } from '../../../utils/sequencer/sequencer-hotkey-options.util';
 import { CreateEventBtnDialogComponent } from './createBtn/event/create-event-btn-dialog.component';
 import { CreateLabelBtnDialogComponent } from './createBtn/label/create-label-btn-dialog.component';
 import { SequencerCanvasComponent } from './canvas/sequencer-canvas.component';
@@ -50,7 +49,6 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   readonly panelName = this.panelService.panelName;
   readonly btnList = this.panelService.btnList;
   readonly editMode = this.panelService.editMode;
-  readonly recentTriggers = this.runtimeService.recentTriggers;
   readonly lastTriggeredBtnId = this.runtimeService.lastTriggeredBtnId;
   readonly activeIndefiniteIds = this.runtimeService.activeIndefiniteIds;
 
@@ -146,11 +144,4 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
     this.renameDraft.set(target.value);
   }
 
-  formatHotkey(normalized?: string | null) {
-    return formatNormalizedHotkey(normalized) || '—';
-  }
-
-  formatTimestamp(timestamp: number) {
-    return new Date(timestamp).toLocaleTimeString('fr-FR', { hour12: false });
-  }
 }

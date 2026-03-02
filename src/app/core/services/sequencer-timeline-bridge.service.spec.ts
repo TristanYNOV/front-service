@@ -26,6 +26,10 @@ class MockSequencerRuntimeService {
     }[]
   >([]);
   readonly activeIndefiniteIds = signal<string[]>([]);
+
+  getActiveIndefiniteLabelIds() {
+    return this.activeIndefiniteIds();
+  }
 }
 
 class MockTimebaseService {
@@ -66,6 +70,7 @@ describe('SequencerTimelineBridgeService', () => {
   });
 
   it('dispatches runtime start/end actions in seq order once', () => {
+    runtime.activeIndefiniteIds.set([]);
     runtime.recentRuntimeEvents.set([
       { type: 'EVENT_INDEFINITE_END', btnId: 'evt-1', timestamp: 30, seq: 4 },
       { type: 'LABEL_TRIGGERED', btnId: 'lbl-once', timestamp: 15, seq: 3 },
@@ -74,9 +79,9 @@ describe('SequencerTimelineBridgeService', () => {
     ]);
 
     const actions = (store.dispatch as jasmine.Spy).calls.allArgs().map(call => call[0]);
-    expect(actions[0]).toEqual(timelineRuntimeOnceTriggered({ eventBtnId: 'evt-2', atMs: 4200, timestamp: 10 }));
-    expect(actions[1]).toEqual(timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 20 }));
-    expect(actions[2]).toEqual(timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 30 }));
+    expect(actions[0]).toEqual(timelineRuntimeOnceTriggered({ eventBtnId: 'evt-2', atMs: 4200, timestamp: 10, activeLabelBtnIds: [] }));
+    expect(actions[1]).toEqual(timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 20, activeLabelBtnIds: [] }));
+    expect(actions[2]).toEqual(timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 30, activeLabelBtnIds: [] }));
     expect(actions.length).toBe(3);
 
     (store.dispatch as jasmine.Spy).calls.reset();
@@ -88,6 +93,27 @@ describe('SequencerTimelineBridgeService', () => {
     ]);
 
     expect(store.dispatch).not.toHaveBeenCalled();
+  });
+
+
+
+  it('includes activeLabelBtnIds in event runtime dispatches', () => {
+    runtime.activeIndefiniteIds.set(['lbl-indef']);
+    runtime.recentRuntimeEvents.set([
+      { type: 'EVENT_ONCE_TRIGGERED', btnId: 'evt-1', timestamp: 10, seq: 1 },
+      { type: 'EVENT_INDEFINITE_START', btnId: 'evt-1', timestamp: 20, seq: 2 },
+      { type: 'EVENT_INDEFINITE_END', btnId: 'evt-1', timestamp: 30, seq: 3 },
+    ]);
+
+    expect(store.dispatch).toHaveBeenCalledWith(
+      timelineRuntimeOnceTriggered({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 10, activeLabelBtnIds: ['lbl-indef'] }),
+    );
+    expect(store.dispatch).toHaveBeenCalledWith(
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 20, activeLabelBtnIds: ['lbl-indef'] }),
+    );
+    expect(store.dispatch).toHaveBeenCalledWith(
+      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 30, activeLabelBtnIds: ['lbl-indef'] }),
+    );
   });
 
   it('dispatches APPLY for LABEL_TRIGGERED once', () => {

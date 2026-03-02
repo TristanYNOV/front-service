@@ -172,7 +172,7 @@ export const timelineReducer = createReducer(
     };
   }),
 
-  on(timelineRuntimeOnceTriggered, (state, { eventBtnId, atMs }) => {
+  on(timelineRuntimeOnceTriggered, (state, { eventBtnId, atMs, activeLabelBtnIds }) => {
     const eventDef = state.definitions.eventDefs.find(definition => definition.sourceSequencerBtnId === eventBtnId);
     const preMs = eventDef?.preMs ?? TIMELINE_DEFAULT_PRE_MS;
     const postMs = eventDef?.postMs ?? TIMELINE_DEFAULT_POST_MS;
@@ -185,7 +185,7 @@ export const timelineReducer = createReducer(
       eventDefId: eventDef?.id ?? eventBtnId,
       startMs: normalized.startMs,
       endMs,
-      labelIds: [],
+      labelIds: mergeLabelIds([], activeLabelBtnIds),
       createdAtIso,
       updatedAtIso: createdAtIso,
       isOpen: false,
@@ -196,7 +196,7 @@ export const timelineReducer = createReducer(
       occurrences: [...state.occurrences, occurrence],
     };
   }),
-  on(timelineRuntimeIndefiniteStart, (state, { eventBtnId, atMs }) => {
+  on(timelineRuntimeIndefiniteStart, (state, { eventBtnId, atMs, activeLabelBtnIds }) => {
     if (state.openOccurrenceByEventBtnId[eventBtnId]) {
       return state;
     }
@@ -212,7 +212,7 @@ export const timelineReducer = createReducer(
       eventDefId: eventDef?.id ?? eventBtnId,
       startMs,
       endMs,
-      labelIds: [],
+      labelIds: mergeLabelIds([], activeLabelBtnIds),
       createdAtIso,
       updatedAtIso: createdAtIso,
       isOpen: true,
@@ -227,7 +227,7 @@ export const timelineReducer = createReducer(
       },
     };
   }),
-  on(timelineRuntimeIndefiniteEnd, (state, { eventBtnId, atMs }) => {
+  on(timelineRuntimeIndefiniteEnd, (state, { eventBtnId, atMs, activeLabelBtnIds }) => {
     const occurrenceId = state.openOccurrenceByEventBtnId[eventBtnId];
     if (!occurrenceId) {
       return state;
@@ -254,7 +254,14 @@ export const timelineReducer = createReducer(
       ...state,
       occurrences: state.occurrences.map(item =>
         item.id === occurrenceId
-          ? { ...item, startMs: normalized.startMs, endMs, isOpen: false, updatedAtIso: new Date().toISOString() }
+          ? {
+              ...item,
+              startMs: normalized.startMs,
+              endMs,
+              labelIds: mergeLabelIds(item.labelIds, activeLabelBtnIds),
+              isOpen: false,
+              updatedAtIso: new Date().toISOString(),
+            }
           : item,
       ),
       openOccurrenceByEventBtnId: nextMap,
@@ -364,4 +371,12 @@ function resolveOccurrenceIdForEventBtnId(state: TimelineState, eventBtnId: stri
   }, intersectingOccurrences[0]);
 
   return latestIntersectingOccurrence.id;
+}
+
+
+function mergeLabelIds(baseLabelIds: string[], additionalLabelIds: string[]): string[] {
+  if (!additionalLabelIds.length) {
+    return baseLabelIds;
+  }
+  return Array.from(new Set([...baseLabelIds, ...additionalLabelIds]));
 }

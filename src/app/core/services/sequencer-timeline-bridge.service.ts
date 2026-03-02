@@ -38,6 +38,7 @@ export class SequencerTimelineBridgeService {
               eventBtnId: event.btnId,
               atMs: this.timebase.currentTimeMs(),
               timestamp: event.timestamp,
+              activeLabelBtnIds: this.runtime.getActiveIndefiniteLabelIds(),
             }),
           );
         }
@@ -48,6 +49,7 @@ export class SequencerTimelineBridgeService {
               eventBtnId: event.btnId,
               atMs: this.timebase.currentTimeMs(),
               timestamp: event.timestamp,
+              activeLabelBtnIds: this.runtime.getActiveIndefiniteLabelIds(),
             }),
           );
         }
@@ -58,6 +60,7 @@ export class SequencerTimelineBridgeService {
               eventBtnId: event.btnId,
               atMs: this.timebase.currentTimeMs(),
               timestamp: event.timestamp,
+              activeLabelBtnIds: this.runtime.getActiveIndefiniteLabelIds(),
             }),
           );
         }

@@ -33,7 +33,7 @@ describe('timelineReducer runtime indefinite actions', () => {
   it('creates closed occurrence on runtime once trigger', () => {
     const next = timelineReducer(
       baseState,
-      timelineRuntimeOnceTriggered({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1 }),
+      timelineRuntimeOnceTriggered({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1, activeLabelBtnIds: [] }),
     );
 
     expect(next.occurrences.length).toBe(1);
@@ -45,7 +45,7 @@ describe('timelineReducer runtime indefinite actions', () => {
   it('creates open occurrence and records mapping on runtime start', () => {
     const next = timelineReducer(
       baseState,
-      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1 }),
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1, activeLabelBtnIds: [] }),
     );
 
     expect(next.occurrences.length).toBe(1);
@@ -57,13 +57,13 @@ describe('timelineReducer runtime indefinite actions', () => {
   it('closes open occurrence and removes mapping on runtime end', () => {
     const started = timelineReducer(
       baseState,
-      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1 }),
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1, activeLabelBtnIds: [] }),
     );
     const startedOccurrence = started.occurrences[0];
 
     const closed = timelineReducer(
       started,
-      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 6000, timestamp: 2 }),
+      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 6000, timestamp: 2, activeLabelBtnIds: [] }),
     );
 
     const updated = closed.occurrences.find(item => item.id === startedOccurrence.id);
@@ -75,12 +75,12 @@ describe('timelineReducer runtime indefinite actions', () => {
   it('ignores duplicate start while occurrence is already open', () => {
     const started = timelineReducer(
       baseState,
-      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1 }),
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1, activeLabelBtnIds: [] }),
     );
 
     const duplicate = timelineReducer(
       started,
-      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5100, timestamp: 2 }),
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5100, timestamp: 2, activeLabelBtnIds: [] }),
     );
 
     expect(duplicate.occurrences.length).toBe(1);
@@ -89,7 +89,7 @@ describe('timelineReducer runtime indefinite actions', () => {
   it('ignores end when no open occurrence exists', () => {
     const ended = timelineReducer(
       baseState,
-      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 6000, timestamp: 2 }),
+      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 6000, timestamp: 2, activeLabelBtnIds: [] }),
     );
 
     expect(ended).toEqual(baseState);
@@ -98,7 +98,7 @@ describe('timelineReducer runtime indefinite actions', () => {
   it('handles multiple start/end pairs deterministically', () => {
     const startedEvt1 = timelineReducer(
       baseState,
-      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1 }),
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1, activeLabelBtnIds: [] }),
     );
     const withEvt2Def: TimelineState = {
       ...startedEvt1,
@@ -113,15 +113,15 @@ describe('timelineReducer runtime indefinite actions', () => {
 
     const startedEvt2 = timelineReducer(
       withEvt2Def,
-      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-2', atMs: 5200, timestamp: 2 }),
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-2', atMs: 5200, timestamp: 2, activeLabelBtnIds: [] }),
     );
     const closedEvt1 = timelineReducer(
       startedEvt2,
-      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 5600, timestamp: 3 }),
+      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 5600, timestamp: 3, activeLabelBtnIds: [] }),
     );
     const closedEvt2 = timelineReducer(
       closedEvt1,
-      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-2', atMs: 5800, timestamp: 4 }),
+      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-2', atMs: 5800, timestamp: 4, activeLabelBtnIds: [] }),
     );
 
     expect(closedEvt2.openOccurrenceByEventBtnId['evt-1']).toBeUndefined();
@@ -305,5 +305,40 @@ describe('timelineReducer runtime label actions', () => {
 
     expect(oldOccurrence?.labelIds).toEqual([]);
     expect(newOccurrence?.labelIds).toEqual(['lbl-2']);
+  });
+});
+
+
+describe('timelineReducer active indefinite labels merge on runtime events', () => {
+  it('ONCE includes active indefinite labels at creation', () => {
+    const next = timelineReducer(
+      baseState,
+      timelineRuntimeOnceTriggered({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1, activeLabelBtnIds: ['lbl-1', 'lbl-2'] }),
+    );
+
+    expect(next.occurrences[0].labelIds).toEqual(['lbl-1', 'lbl-2']);
+  });
+
+  it('INDEFINITE START includes active indefinite labels at open', () => {
+    const next = timelineReducer(
+      baseState,
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1, activeLabelBtnIds: ['lbl-1'] }),
+    );
+
+    expect(next.occurrences[0].labelIds).toEqual(['lbl-1']);
+  });
+
+  it('INDEFINITE END merges active indefinite labels with existing labels', () => {
+    const started = timelineReducer(
+      baseState,
+      timelineRuntimeIndefiniteStart({ eventBtnId: 'evt-1', atMs: 5000, timestamp: 1, activeLabelBtnIds: ['lbl-existing'] }),
+    );
+
+    const ended = timelineReducer(
+      started,
+      timelineRuntimeIndefiniteEnd({ eventBtnId: 'evt-1', atMs: 6000, timestamp: 2, activeLabelBtnIds: ['lbl-existing', 'lbl-new'] }),
+    );
+
+    expect(ended.occurrences[0].labelIds).toEqual(['lbl-existing', 'lbl-new']);
   });
 });

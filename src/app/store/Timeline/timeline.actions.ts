@@ -62,15 +62,15 @@ export const setAutoFollow = createAction('[Timeline] Set Auto Follow', props<{ 
 
 export const timelineRuntimeIndefiniteStart = createAction(
   '[Timeline Runtime] Indefinite Start',
-  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+  props<{ eventBtnId: string; atMs: number; timestamp: number; activeLabelBtnIds: string[] }>(),
 );
 
 export const timelineRuntimeIndefiniteEnd = createAction(
   '[Timeline Runtime] Indefinite End',
-  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+  props<{ eventBtnId: string; atMs: number; timestamp: number; activeLabelBtnIds: string[] }>(),
 );
 
 export const timelineRuntimeOnceTriggered = createAction(
   '[Timeline Runtime] Once Triggered',
-  props<{ eventBtnId: string; atMs: number; timestamp: number }>(),
+  props<{ eventBtnId: string; atMs: number; timestamp: number; activeLabelBtnIds: string[] }>(),
 );

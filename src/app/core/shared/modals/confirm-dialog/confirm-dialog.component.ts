@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -26,5 +26,11 @@ export class ConfirmDialogComponent {
 
   confirm() {
     this.dialogRef.close(true);
+  }
+
+  @HostListener('keydown.enter', ['$event'])
+  onEnter(event: KeyboardEvent) {
+    event.preventDefault();
+    this.confirm();
   }
 }

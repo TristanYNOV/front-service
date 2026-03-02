@@ -54,25 +54,4 @@
       (deleteBtn)="deleteBtn($event)"
     ></app-sequencer-canvas>
   </div>
-
-  <div class="border-layer border-t pt-2">
-    <h4 class="mb-2 text-xs font-semibold">Recent triggers</h4>
-    @if (!recentTriggers().length) {
-      <div class="text-muted text-[11px]">Aucun trigger pour l’instant.</div>
-    } @else {
-      <ul class="flex list-none flex-col gap-1 p-0">
-        @for (entry of recentTriggers(); track entry.timestamp) {
-          <li class="text-muted flex flex-wrap gap-1.5 text-[11px]">
-            <span class="text-strong">{{ formatTimestamp(entry.timestamp) }}</span>
-            <span class="accent-text text-[10px] uppercase">{{ entry.source }}</span>
-            <span>{{ entry.name }}</span>
-            <span>({{ entry.btnId }})</span>
-            @if (entry.normalizedHotkey) {
-              <span class="text-[11px] font-mono text-success">{{ formatHotkey(entry.normalizedHotkey) }}</span>
-            }
-          </li>
-        }
-      </ul>
-    }
-  </div>
 </div>

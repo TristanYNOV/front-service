@@ -2,6 +2,7 @@ export type TimelineTimingMode = 'once' | 'indefinite';
 export type TimelineLabelBehavior = 'once' | 'indefinite';
 
 export interface TimelineMetadata {
+  timelineName: string;
   analysisName: string;
   createdAtIso: string;
   updatedAtIso: string;

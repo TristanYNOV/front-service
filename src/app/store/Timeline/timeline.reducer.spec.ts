@@ -9,6 +9,7 @@ import {
   toggleOccurrenceLabel,
   removeOccurrences,
   undoRemoveOccurrences,
+  setTimelineName,
 } from './timeline.actions';
 
 const baseState: TimelineState = {
@@ -408,5 +409,16 @@ describe('timelineReducer remove occurrences and undo', () => {
     expect(undone.occurrences.map(item => item.id)).toEqual(['occ-open', 'occ-1', 'occ-2']);
     expect(undone.ui.selectedOccurrenceIds).toEqual(['occ-1', 'occ-2']);
     expect(undone.lastRemoved).toBeNull();
+  });
+});
+
+
+describe('timelineReducer timeline name', () => {
+  it('updates timeline name and falls back to default when blank', () => {
+    const renamed = timelineReducer(baseState, setTimelineName({ name: 'Ma timeline' }));
+    expect(renamed.meta.timelineName).toBe('Ma timeline');
+
+    const fallback = timelineReducer(renamed, setTimelineName({ name: '   ' }));
+    expect(fallback.meta.timelineName).toBe('Timeline');
   });
 });

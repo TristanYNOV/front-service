@@ -13,7 +13,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VideoService } from '../../../core/services/video.service';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-video-display',
@@ -32,6 +33,7 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   private readonly stepRate = 0.25;
 
   protected readonly videoService = inject(VideoService);
+  private readonly confirmDialogService = inject(ConfirmDialogService);
 
   readonly videoName = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
@@ -67,6 +69,29 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
 
   onChangeVideoClick() {
     this.fileInput?.nativeElement.click();
+  }
+
+
+  async onClearVideo() {
+    if (!this.hasVideo()) {
+      return;
+    }
+
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Retirer la vidéo',
+      message: 'Voulez-vous retirer la vidéo chargée ?',
+      confirmLabel: 'Retirer',
+      cancelLabel: 'Annuler',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.videoService.clearVideo();
+    this.videoName.set(null);
+    this.errorMessage.set(null);
+    this.seekInputMs = 0;
   }
 
   onVideoLoaded() {

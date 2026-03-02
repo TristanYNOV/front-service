@@ -13,6 +13,7 @@ import { TimelineDefinitions, TimelineEventDef, TimelineShiftScope } from '../..
 import {
   alignToCurrentTimebase,
   setAutoFollow,
+  setTimelineName,
   removeOccurrences,
   setSelection,
   setUiScroll,
@@ -30,6 +31,7 @@ import {
   selectTimelineCanUndoShiftAlign,
   selectTimelineEventDefs,
   selectTimelineLabelDefs,
+  selectTimelineName,
   selectTimelineOccurrences,
   selectTimelineScroll,
   selectTimelineSelectionIds,
@@ -44,6 +46,7 @@ export class TimelineFacadeService {
   private readonly sequencerPanelService = inject(SequencerPanelService);
 
   readonly eventDefs = this.store.selectSignal(selectTimelineEventDefs);
+  readonly timelineName = this.store.selectSignal(selectTimelineName);
   readonly labelDefs = this.store.selectSignal(selectTimelineLabelDefs);
   readonly occurrences = this.store.selectSignal(selectTimelineOccurrences);
   readonly selectionIds = this.store.selectSignal(selectTimelineSelectionIds);
@@ -137,6 +140,10 @@ export class TimelineFacadeService {
 
   setAutoFollow(enabled: boolean) {
     this.store.dispatch(setAutoFollow({ enabled }));
+  }
+
+  setTimelineName(name: string) {
+    this.store.dispatch(setTimelineName({ name }));
   }
 
   playSelection() {

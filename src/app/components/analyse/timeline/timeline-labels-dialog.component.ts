@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 interface TimelineLabelsDialogData {
   occurrenceId: string;
   selectedLabelIds: string[];
-  labelDefs: Array<{ id: string; name: string }>;
+  labelDefs: { id: string; name: string }[];
   toggleLabel: (occurrenceId: string, labelId: string) => void;
 }
 

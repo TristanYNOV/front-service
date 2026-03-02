@@ -38,6 +38,8 @@ export class TimelineComponent implements OnDestroy {
 
   readonly scrollTopPx = signal(0);
   readonly timelineHasFocus = signal(false);
+  readonly isEditingTimelineName = signal(false);
+  readonly timelineNameDraft = signal('');
 
   private readonly isProgrammaticScrollSignal = signal(false);
   private programmaticScrollTimeoutId?: number;
@@ -64,6 +66,12 @@ export class TimelineComponent implements OnDestroy {
   );
 
   constructor() {
+    effect(() => {
+      if (!this.isEditingTimelineName()) {
+        this.timelineNameDraft.set(this.facade.timelineName());
+      }
+    });
+
     effect(() => {
       if (!this.facade.autoFollow() || !this.timebase.isPlaying()) {
         return;
@@ -192,6 +200,30 @@ export class TimelineComponent implements OnDestroy {
     }
 
     return `Supprimer la sélection (${this.selectedCount()})`;
+  }
+
+
+  startTimelineNameEdit() {
+    this.timelineNameDraft.set(this.facade.timelineName());
+    this.isEditingTimelineName.set(true);
+  }
+
+  onTimelineNameInput(event: Event) {
+    const target = event.target as HTMLInputElement | null;
+    if (!target) {
+      return;
+    }
+    this.timelineNameDraft.set(target.value);
+  }
+
+  saveTimelineName() {
+    this.facade.setTimelineName(this.timelineNameDraft());
+    this.isEditingTimelineName.set(false);
+  }
+
+  cancelTimelineNameEdit() {
+    this.timelineNameDraft.set(this.facade.timelineName());
+    this.isEditingTimelineName.set(false);
   }
 
   onRulerPointerDown(event: MouseEvent) {

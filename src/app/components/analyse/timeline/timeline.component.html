@@ -1,4 +1,12 @@
-<div #timelineRoot class="bg-layer-1 text-default flex h-full w-full flex-col" tabindex="0">
+<div
+  #timelineRoot
+  class="bg-layer-1 text-default flex h-full w-full flex-col"
+  tabindex="0"
+  (keydown)="onTimelineKeydown($event)"
+  (focusin)="onTimelineFocusIn()"
+  (focusout)="onTimelineFocusOut()"
+  (mousedown)="onTimelinePointerDown($event)"
+>
   <div class="border-subtle bg-layer-2 flex items-center gap-2 border-b p-2 text-xs">
     <button class="btn-secondary" (click)="timebase.playPause()">{{ timebase.isPlaying() ? 'Pause' : 'Play' }}</button>
     <button class="btn-secondary" (click)="timebase.play()" *ngIf="timebase.mode() === 'clock'">Démarrer un chrono</button>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -14,7 +14,6 @@ import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interf
 import { TimelineLabelsDialogComponent } from './timeline-labels-dialog.component';
 import { getReadableTextColor } from '../../../utils/color/color-contrast.utils';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
-import { HotkeysService } from '../../../core/services/hotkeys.service';
 
 @Component({
   selector: 'app-timeline',
@@ -31,7 +30,6 @@ export class TimelineComponent implements OnDestroy {
   readonly timebase = inject(TimebaseService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialogService = inject(ConfirmDialogService);
-  private readonly hotkeysService = inject(HotkeysService);
 
   readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
   readonly rulerHeightPx = 36;
@@ -39,6 +37,7 @@ export class TimelineComponent implements OnDestroy {
   readonly pxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
 
   readonly scrollTopPx = signal(0);
+  readonly timelineHasFocus = signal(false);
 
   private readonly isProgrammaticScrollSignal = signal(false);
   private programmaticScrollTimeoutId?: number;
@@ -65,8 +64,6 @@ export class TimelineComponent implements OnDestroy {
   );
 
   constructor() {
-    this.registerDeleteHotkeys();
-
     effect(() => {
       if (!this.facade.autoFollow() || !this.timebase.isPlaying()) {
         return;
@@ -93,12 +90,66 @@ export class TimelineComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.hotkeysService.unregisterReservedHotkey('timeline.delete');
-    this.hotkeysService.unregisterReservedHotkey('timeline.backspace-delete');
     if (this.programmaticScrollTimeoutId !== undefined) {
       window.clearTimeout(this.programmaticScrollTimeoutId);
       this.programmaticScrollTimeoutId = undefined;
     }
+  }
+
+  @HostListener('document:mousedown', ['$event'])
+  onDocumentMouseDown(event: MouseEvent) {
+    const timelineRoot = this.timelineRootRef?.nativeElement;
+    if (!timelineRoot) {
+      return;
+    }
+
+    const target = event.target;
+    if (!(target instanceof Node) || !timelineRoot.contains(target)) {
+      this.timelineHasFocus.set(false);
+    }
+  }
+
+  onTimelineFocusIn() {
+    this.timelineHasFocus.set(true);
+  }
+
+  onTimelineFocusOut() {
+    const timelineRoot = this.timelineRootRef?.nativeElement;
+    if (!timelineRoot || typeof document === 'undefined') {
+      this.timelineHasFocus.set(false);
+      return;
+    }
+
+    const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement) || !timelineRoot.contains(activeElement)) {
+      this.timelineHasFocus.set(false);
+    }
+  }
+
+  onTimelinePointerDown(event: MouseEvent) {
+    const timelineRoot = this.timelineRootRef?.nativeElement;
+    if (!timelineRoot || this.isTextInputTarget(event.target)) {
+      return;
+    }
+
+    timelineRoot.focus();
+    this.timelineHasFocus.set(true);
+  }
+
+  async onTimelineKeydown(event: KeyboardEvent) {
+    const isDeleteKey =
+      event.key === 'Backspace' ||
+      event.key === 'Delete' ||
+      event.code === 'Backspace' ||
+      event.code === 'Delete';
+
+    if (!isDeleteKey || !this.timelineHasFocus() || this.isTextInputTarget(event.target) || !this.canDeleteSelection()) {
+      return;
+    }
+
+    // Backspace = Delete sur clavier Mac.
+    event.preventDefault();
+    await this.deleteSelection();
   }
 
   onMainScroll(event: Event) {
@@ -133,14 +184,6 @@ export class TimelineComponent implements OnDestroy {
     }
 
     this.facade.removeSelectedOccurrences(selectedIds);
-  }
-
-  async onTimelineDeleteShortcut() {
-    if (!this.isTimelineFocused()) {
-      return;
-    }
-
-    await this.deleteSelection();
   }
 
   deleteSelectionTooltip() {
@@ -308,37 +351,15 @@ export class TimelineComponent implements OnDestroy {
     this.facade.setAutoFollow(true);
   }
 
-  private isTimelineFocused() {
-    if (typeof document === 'undefined') {
+  private isTextInputTarget(target: EventTarget | null) {
+    if (!(target instanceof HTMLElement)) {
       return false;
     }
-    const timelineRoot = this.timelineRootRef?.nativeElement;
-    if (!timelineRoot) {
-      return false;
+    const tagName = target.tagName.toLowerCase();
+    if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
+      return true;
     }
-
-    const activeElement = document.activeElement;
-    return activeElement instanceof HTMLElement && timelineRoot.contains(activeElement);
-  }
-
-  private registerDeleteHotkeys() {
-    this.hotkeysService.registerReservedHotkey(
-      'timeline.delete',
-      { key: 'Delete', code: 'Delete' },
-      () => {
-        void this.onTimelineDeleteShortcut();
-      },
-      { label: 'Timeline supprimer', allowRepeat: false },
-    );
-
-    this.hotkeysService.registerReservedHotkey(
-      'timeline.backspace-delete',
-      { key: 'Backspace', code: 'Backspace' },
-      () => {
-        void this.onTimelineDeleteShortcut();
-      },
-      { label: 'Timeline supprimer', allowRepeat: false },
-    );
+    return target.isContentEditable;
   }
 
   private withOpacity(hex: string, opacity: number) {

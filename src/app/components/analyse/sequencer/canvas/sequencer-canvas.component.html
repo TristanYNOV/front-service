@@ -1,4 +1,4 @@
-<div class="relative h-full min-h-0">
+<div #canvasContainer class="relative h-full min-h-0">
   <div
     class="bg-layer-1 bg-canvas-grid hide-scrollbar border-layer relative h-full min-h-0 overflow-auto rounded-md border"
     data-pan-surface="true"
@@ -59,14 +59,16 @@
     </div>
   </div>
 
-  <div class="absolute bottom-2 left-1/2 z-50 -translate-x-1/2">
-    <app-zoom-controls
-      [value]="sequencerZoom.zoom()"
-      [min]="sequencerZoom.min"
-      [max]="sequencerZoom.max"
-      [step]="sequencerZoom.step"
-      [ariaLabel]="'Zoom sequencer'"
-      (valueChange)="sequencerZoom.setZoom($event)"
-    ></app-zoom-controls>
-  </div>
+  @if (showZoom()) {
+    <div class="absolute bottom-2 left-1/2 z-50 -translate-x-1/2">
+      <app-zoom-controls
+        [value]="sequencerZoom.zoom()"
+        [min]="sequencerZoom.min"
+        [max]="sequencerZoom.max"
+        [step]="sequencerZoom.step"
+        [ariaLabel]="'Zoom sequencer'"
+        (valueChange)="sequencerZoom.setZoom($event)"
+      ></app-zoom-controls>
+    </div>
+  }
 </div>

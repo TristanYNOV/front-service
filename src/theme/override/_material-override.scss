@@ -106,7 +106,13 @@
   .mat-mdc-slider {
     display: flex;
     align-items: center;
-    min-width: 0;
+    min-width: 5rem;
+    width: 5rem;
+    flex: 0 0 5rem;
     height: 28px;
+  }
+
+  .mat-mdc-slider .mdc-slider {
+    width: 100%;
   }
 }

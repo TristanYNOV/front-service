@@ -61,9 +61,35 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
   private timelineResizeObserver?: ResizeObserver;
   private readonly defaultEventColor = '#1F3D28';
 
+  readonly timelineEndMsForFit = computed(() => {
+    if (this.timebase.mode() !== 'clock') {
+      return this.facade.workDurationMs();
+    }
+
+    const occurrences = this.facade.occurrences();
+    if (occurrences.length === 0) {
+      return this.facade.workDurationMs();
+    }
+
+    const eventDefsById = new Map(this.facade.eventDefs().map(eventDef => [eventDef.id, eventDef]));
+    const hasOpenOccurrence = occurrences.some(occurrence => occurrence.isOpen);
+    const currentTimeMs = hasOpenOccurrence ? this.timebase.currentTimeMs() : 0;
+
+    const maxEndMs = occurrences.reduce((maxValue, occurrence) => {
+      if (occurrence.isOpen) {
+        const eventDef = eventDefsById.get(occurrence.eventDefId);
+        const endCandidate = currentTimeMs + (eventDef?.postMs ?? 1000);
+        return Math.max(maxValue, endCandidate);
+      }
+      return Math.max(maxValue, occurrence.endMs);
+    }, 0);
+
+    return maxEndMs > 0 ? maxEndMs : this.facade.workDurationMs();
+  });
+
   readonly fitZoom = computed(() => {
     const width = this.containerWidthPx();
-    const durationMs = this.facade.workDurationMs();
+    const durationMs = this.timelineEndMsForFit();
 
     if (width <= 0 || durationMs <= 0) {
       return 1;
@@ -84,7 +110,7 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
   readonly contentWidthPx = computed(() => {
     const minWidth = Math.max(1, this.containerWidthPx());
-    const naturalWidth = Math.ceil(this.facade.workDurationMs() * this.pxPerMs());
+    const naturalWidth = Math.ceil(this.timelineEndMsForFit() * this.pxPerMs());
     return Math.max(minWidth, naturalWidth);
   });
 

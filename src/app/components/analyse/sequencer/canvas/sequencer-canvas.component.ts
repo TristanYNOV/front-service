@@ -1,11 +1,15 @@
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   HostListener,
   Input,
+  OnDestroy,
   Output,
+  ViewChild,
   computed,
   inject,
   signal,
@@ -35,10 +39,17 @@ import { ZoomControlsComponent } from '../../../shared/zoom-controls/zoom-contro
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MatButtonModule, MatIconModule, ZoomControlsComponent],
 })
-export class SequencerCanvasComponent {
+export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('canvasContainer', { static: false }) canvasContainerRef?: ElementRef<HTMLDivElement>;
+
+  private readonly minZoomContainerPx = 250;
   private readonly defaultEventColor = '#1F3D28';
   private readonly panelService = inject(SequencerPanelService);
   readonly sequencerZoom = inject(SequencerZoomService);
+  readonly containerWidthPx = signal(0);
+  readonly showZoom = computed(() => this.containerWidthPx() >= this.minZoomContainerPx);
+
+  private resizeObserver?: ResizeObserver;
 
   @Input({ required: true }) btnList: SequencerBtn[] = [];
   @Input({ required: true }) editMode = false;
@@ -110,6 +121,28 @@ export class SequencerCanvasComponent {
     originW: number;
     originH: number;
   } | null>(null);
+
+  ngAfterViewInit() {
+    const canvasContainer = this.canvasContainerRef?.nativeElement;
+    if (!canvasContainer) {
+      return;
+    }
+
+    this.containerWidthPx.set(canvasContainer.clientWidth);
+    if (typeof window === 'undefined' || !('ResizeObserver' in window)) {
+      return;
+    }
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.containerWidthPx.set(canvasContainer.clientWidth);
+    });
+    this.resizeObserver.observe(canvasContainer);
+  }
+
+  ngOnDestroy() {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
+  }
 
   ensureBtnLayout(btn: SequencerBtn) {
     return this.panelService.ensureLayout(btn);

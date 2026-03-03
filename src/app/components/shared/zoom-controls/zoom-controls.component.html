@@ -1,0 +1,13 @@
+<div class="zoom-controls zoom-controls--compact bg-layer-1 border-layer-2 text-main inline-flex items-center gap-2 rounded-xl border px-2" [attr.aria-label]="ariaLabel">
+  <button type="button" mat-icon-button [disabled]="disabled" [attr.aria-label]="'Diminuer le zoom'" (click)="zoomOut()">
+    <mat-icon>remove</mat-icon>
+  </button>
+
+  <mat-slider class="w-24" [min]="min" [max]="max" [step]="step" [disabled]="disabled" [discrete]="false">
+    <input matSliderThumb [value]="value" (input)="onThumbInput($event)" [attr.aria-label]="ariaLabel" />
+  </mat-slider>
+
+  <button type="button" mat-icon-button [disabled]="disabled" [attr.aria-label]="'Augmenter le zoom'" (click)="zoomIn()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

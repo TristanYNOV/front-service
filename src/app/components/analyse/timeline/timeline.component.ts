@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -14,15 +25,17 @@ import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interf
 import { TimelineLabelsDialogComponent } from './timeline-labels-dialog.component';
 import { getReadableTextColor } from '../../../utils/color/color-contrast.utils';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { TimelineZoomService } from '../../../core/services/timeline-zoom.service';
+import { ZoomControlsComponent } from '../../shared/zoom-controls/zoom-controls.component';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, ZoomControlsComponent],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })
-export class TimelineComponent implements OnDestroy {
+export class TimelineComponent implements OnDestroy, AfterViewInit {
   @ViewChild('timeScrollEl', { static: false }) timeScrollElRef?: ElementRef<HTMLDivElement>;
   @ViewChild('timelineRoot', { static: false }) timelineRootRef?: ElementRef<HTMLDivElement>;
 
@@ -30,24 +43,87 @@ export class TimelineComponent implements OnDestroy {
   readonly timebase = inject(TimebaseService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialogService = inject(ConfirmDialogService);
+  readonly timelineZoom = inject(TimelineZoomService);
 
   readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
   readonly rulerHeightPx = 36;
   readonly leftColumnWidthPx = 220;
-  readonly pxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
+  readonly basePxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
 
   readonly scrollTopPx = signal(0);
   readonly timelineHasFocus = signal(false);
   readonly isEditingTimelineName = signal(false);
   readonly timelineNameDraft = signal('');
+  readonly containerWidthPx = signal(0);
 
   private readonly isProgrammaticScrollSignal = signal(false);
   private programmaticScrollTimeoutId?: number;
+  private timelineResizeObserver?: ResizeObserver;
   private readonly defaultEventColor = '#1F3D28';
 
-  readonly contentWidthPx = computed(() => Math.max(1200, Math.ceil(this.facade.workDurationMs() * this.pxPerMs)));
+  readonly displayDurationMs = computed(() => this.facade.workDurationMs());
+
+  readonly fitTargetDurationMs = computed(() => {
+    if (this.timebase.mode() !== 'clock') {
+      return this.displayDurationMs();
+    }
+
+    const occurrences = this.facade.occurrences();
+    if (occurrences.length === 0) {
+      return this.displayDurationMs();
+    }
+
+    const eventDefsById = new Map(this.facade.eventDefs().map(eventDef => [eventDef.id, eventDef]));
+    const hasOpenOccurrence = occurrences.some(occurrence => occurrence.isOpen);
+    const currentTimeMs = hasOpenOccurrence ? this.timebase.currentTimeMs() : 0;
+
+    const maxEndMs = occurrences.reduce((maxValue, occurrence) => {
+      if (occurrence.isOpen) {
+        const eventDef = eventDefsById.get(occurrence.eventDefId);
+        const endCandidate = currentTimeMs + (eventDef?.postMs ?? 1000);
+        return Math.max(maxValue, endCandidate);
+      }
+      return Math.max(maxValue, occurrence.endMs);
+    }, 0);
+
+    return maxEndMs > 0 ? maxEndMs : this.displayDurationMs();
+  });
+
+  readonly fitZoom = computed(() => {
+    const width = this.containerWidthPx();
+    const durationMs = this.fitTargetDurationMs();
+
+    if (width <= 0 || durationMs <= 0) {
+      return 1;
+    }
+
+    const rawFit = width / (durationMs * this.basePxPerMs);
+    return this.clamp(rawFit, 0.01, 1);
+  });
+
+  readonly actualZoom = computed(() => {
+    const ui = this.timelineZoom.uiZoom();
+    const fit = this.fitZoom();
+
+    if (fit >= this.timelineZoom.min) {
+      return ui;
+    }
+
+    const t = this.clamp((ui - this.timelineZoom.min) / (this.timelineZoom.max - this.timelineZoom.min), 0, 1);
+    return fit + t * (1 - fit);
+  });
+
+  readonly pxPerMs = computed(() => this.basePxPerMs * this.actualZoom());
+
+  readonly contentWidthPx = computed(() => {
+    const minWidth = Math.max(1, this.containerWidthPx());
+    const naturalWidth = Math.ceil(this.displayDurationMs() * this.pxPerMs());
+    return Math.max(minWidth, naturalWidth);
+  });
+
   readonly contentHeightPx = computed(() => this.rulerHeightPx + this.facade.eventDefs().length * this.rowHeightPx);
   readonly rulerTicks = computed(() => Array.from({ length: Math.ceil(this.contentWidthPx() / 80) }, (_, index) => index));
+  readonly tickMs = computed(() => 80 / this.pxPerMs());
 
   readonly selectedOccurrences = computed(() => {
     const selectedIds = new Set(this.facade.selectionIds());
@@ -82,7 +158,7 @@ export class TimelineComponent implements OnDestroy {
         return;
       }
 
-      const playheadX = this.timebase.currentTimeMs() * this.pxPerMs;
+      const playheadX = this.timebase.currentTimeMs() * this.pxPerMs();
       const leftComfort = timeScrollEl.scrollLeft + timeScrollEl.clientWidth * TIMELINE_AUTO_FOLLOW_COMFORT_ZONE[0];
       const rightComfort = timeScrollEl.scrollLeft + timeScrollEl.clientWidth * TIMELINE_AUTO_FOLLOW_COMFORT_ZONE[1];
       if (playheadX >= leftComfort && playheadX <= rightComfort) {
@@ -97,11 +173,32 @@ export class TimelineComponent implements OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    const timeScrollEl = this.timeScrollElRef?.nativeElement;
+    if (!timeScrollEl) {
+      return;
+    }
+
+    this.containerWidthPx.set(timeScrollEl.clientWidth);
+
+    if (typeof window === 'undefined' || !('ResizeObserver' in window)) {
+      return;
+    }
+
+    this.timelineResizeObserver = new ResizeObserver(() => {
+      this.containerWidthPx.set(timeScrollEl.clientWidth);
+    });
+    this.timelineResizeObserver.observe(timeScrollEl);
+  }
+
   ngOnDestroy() {
     if (this.programmaticScrollTimeoutId !== undefined) {
       window.clearTimeout(this.programmaticScrollTimeoutId);
       this.programmaticScrollTimeoutId = undefined;
     }
+
+    this.timelineResizeObserver?.disconnect();
+    this.timelineResizeObserver = undefined;
   }
 
   @HostListener('document:mousedown', ['$event'])
@@ -155,7 +252,6 @@ export class TimelineComponent implements OnDestroy {
       return;
     }
 
-    // Backspace = Delete sur clavier Mac.
     event.preventDefault();
     await this.deleteSelection();
   }
@@ -202,7 +298,6 @@ export class TimelineComponent implements OnDestroy {
     return `Supprimer la sélection (${this.selectedCount()})`;
   }
 
-
   startTimelineNameEdit() {
     this.timelineNameDraft.set(this.facade.timelineName());
     this.isEditingTimelineName.set(true);
@@ -240,7 +335,7 @@ export class TimelineComponent implements OnDestroy {
       const rulerRect = timeScrollEl.getBoundingClientRect();
       const xWithinViewport = Math.max(0, pointerEvent.clientX - rulerRect.left);
       const absoluteX = xWithinViewport + timeScrollEl.scrollLeft;
-      const targetMs = Math.max(0, absoluteX / this.pxPerMs);
+      const targetMs = Math.max(0, absoluteX / this.pxPerMs());
       this.timebase.seekTo(targetMs);
     };
 
@@ -276,7 +371,7 @@ export class TimelineComponent implements OnDestroy {
     const initialEnd = occurrence.endMs;
 
     const move = (moveEvent: MouseEvent) => {
-      const deltaMs = (moveEvent.clientX - startX) / this.pxPerMs;
+      const deltaMs = (moveEvent.clientX - startX) / this.pxPerMs();
       if (edge === 'start') {
         this.facade.updateOccurrenceTiming(occurrence.id, initialStart + deltaMs, initialEnd);
       } else {
@@ -334,11 +429,11 @@ export class TimelineComponent implements OnDestroy {
   occurrenceWidthPx(occurrence: TimelineOccurrence) {
     const eventDef = this.facade.eventDefs().find(definition => definition.id === occurrence.eventDefId);
     const endMs = occurrence.isOpen ? this.timebase.currentTimeMs() + (eventDef?.postMs ?? 1000) : occurrence.endMs;
-    return Math.max(8, (endMs - occurrence.startMs) * this.pxPerMs);
+    return Math.max(8, (endMs - occurrence.startMs) * this.pxPerMs());
   }
 
   occurrenceLeftPx(occurrence: TimelineOccurrence) {
-    return occurrence.startMs * this.pxPerMs;
+    return occurrence.startMs * this.pxPerMs();
   }
 
   occurrenceLabelSummary(occurrence: TimelineOccurrence) {
@@ -348,6 +443,17 @@ export class TimelineComponent implements OnDestroy {
       hiddenCount: Math.max(0, labelNames.length - 2),
       tooltip: labelNames.join(', '),
     };
+  }
+
+  formatTime(valueMs: number) {
+    const totalSeconds = Math.max(0, Math.floor(valueMs / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+      .toString()
+      .padStart(2, '0')}`;
   }
 
   private occurrenceLabelNames(occurrence: TimelineOccurrence) {
@@ -367,7 +473,7 @@ export class TimelineComponent implements OnDestroy {
   }
 
   playheadLeftPx() {
-    return this.timebase.currentTimeMs() * this.pxPerMs;
+    return this.timebase.currentTimeMs() * this.pxPerMs();
   }
 
   recenter() {
@@ -401,6 +507,10 @@ export class TimelineComponent implements OnDestroy {
     const g = Number.parseInt(normalized.slice(3, 5), 16);
     const b = Number.parseInt(normalized.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  private clamp(value: number, min: number, max: number) {
+    return Math.min(max, Math.max(min, value));
   }
 
   private setProgrammaticScroll(callback: () => void) {

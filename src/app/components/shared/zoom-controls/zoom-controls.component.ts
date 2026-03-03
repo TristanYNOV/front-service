@@ -17,8 +17,6 @@ export class ZoomControlsComponent {
   @Input({ required: true }) step = 0.05;
   @Input() disabled = false;
   @Input() ariaLabel = 'Zoom controls';
-  @Input() showPercent = true;
-
   @Output() valueChange = new EventEmitter<number>();
 
   zoomOut() {
@@ -38,9 +36,6 @@ export class ZoomControlsComponent {
     this.emitClamped(Number(sliderInput.value));
   }
 
-  zoomPercent() {
-    return `${Math.round(this.value * 100)}%`;
-  }
 
   private emitClamped(nextValue: number) {
     this.valueChange.emit(this.clamp(nextValue));

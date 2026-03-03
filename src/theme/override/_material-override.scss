@@ -104,6 +104,9 @@
   }
 
   .mat-mdc-slider {
+    display: flex;
+    align-items: center;
+    min-width: 0;
     height: 28px;
   }
 }

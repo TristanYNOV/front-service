@@ -1,4 +1,4 @@
-<div class="zoom-controls zoom-controls--compact bg-layer-1 border-layer-2 text-main inline-flex items-center gap-1 rounded-xl border px-1.5 py-1" [attr.aria-label]="ariaLabel">
+<div class="zoom-controls zoom-controls--compact bg-layer-1 border-layer-2 text-main inline-flex items-center gap-2 rounded-xl border px-2" [attr.aria-label]="ariaLabel">
   <button type="button" mat-icon-button [disabled]="disabled" [attr.aria-label]="'Diminuer le zoom'" (click)="zoomOut()">
     <mat-icon>remove</mat-icon>
   </button>
@@ -10,8 +10,4 @@
   <button type="button" mat-icon-button [disabled]="disabled" [attr.aria-label]="'Augmenter le zoom'" (click)="zoomIn()">
     <mat-icon>add</mat-icon>
   </button>
-
-  @if (showPercent) {
-    <span class="text-xs font-medium tabular-nums">{{ zoomPercent() }}</span>
-  }
 </div>

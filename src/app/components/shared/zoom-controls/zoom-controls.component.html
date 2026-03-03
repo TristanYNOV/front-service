@@ -1,10 +1,10 @@
-<div class="bg-layer-1 border-layer-2 text-main inline-flex items-center gap-2 rounded-xl border p-2" [attr.aria-label]="ariaLabel">
+<div class="zoom-controls zoom-controls--compact bg-layer-1 border-layer-2 text-main inline-flex items-center gap-1 rounded-xl border px-1.5 py-1" [attr.aria-label]="ariaLabel">
   <button type="button" mat-icon-button [disabled]="disabled" [attr.aria-label]="'Diminuer le zoom'" (click)="zoomOut()">
     <mat-icon>remove</mat-icon>
   </button>
 
-  <mat-slider class="min-w-28" [min]="min" [max]="max" [step]="step" [disabled]="disabled" [discrete]="false">
-    <input matSliderThumb [value]="sliderValue()" (input)="onSliderInput($event)" [attr.aria-label]="ariaLabel" />
+  <mat-slider class="w-24" [min]="min" [max]="max" [step]="step" [disabled]="disabled" [discrete]="false">
+    <input matSliderThumb [value]="value" (input)="onSliderInput($event)" [attr.aria-label]="ariaLabel" />
   </mat-slider>
 
   <button type="button" mat-icon-button [disabled]="disabled" [attr.aria-label]="'Augmenter le zoom'" (click)="zoomIn()">
@@ -12,6 +12,6 @@
   </button>
 
   @if (showPercent) {
-    <span class="text-sm font-medium tabular-nums">{{ zoomPercent() }}</span>
+    <span class="text-xs font-medium tabular-nums">{{ zoomPercent() }}</span>
   }
 </div>

@@ -86,3 +86,24 @@
     @apply mt-2 mb-4;
   }
 }
+
+.zoom-controls--compact {
+  border-radius: 12px;
+
+  .mat-mdc-icon-button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+
+  .mat-mdc-icon-button .mat-icon {
+    font-size: 18px;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 18px;
+  }
+
+  .mat-mdc-slider {
+    height: 28px;
+  }
+}

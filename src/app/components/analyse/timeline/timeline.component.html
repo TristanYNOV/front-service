@@ -33,14 +33,13 @@
 
     <app-zoom-controls
       class="mx-2"
-      [value]="timelineZoom.zoom()"
-      [min]="timelineZoom.min"
-      [max]="timelineZoom.max"
-      [step]="timelineZoom.step"
-      [invert]="true"
+      [value]="timelineZoom.uiZoom()"
+      [min]="timelineZoom.minUi"
+      [max]="timelineZoom.maxUi"
+      [step]="timelineZoom.stepUi"
       [ariaLabel]="'Zoom timeline'"
       [showPercent]="true"
-      (valueChange)="timelineZoom.setZoom($event)"
+      (valueChange)="timelineZoom.setUiZoom($event)"
     ></app-zoom-controls>
 
     <button
@@ -91,7 +90,7 @@
               (mousedown)="onRulerPointerDown($event)"
             >
               @for (tick of rulerTicks(); track tick) {
-                <span class="border-subtle absolute top-0 h-full border-l text-[10px] text-muted" [style.left.px]="tick * 80">{{ tick }}s</span>
+                <span class="border-subtle absolute top-0 h-full border-l text-[10px] text-muted" [style.left.px]="tick * 80">{{ formatTime(tick * tickMs()) }}</span>
               }
               <span class="bg-timeline-playhead absolute top-0 h-full w-0.5" [style.left.px]="playheadLeftPx()"></span>
             </div>

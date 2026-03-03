@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, computed } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSliderModule } from '@angular/material/slider';
@@ -15,14 +15,11 @@ export class ZoomControlsComponent {
   @Input({ required: true }) min = 0.25;
   @Input({ required: true }) max = 1;
   @Input({ required: true }) step = 0.05;
-  @Input() invert = false;
   @Input() disabled = false;
   @Input() ariaLabel = 'Zoom controls';
   @Input() showPercent = true;
 
   @Output() valueChange = new EventEmitter<number>();
-
-  readonly sliderValue = computed(() => (this.invert ? this.min + this.max - this.value : this.value));
 
   zoomOut() {
     this.emitClamped(this.value - this.step);
@@ -38,9 +35,7 @@ export class ZoomControlsComponent {
       return;
     }
 
-    const raw = Number(sliderInput.value);
-    const nextValue = this.invert ? this.min + this.max - raw : raw;
-    this.emitClamped(nextValue);
+    this.emitClamped(Number(sliderInput.value));
   }
 
   zoomPercent() {
@@ -48,8 +43,7 @@ export class ZoomControlsComponent {
   }
 
   private emitClamped(nextValue: number) {
-    const clampedValue = this.clamp(nextValue);
-    this.valueChange.emit(clampedValue);
+    this.valueChange.emit(this.clamp(nextValue));
   }
 
   private clamp(value: number) {

@@ -19,22 +19,12 @@ describe('ZoomControlsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('maps slider value directly when invert is false', () => {
+  it('maps slider value directly', () => {
     const emitSpy = spyOn(component.valueChange, 'emit');
 
-    component.invert = false;
     component.onSliderInput({ target: { value: '0.7' } } as unknown as Event);
 
     expect(emitSpy).toHaveBeenCalledWith(0.7);
-  });
-
-  it('maps slider value inversely when invert is true', () => {
-    const emitSpy = spyOn(component.valueChange, 'emit');
-
-    component.invert = true;
-    component.onSliderInput({ target: { value: '0.4' } } as unknown as Event);
-
-    expect(emitSpy).toHaveBeenCalledWith(0.85);
   });
 
   it('clamps minus and plus actions to min and max', () => {

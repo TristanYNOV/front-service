@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnDestroy, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -24,7 +35,7 @@ import { ZoomControlsComponent } from '../../shared/zoom-controls/zoom-controls.
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })
-export class TimelineComponent implements OnDestroy {
+export class TimelineComponent implements OnDestroy, AfterViewInit {
   @ViewChild('timeScrollEl', { static: false }) timeScrollElRef?: ElementRef<HTMLDivElement>;
   @ViewChild('timelineRoot', { static: false }) timelineRootRef?: ElementRef<HTMLDivElement>;
 
@@ -38,20 +49,48 @@ export class TimelineComponent implements OnDestroy {
   readonly rulerHeightPx = 36;
   readonly leftColumnWidthPx = 220;
   readonly basePxPerMs = TIMELINE_PIXELS_PER_SECOND / 1000;
-  readonly pxPerMs = computed(() => this.basePxPerMs * this.timelineZoom.zoom());
 
   readonly scrollTopPx = signal(0);
   readonly timelineHasFocus = signal(false);
   readonly isEditingTimelineName = signal(false);
   readonly timelineNameDraft = signal('');
+  readonly containerWidthPx = signal(0);
 
   private readonly isProgrammaticScrollSignal = signal(false);
   private programmaticScrollTimeoutId?: number;
+  private timelineResizeObserver?: ResizeObserver;
   private readonly defaultEventColor = '#1F3D28';
 
-  readonly contentWidthPx = computed(() => Math.max(1200, Math.ceil(this.facade.workDurationMs() * this.pxPerMs())));
+  readonly fitZoom = computed(() => {
+    const width = this.containerWidthPx();
+    const durationMs = this.facade.workDurationMs();
+
+    if (width <= 0 || durationMs <= 0) {
+      return 1;
+    }
+
+    const rawFit = width / (durationMs * this.basePxPerMs);
+    return this.clamp(rawFit, 0.01, 1);
+  });
+
+  readonly actualZoom = computed(() => {
+    const ui = this.timelineZoom.uiZoom();
+    const fit = this.fitZoom();
+    const t = this.clamp((ui - this.timelineZoom.minUi) / (this.timelineZoom.maxUi - this.timelineZoom.minUi), 0, 1);
+    return fit + t * (1 - fit);
+  });
+
+  readonly pxPerMs = computed(() => this.basePxPerMs * this.actualZoom());
+
+  readonly contentWidthPx = computed(() => {
+    const minWidth = Math.max(1, this.containerWidthPx());
+    const naturalWidth = Math.ceil(this.facade.workDurationMs() * this.pxPerMs());
+    return Math.max(minWidth, naturalWidth);
+  });
+
   readonly contentHeightPx = computed(() => this.rulerHeightPx + this.facade.eventDefs().length * this.rowHeightPx);
   readonly rulerTicks = computed(() => Array.from({ length: Math.ceil(this.contentWidthPx() / 80) }, (_, index) => index));
+  readonly tickMs = computed(() => 80 / this.pxPerMs());
 
   readonly selectedOccurrences = computed(() => {
     const selectedIds = new Set(this.facade.selectionIds());
@@ -101,11 +140,32 @@ export class TimelineComponent implements OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    const timeScrollEl = this.timeScrollElRef?.nativeElement;
+    if (!timeScrollEl) {
+      return;
+    }
+
+    this.containerWidthPx.set(timeScrollEl.clientWidth);
+
+    if (typeof window === 'undefined' || !('ResizeObserver' in window)) {
+      return;
+    }
+
+    this.timelineResizeObserver = new ResizeObserver(() => {
+      this.containerWidthPx.set(timeScrollEl.clientWidth);
+    });
+    this.timelineResizeObserver.observe(timeScrollEl);
+  }
+
   ngOnDestroy() {
     if (this.programmaticScrollTimeoutId !== undefined) {
       window.clearTimeout(this.programmaticScrollTimeoutId);
       this.programmaticScrollTimeoutId = undefined;
     }
+
+    this.timelineResizeObserver?.disconnect();
+    this.timelineResizeObserver = undefined;
   }
 
   @HostListener('document:mousedown', ['$event'])
@@ -159,7 +219,6 @@ export class TimelineComponent implements OnDestroy {
       return;
     }
 
-    // Backspace = Delete sur clavier Mac.
     event.preventDefault();
     await this.deleteSelection();
   }
@@ -205,7 +264,6 @@ export class TimelineComponent implements OnDestroy {
 
     return `Supprimer la sélection (${this.selectedCount()})`;
   }
-
 
   startTimelineNameEdit() {
     this.timelineNameDraft.set(this.facade.timelineName());
@@ -354,6 +412,17 @@ export class TimelineComponent implements OnDestroy {
     };
   }
 
+  formatTime(valueMs: number) {
+    const totalSeconds = Math.max(0, Math.floor(valueMs / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+      .toString()
+      .padStart(2, '0')}`;
+  }
+
   private occurrenceLabelNames(occurrence: TimelineOccurrence) {
     const labelNameById = this.labelNameById();
     return occurrence.labelIds.map(id => labelNameById[id]).filter((name): name is string => Boolean(name));
@@ -405,6 +474,10 @@ export class TimelineComponent implements OnDestroy {
     const g = Number.parseInt(normalized.slice(3, 5), 16);
     const b = Number.parseInt(normalized.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  private clamp(value: number, min: number, max: number) {
+    return Math.min(max, Math.max(min, value));
   }
 
   private setProgrammaticScroll(callback: () => void) {

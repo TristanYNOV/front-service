@@ -366,10 +366,20 @@ export class HotkeysService {
     if (!(target instanceof HTMLElement)) {
       return false;
     }
+
     const tagName = target.tagName.toLowerCase();
-    if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
+    if (tagName === 'textarea' || tagName === 'select') {
       return true;
     }
+
+    if (tagName === 'input') {
+      const inputType = (target as HTMLInputElement).type.toLowerCase();
+      if (inputType === 'range' || inputType === 'checkbox' || inputType === 'radio' || inputType === 'button') {
+        return false;
+      }
+      return true;
+    }
+
     return target.isContentEditable;
   }
 

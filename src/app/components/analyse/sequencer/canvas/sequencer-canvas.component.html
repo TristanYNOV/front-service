@@ -1,57 +1,74 @@
-<div
-  class="bg-layer-1 bg-canvas-grid hide-scrollbar border-layer relative h-full min-h-0 overflow-auto rounded-md border"
-  data-pan-surface="true"
-  (mousedown)="onViewportMouseDown($event)"
->
-  <div class="relative" data-pan-surface="true" [ngStyle]="contentStyle()">
-    @for (btn of btnList; track btn.id) {
-      <div
-        role="button"
-        tabindex="0"
-        class="absolute flex select-none flex-col items-center justify-center gap-1 overflow-hidden rounded-md border p-2 text-center"
-        [class.seq-btn-event-card]="btn.type === 'event'"
-        [class.seq-btn-label]="btn.type === 'label'"
-        [class.seq-btn-event-active]="btn.type === 'event' && isActive(btn.id)"
-        [ngStyle]="btnStyle(btn)"
-        [class.is-pressed]="lastTriggeredBtnId === btn.id"
-        (mousedown)="onBtnMouseDown($event, btn)"
-        (click)="onBtnClick($event, btn)"
-      >
-        @if (editMode) {
-          <div class="absolute left-1 top-1 z-20">
-            <button
-              type="button"
-              class="flex h-4 w-4 min-h-4 min-w-4 items-center justify-center"
-              (click)="onEditIconClick($event, btn)"
-            >
-              <mat-icon class="h-3 w-3 text-[12px]">edit</mat-icon>
-            </button>
+<div #canvasContainer class="relative h-full min-h-0">
+  <div
+    class="bg-layer-1 bg-canvas-grid hide-scrollbar border-layer relative h-full min-h-0 overflow-auto rounded-md border"
+    data-pan-surface="true"
+    (mousedown)="onViewportMouseDown($event)"
+  >
+    <div class="relative" data-pan-surface="true" [ngStyle]="zoomedCanvasStyle()">
+      <div class="absolute left-0 top-0" data-pan-surface="true" [ngStyle]="contentStyle()" [style.transform]="'scale(' + zoom() + ')'" style="transform-origin: top left;">
+        @for (btn of btnList; track btn.id) {
+          <div
+            role="button"
+            tabindex="0"
+            class="absolute flex select-none flex-col items-center justify-center gap-1 overflow-hidden rounded-md border p-2 text-center"
+            [class.seq-btn-event-card]="btn.type === 'event'"
+            [class.seq-btn-label]="btn.type === 'label'"
+            [class.seq-btn-event-active]="btn.type === 'event' && isActive(btn.id)"
+            [ngStyle]="btnStyle(btn)"
+            [class.is-pressed]="lastTriggeredBtnId === btn.id"
+            (mousedown)="onBtnMouseDown($event, btn)"
+            (click)="onBtnClick($event, btn)"
+          >
+            @if (editMode) {
+              <div class="absolute left-1 top-1 z-20">
+                <button
+                  type="button"
+                  class="flex h-4 w-4 min-h-4 min-w-4 items-center justify-center"
+                  (click)="onEditIconClick($event, btn)"
+                >
+                  <mat-icon class="h-3 w-3 text-[12px]">edit</mat-icon>
+                </button>
+              </div>
+              <div class="absolute right-1 top-1 z-20">
+                <button
+                  type="button"
+                  class="flex h-4 w-4 min-h-4 min-w-4 items-center justify-center"
+                  (click)="onDeleteIconClick($event, btn)"
+                >
+                  <mat-icon class="h-3 w-3 text-[12px]">delete</mat-icon>
+                </button>
+              </div>
+            }
+
+            <div class="min-w-0 max-w-full px-1">
+              <div class="text-[10px] font-medium">{{ btn.id }}</div>
+              <div class="truncate text-xs font-semibold">{{ btn.name }}</div>
+            </div>
+
+            <div class="w-full text-[10px]">{{ formatHotkey(btn.hotkeyNormalized) }}</div>
+
+            @if (editMode) {
+              <span
+                class="border-layer bg-layer-0 absolute bottom-0 right-0 h-3.5 w-3.5 cursor-se-resize rounded-tl border-l border-t"
+                (mousedown)="onResizeHandleMouseDown($event, btn)"
+              ></span>
+            }
           </div>
-          <div class="absolute right-1 top-1 z-20">
-            <button
-              type="button"
-              class="flex h-4 w-4 min-h-4 min-w-4 items-center justify-center"
-              (click)="onDeleteIconClick($event, btn)"
-            >
-              <mat-icon class="h-3 w-3 text-[12px]">delete</mat-icon>
-            </button>
-          </div>
-        }
-
-        <div class="min-w-0 max-w-full px-1">
-          <div class="text-[10px] font-medium">{{ btn.id }}</div>
-          <div class="truncate text-xs font-semibold">{{ btn.name }}</div>
-        </div>
-
-        <div class="w-full text-[10px]">{{ formatHotkey(btn.hotkeyNormalized) }}</div>
-
-        @if (editMode) {
-          <span
-            class="border-layer bg-layer-0 absolute bottom-0 right-0 h-3.5 w-3.5 cursor-se-resize rounded-tl border-l border-t"
-            (mousedown)="onResizeHandleMouseDown($event, btn)"
-          ></span>
         }
       </div>
-    }
+    </div>
   </div>
+
+  @if (showZoom()) {
+    <div class="absolute bottom-2 left-1/2 z-50 -translate-x-1/2">
+      <app-zoom-controls
+        [value]="sequencerZoom.zoom()"
+        [min]="sequencerZoom.min"
+        [max]="sequencerZoom.max"
+        [step]="sequencerZoom.step"
+        [ariaLabel]="'Zoom sequencer'"
+        (valueChange)="sequencerZoom.setZoom($event)"
+      ></app-zoom-controls>
+    </div>
+  }
 </div>

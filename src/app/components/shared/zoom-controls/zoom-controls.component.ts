@@ -27,13 +27,13 @@ export class ZoomControlsComponent {
     this.emitClamped(this.value + this.step);
   }
 
-  onSliderInput(event: Event) {
+  onThumbInput(event: Event) {
     const sliderInput = event.target as HTMLInputElement | null;
     if (!sliderInput) {
       return;
     }
 
-    this.emitClamped(Number(sliderInput.value));
+    this.emitClamped(Number.isFinite(sliderInput.valueAsNumber) ? sliderInput.valueAsNumber : Number(sliderInput.value));
   }
 
 

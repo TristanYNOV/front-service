@@ -34,9 +34,9 @@
     <app-zoom-controls
       class="mx-2"
       [value]="timelineZoom.uiZoom()"
-      [min]="timelineZoom.minUi"
-      [max]="timelineZoom.maxUi"
-      [step]="timelineZoom.stepUi"
+      [min]="timelineZoom.min"
+      [max]="timelineZoom.max"
+      [step]="timelineZoom.step"
       [ariaLabel]="'Zoom timeline'"
       (valueChange)="timelineZoom.setUiZoom($event)"
     ></app-zoom-controls>

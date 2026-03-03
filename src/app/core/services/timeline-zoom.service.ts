@@ -2,12 +2,12 @@ import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class TimelineZoomService {
-  readonly minUi = 0.05;
-  readonly maxUi = 1;
-  readonly stepUi = 0.05;
-  readonly defaultUi = 1;
+  readonly min = 0.05;
+  readonly max = 1;
+  readonly step = 0.05;
+  readonly default = 1;
 
-  private readonly _uiZoom = signal(this.defaultUi);
+  private readonly _uiZoom = signal(this.default);
   readonly uiZoom = this._uiZoom.asReadonly();
 
   setUiZoom(value: number) {
@@ -15,14 +15,14 @@ export class TimelineZoomService {
   }
 
   zoomIn() {
-    this.setUiZoom(this.uiZoom() + this.stepUi);
+    this.setUiZoom(this.uiZoom() + this.step);
   }
 
   zoomOut() {
-    this.setUiZoom(this.uiZoom() - this.stepUi);
+    this.setUiZoom(this.uiZoom() - this.step);
   }
 
   private clamp(value: number) {
-    return Math.min(this.maxUi, Math.max(this.minUi, value));
+    return Math.min(this.max, Math.max(this.min, value));
   }
 }

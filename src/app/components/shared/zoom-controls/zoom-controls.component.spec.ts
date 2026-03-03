@@ -22,7 +22,7 @@ describe('ZoomControlsComponent', () => {
   it('maps slider value directly', () => {
     const emitSpy = spyOn(component.valueChange, 'emit');
 
-    component.onSliderInput({ target: { value: '0.7' } } as unknown as Event);
+    component.onThumbInput({ target: { value: '0.7' } } as unknown as Event);
 
     expect(emitSpy).toHaveBeenCalledWith(0.7);
   });
@@ -42,7 +42,7 @@ describe('ZoomControlsComponent', () => {
   it('emits on slider input changes', () => {
     const emitSpy = spyOn(component.valueChange, 'emit');
 
-    component.onSliderInput({ target: { value: '0.95' } } as unknown as Event);
+    component.onThumbInput({ target: { value: '0.95' } } as unknown as Event);
 
     expect(emitSpy).toHaveBeenCalledTimes(1);
     expect(emitSpy).toHaveBeenCalledWith(0.95);

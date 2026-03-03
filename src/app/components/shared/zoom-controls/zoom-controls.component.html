@@ -4,7 +4,7 @@
   </button>
 
   <mat-slider class="w-24" [min]="min" [max]="max" [step]="step" [disabled]="disabled" [discrete]="false">
-    <input matSliderThumb [value]="value" (input)="onSliderInput($event)" [attr.aria-label]="ariaLabel" />
+    <input matSliderThumb [value]="value" (input)="onThumbInput($event)" [attr.aria-label]="ariaLabel" />
   </mat-slider>
 
   <button type="button" mat-icon-button [disabled]="disabled" [attr.aria-label]="'Augmenter le zoom'" (click)="zoomIn()">

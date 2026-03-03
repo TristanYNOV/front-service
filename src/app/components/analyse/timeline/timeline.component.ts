@@ -61,14 +61,16 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
   private timelineResizeObserver?: ResizeObserver;
   private readonly defaultEventColor = '#1F3D28';
 
-  readonly timelineEndMsForFit = computed(() => {
+  readonly displayDurationMs = computed(() => this.facade.workDurationMs());
+
+  readonly fitTargetDurationMs = computed(() => {
     if (this.timebase.mode() !== 'clock') {
-      return this.facade.workDurationMs();
+      return this.displayDurationMs();
     }
 
     const occurrences = this.facade.occurrences();
     if (occurrences.length === 0) {
-      return this.facade.workDurationMs();
+      return this.displayDurationMs();
     }
 
     const eventDefsById = new Map(this.facade.eventDefs().map(eventDef => [eventDef.id, eventDef]));
@@ -84,12 +86,12 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
       return Math.max(maxValue, occurrence.endMs);
     }, 0);
 
-    return maxEndMs > 0 ? maxEndMs : this.facade.workDurationMs();
+    return maxEndMs > 0 ? maxEndMs : this.displayDurationMs();
   });
 
   readonly fitZoom = computed(() => {
     const width = this.containerWidthPx();
-    const durationMs = this.timelineEndMsForFit();
+    const durationMs = this.fitTargetDurationMs();
 
     if (width <= 0 || durationMs <= 0) {
       return 1;
@@ -102,7 +104,12 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
   readonly actualZoom = computed(() => {
     const ui = this.timelineZoom.uiZoom();
     const fit = this.fitZoom();
-    const t = this.clamp((ui - this.timelineZoom.minUi) / (this.timelineZoom.maxUi - this.timelineZoom.minUi), 0, 1);
+
+    if (fit >= this.timelineZoom.min) {
+      return ui;
+    }
+
+    const t = this.clamp((ui - this.timelineZoom.min) / (this.timelineZoom.max - this.timelineZoom.min), 0, 1);
     return fit + t * (1 - fit);
   });
 
@@ -110,7 +117,7 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
   readonly contentWidthPx = computed(() => {
     const minWidth = Math.max(1, this.containerWidthPx());
-    const naturalWidth = Math.ceil(this.timelineEndMsForFit() * this.pxPerMs());
+    const naturalWidth = Math.ceil(this.displayDurationMs() * this.pxPerMs());
     return Math.max(minWidth, naturalWidth);
   });
 

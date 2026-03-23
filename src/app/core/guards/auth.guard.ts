@@ -1,15 +1,17 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { selectIsLoggedIn } from '../../store/User/user.selectors';
-import { map, take } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, map, take } from 'rxjs';
+import { AuthSessionService } from '../auth/auth-session.service';
 
 export const authGuard: CanActivateFn = () => {
-  const store = inject(Store);
+  const authSession = inject(AuthSessionService);
   const router = inject(Router);
 
-  return store.select(selectIsLoggedIn).pipe(
+  // On attend la fin de la restauration initiale pour éviter des redirections chaotiques au boot.
+  return toObservable(authSession.state).pipe(
+    filter(state => state.bootstrapped),
     take(1),
-    map(isLoggedIn => (isLoggedIn ? true : router.parseUrl('/')))
+    map(state => (state.status === 'authenticated' ? true : router.parseUrl('/')))
   );
 };

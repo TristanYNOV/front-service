@@ -1,6 +1,7 @@
 export interface AuthTokens {
   accessToken: string;
-  refreshToken: string;
+  // kept optional only for backward compatibility with legacy store code.
+  refreshToken?: string;
 }
 
 export interface AuthRequest {

@@ -1,32 +1,35 @@
 <div class="max-h-[85vh] w-[500px] h-fit bg-layer-2 rounded-lg light-text pt-8 p-4 overflow-hidden">
-  <h4 class="text-center font-bold text-3xl"> {{ this.modalType === 'login' ? 'Connexion' : "S'inscrire" }} </h4>
+  <h4 class="text-center font-bold text-3xl">{{ this.modalType === 'login' ? 'Connexion' : "S'inscrire" }}</h4>
   <div class="text-center mt-4">
     <button type="button" class="underline text-sm" (click)="toggleMode()">
       {{ modalType === 'login' ? 'Créer un compte' : 'Se connecter' }}
     </button>
   </div>
-  @if (error$ | async; as error) {
+
+  @if (backendError; as error) {
     <div class="text-center alert-text mt-2">{{ error }}</div>
   }
+
   <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 mt-4">
-      <mat-form-field>
-        <mat-label>Email</mat-label>
-          <input
-            formControlName="email"
-            matInput
-            placeholder="analyse@sport.fr"
-            required
-          />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Mot de passe</mat-label>
-        <input
-          [type]=" hidePassword ? 'password' : 'text'"
-          formControlName="password"
-          matInput
-          required
-        />
-      </mat-form-field>
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input formControlName="email" matInput placeholder="analyse@sport.fr" required />
+      @if (form.controls.email.hasError('required') && (form.controls.email.dirty || form.controls.email.touched)) {
+        <mat-error>Email requis.</mat-error>
+      }
+      @if (form.controls.email.hasError('email') && (form.controls.email.dirty || form.controls.email.touched)) {
+        <mat-error>Format email invalide.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Mot de passe</mat-label>
+      <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" matInput required />
+      <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" [attr.aria-label]="hidePassword ? 'Afficher le mot de passe' : 'Masquer le mot de passe'">
+        <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+    </mat-form-field>
+
     @if (shouldShowPasswordErrors()) {
       <div class="flex flex-col">
         @if (form.controls['password'].hasError('minLength')) {
@@ -48,18 +51,14 @@
     }
 
     <div class="flex justify-around mt-8">
-      @if (loading$ | async) {
+      @if (isSubmitting) {
         <app-loading-dots />
       } @else {
-        <button
-          class="btn-accent p-2"
-          type="submit"
-          [disabled]="form.invalid || (loading$ | async)"
-        >
+        <button class="btn-accent p-2" type="submit" [disabled]="form.invalid || isSubmitting">
           {{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}
         </button>
       }
-      <button (click)="closeModal()" class="btn-accent p-2">Annuler</button>
+      <button type="button" (click)="closeModal()" class="btn-accent p-2">Annuler</button>
     </div>
   </form>
 </div>

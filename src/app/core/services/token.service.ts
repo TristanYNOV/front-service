@@ -1,55 +1,36 @@
 import { Injectable } from '@angular/core';
 import { AuthTokens } from '../../interfaces/auth.interface';
 
+/**
+ * Legacy service conservé pour compatibilité interne.
+ * Les tokens sont maintenant uniquement en mémoire (jamais en storage persistant).
+ */
 @Injectable({ providedIn: 'root' })
 export class TokenService {
-  private readonly accessKey = 'myVideo_access_token';
-  private readonly refreshKey = 'myVideo_refresh_token';
-  private readonly emailKey = 'myVideo_email_token';
-
-  private isBrowser(): boolean {
-    return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-  }
+  private tokens: AuthTokens | null = null;
+  private email: string | null = null;
 
   setTokens(tokens: AuthTokens): void {
-    if (!this.isBrowser()) return;
-
-    window.localStorage.setItem(this.accessKey, tokens.accessToken);
-    window.localStorage.setItem(this.refreshKey, tokens.refreshToken);
+    this.tokens = tokens;
   }
 
   getTokens(): AuthTokens | null {
-    if (!this.isBrowser()) return null;
-
-    const accessToken = window.localStorage.getItem(this.accessKey);
-    const refreshToken = window.localStorage.getItem(this.refreshKey);
-
-    if (!accessToken || !refreshToken) return null;
-    return { accessToken, refreshToken };
+    return this.tokens;
   }
 
   clearTokens(): void {
-    if (!this.isBrowser()) return;
-
-    window.localStorage.removeItem(this.accessKey);
-    window.localStorage.removeItem(this.refreshKey);
+    this.tokens = null;
   }
 
-  setEmailInLocalStorage(email: string) {
-    if(!this.isBrowser()) return;
-
-    window.localStorage.setItem(this.emailKey, JSON.stringify(email));
+  setEmailInLocalStorage(email: string): void {
+    this.email = email;
   }
 
-  removeEmailInLocalStorage() {
-    if(!this.isBrowser()) return;
-
-    window.localStorage.removeItem(this.emailKey);
+  removeEmailInLocalStorage(): void {
+    this.email = null;
   }
 
-  getEmailInLocalStorage() {
-    if(!this.isBrowser()) return;
-
-    return window.localStorage.getItem(this.emailKey);
+  getEmailInLocalStorage(): string | null {
+    return this.email;
   }
 }

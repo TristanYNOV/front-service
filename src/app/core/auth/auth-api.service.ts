@@ -42,13 +42,27 @@ export class AuthApiService {
   }
 
   /**
-   * Le backend renvoie un JSON string (`"<jwt>"`).
-   * On normalise pour toujours injecter un bearer sans guillemets dans l'interceptor.
+   * Robustesse de parsing: selon le backend/proxy, le login peut répondre
+   * soit `"<jwt>"`, soit `{ "accessToken": "<jwt>" }`.
    */
   private normalizeJwtFromLogin(rawToken: string): string {
     const trimmed = rawToken.trim();
-    if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
-      return JSON.parse(trimmed) as string;
+
+    try {
+      const parsed = JSON.parse(trimmed) as unknown;
+
+      if (typeof parsed === 'string') {
+        return parsed;
+      }
+
+      if (typeof parsed === 'object' && parsed !== null && 'accessToken' in parsed) {
+        const accessToken = (parsed as { accessToken?: unknown }).accessToken;
+        if (typeof accessToken === 'string' && accessToken.trim().length > 0) {
+          return accessToken;
+        }
+      }
+    } catch {
+      // Réponse déjà en texte brut: on garde la valeur telle quelle.
     }
 
     return trimmed;

@@ -36,6 +36,18 @@ describe('AuthApiService', () => {
     expect(receivedToken).toBe('jwt-token');
   });
 
+  it('normalizes object payload JWT from login response', () => {
+    let receivedToken = '';
+    service.login({ email: 'test@example.com', password: 'Password1!' }).subscribe(token => {
+      receivedToken = token;
+    });
+
+    const req = httpMock.expectOne(environment.authEndpoints.login);
+    req.flush('{"accessToken":"jwt-token-obj"}');
+
+    expect(receivedToken).toBe('jwt-token-obj');
+  });
+
   it('calls refresh contract and returns access token object', () => {
     service.refresh().subscribe(response => {
       expect(response.accessToken).toBe('new-token');

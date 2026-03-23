@@ -21,14 +21,19 @@ describe('AuthApiService', () => {
     httpMock.verify();
   });
 
-  it('calls login contract and expects a text JWT body', () => {
-    service.login({ email: 'test@example.com', password: 'Password1!' }).subscribe();
+  it('normalizes JSON-string JWT from login response', () => {
+    let receivedToken = '';
+    service.login({ email: 'test@example.com', password: 'Password1!' }).subscribe(token => {
+      receivedToken = token;
+    });
 
     const req = httpMock.expectOne(environment.authEndpoints.login);
     expect(req.request.method).toBe('POST');
     expect(req.request.responseType).toBe('text');
     expect(req.request.withCredentials).toBeTrue();
-    req.flush('jwt-token');
+    req.flush('"jwt-token"');
+
+    expect(receivedToken).toBe('jwt-token');
   });
 
   it('calls refresh contract and returns access token object', () => {

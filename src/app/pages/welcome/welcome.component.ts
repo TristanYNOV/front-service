@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthSessionService } from '../../core/auth/auth-session.service';
 
 @Component({
   selector: 'app-welcome',
@@ -10,4 +11,8 @@ import { RouterLink } from '@angular/router';
     RouterLink
   ]
 })
-export class WelcomeComponent {}
+export class WelcomeComponent {
+  private readonly authSession = inject(AuthSessionService);
+
+  protected readonly welcomePseudo = computed(() => this.authSession.user()?.pseudo ?? 'coach');
+}

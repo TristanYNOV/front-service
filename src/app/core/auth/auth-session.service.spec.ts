@@ -58,6 +58,20 @@ describe('AuthSessionService', () => {
     expect(service.state().bootstrapped).toBeTrue();
   }));
 
+  it('sets token before calling /me during login flow', fakeAsync(() => {
+    authApiMock.login.and.returnValue(of('jwt-1'));
+    authApiMock.me.and.callFake(() => {
+      // Régression évitée: /me doit partir avec un token déjà disponible pour l'interceptor JWT.
+      expect(service.accessToken()).toBe('jwt-1');
+      return of({ id: '2', pseudo: 'user', email: 'user@ab.fr' });
+    });
+
+    service.login('user@ab.fr', 'Password1!').subscribe();
+    tick();
+
+    expect(service.user()?.id).toBe('2');
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/welcome']);
+  }));
 
   it('uses email as pseudo fallback when register pseudo is empty', fakeAsync(() => {
     authApiMock.register.and.returnValue(of({ id: '3', pseudo: 'user@ab.fr', email: 'user@ab.fr' }));
@@ -74,15 +88,18 @@ describe('AuthSessionService', () => {
     });
   }));
 
-  it('logs in and hydrates current user', fakeAsync(() => {
-    authApiMock.login.and.returnValue(of('jwt-1'));
-    authApiMock.me.and.returnValue(of({ id: '2', pseudo: 'user', email: 'user@ab.fr' }));
+  it('keeps register -> auto-login -> /me sequence and redirects to welcome', fakeAsync(() => {
+    authApiMock.register.and.returnValue(of({ id: '4', pseudo: 'rookie', email: 'rookie@ab.fr' }));
+    authApiMock.login.and.returnValue(of('jwt-3'));
+    authApiMock.me.and.callFake(() => {
+      expect(service.accessToken()).toBe('jwt-3');
+      return of({ id: '4', pseudo: 'rookie', email: 'rookie@ab.fr' });
+    });
 
-    service.login('user@ab.fr', 'Password1!').subscribe();
+    service.register('rookie@ab.fr', 'Password1!', 'rookie').subscribe();
     tick();
 
-    expect(service.accessToken()).toBe('jwt-1');
-    expect(service.user()?.id).toBe('2');
+    expect(service.user()?.pseudo).toBe('rookie');
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/welcome']);
   }));
 

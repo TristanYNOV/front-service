@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { runtimeEnvironment } from '../config/runtime-environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiUrlPolicyService {
@@ -10,14 +10,14 @@ export class ApiUrlPolicyService {
 
     // On limite explicitement aux préfixes API connus pour éviter toute fuite du bearer.
     if (!this.isAbsoluteUrl(url)) {
-      return environment.apiAllowedPrefixes.some((prefix: string) => url.startsWith(prefix));
+      return runtimeEnvironment.apiAllowedPrefixes.some((prefix: string) => url.startsWith(prefix));
     }
 
     try {
       const parsed = new URL(url);
       const isSameOrigin = typeof window !== 'undefined' ? parsed.origin === window.location.origin : false;
 
-      return isSameOrigin && environment.apiAllowedPrefixes.some((prefix: string) => parsed.pathname.startsWith(prefix));
+      return isSameOrigin && runtimeEnvironment.apiAllowedPrefixes.some((prefix: string) => parsed.pathname.startsWith(prefix));
     } catch {
       return false;
     }

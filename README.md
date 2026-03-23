@@ -1,46 +1,57 @@
 # Front Service (Angular)
 
-Frontend Angular du projet Analyse Basket.
+Frontend Angular principal de l’application (avec SSR/hydration), consommant plusieurs services backend via routes API.
 
 ## Prérequis
-- Node.js 18+
+- Node.js 20+
 - npm
-- `auth-service` lancé localement (par défaut sur `http://localhost:3000`)
 
 ## Installation
 ```bash
-npm install
+npm ci
 ```
 
-## Quickstart dev local
+## Développement local
 ```bash
 npm start
 ```
 - Frontend: `http://localhost:4200`
 - Le mode dev utilise `proxy.conf.mjs` pour proxifier `/auth`, `/users`, `/me` vers `http://localhost:3000`.
-- Le préfixe `/auth` est conservé pour respecter le cookie refresh (`Path=/auth`).
 
-## Flow auth MVP (résumé)
-1. Au boot: tentative `POST /auth/refresh`, puis `GET /me` si succès.
-2. Login: `POST /auth/login`, token access en mémoire, puis `GET /me`.
-3. Register: `POST /users` (pseudo optionnel dans l'UI, fallback email), puis login automatique.
-4. Logout: `POST /auth/logout`, nettoyage frontend même si erreur réseau.
-
-## Environnements
-- `src/environments/environment.development.ts`: chemins API pour dev (avec proxy Angular).
-- `src/environments/environment.production.ts`: chemins relatifs pour fonctionnement derrière infra / Traefik.
-
-## Tests
+## Build local
 ```bash
-npm test
-npm run lint
+npm run build
+```
+Le build produit un artefact SSR Angular (`dist/front-service/browser` + `dist/front-service/server`).
+
+## Docker local
+```bash
+docker build -t front-service:local .
+docker run --rm -p 4000:4000 -e AUTH_API_PREFIX=http://localhost:3000 front-service:local
 ```
 
-## Troubleshooting rapide
-- **401 ou erreurs réseau au login**: vérifier que `auth-service` tourne bien sur `localhost:3000`.
-- **Le proxy semble ignoré**: vérifier `angular.json` (`serve.development.proxyConfig`) et redémarrer `npm start`.
-- **Refresh KO au reload**: vérifier que le cookie `refreshToken` est bien reçu et que le chemin `/auth` n'est pas modifié.
-- **Toujours anonyme après reload**: confirmer que `/auth/refresh` répond correctement puis que `/me` est accessible avec le bearer.
+## CI/CD GitHub Actions
+- `lint.yml` : lint sur `push` (toutes branches) + `pull_request`.
+- `build.yml` : build sur `push` (toutes branches) + `pull_request`.
+- `publish-image.yml` : publication image GHCR **uniquement** sur `push` vers `master`.
 
-## Doc auth frontend
-Voir `docs/frontend/auth-integration.md` pour les détails d'architecture et d'intégration.
+## Publication image
+Image publiée sur GHCR sous la forme:
+- `ghcr.io/<owner>/<repo>:master`
+- `ghcr.io/<owner>/<repo>:sha-<shortsha>`
+
+## Contrat de déploiement (pour le futur repo infra)
+Voir `contract/deployment/`:
+- `README.md`
+- `runtime-env.example`
+- `compose.service.yaml`
+- `ghcr-tags.md`
+- `reverse-proxy.md`
+- `rendering-strategy.md`
+
+## Tests / qualité
+```bash
+npm run lint
+npm run build
+npm test
+```

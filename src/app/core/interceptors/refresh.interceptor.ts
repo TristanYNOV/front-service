@@ -3,12 +3,12 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthSessionService } from '../auth/auth-session.service';
-import { environment } from '../../../environments/environment';
+import { runtimeEnvironment } from '../config/runtime-environment';
 
 const EXCLUDED_RETRY_URLS = [
-  environment.authEndpoints.login,
-  environment.authEndpoints.refresh,
-  environment.authEndpoints.logout,
+  runtimeEnvironment.authEndpoints.login,
+  runtimeEnvironment.authEndpoints.refresh,
+  runtimeEnvironment.authEndpoints.logout,
 ];
 
 export const refreshInterceptor: HttpInterceptorFn = (req, next) => {

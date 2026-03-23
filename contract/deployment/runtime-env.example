@@ -1,0 +1,17 @@
+# Port HTTP du serveur SSR Angular.
+PORT=4000
+
+# Préfixe commun utilisé pour construire les endpoints auth si les variables explicites
+# AUTH_*_ENDPOINT ne sont pas fournies.
+# Exemple local: http://auth:3000
+AUTH_API_PREFIX=
+
+# Endpoints explicites (prioritaires sur AUTH_API_PREFIX)
+AUTH_LOGIN_ENDPOINT=/auth/login
+AUTH_REGISTER_ENDPOINT=/users
+AUTH_REFRESH_ENDPOINT=/auth/refresh
+AUTH_LOGOUT_ENDPOINT=/auth/logout
+AUTH_ME_ENDPOINT=/me
+
+# Préfixes autorisés pour l'injection automatique du bearer token (CSV)
+API_ALLOWED_PREFIXES=/auth,/api,/me,/users

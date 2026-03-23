@@ -1,30 +1,24 @@
-# Étape 1 : Construction de l'application Angular
-FROM node:22 AS builder
+FROM node:22-alpine AS builder
+WORKDIR /workspace
 
-WORKDIR /usr/src/app
-
-# Copie des fichiers package.json et package-lock.json pour installer les dépendances
 COPY package.json package-lock.json ./
+RUN npm ci
 
-RUN npm install --legacy-peer-deps
-
-# Copie du reste du code source
 COPY . .
-
-# Compilation Angular en mode production
 RUN npm run build
 
-# Étape 2 : Serveur NGINX pour exécuter l’application
-FROM nginx:latest AS runner
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=4000
 
-# Copie des fichiers Angular compilés vers le dossier NGINX
-COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
+COPY --from=builder /workspace/dist/front-service/browser ./browser
+COPY --from=builder /workspace/dist/front-service/server ./server
+COPY docker/entrypoint.sh ./entrypoint.sh
 
-# Copie d'un fichier de configuration NGINX personnalisé
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 4000
 
-# Exposition du port HTTP
-EXPOSE 80
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD node -e "const http=require('node:http');const req=http.get({host:'127.0.0.1',port:process.env.PORT||4000,path:'/healthz',timeout:2000},res=>process.exit(res.statusCode===200?0:1));req.on('error',()=>process.exit(1));"
 
-# Démarrage de NGINX
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/app/entrypoint.sh"]

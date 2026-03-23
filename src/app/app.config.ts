@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
@@ -8,10 +8,11 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { dataStateReducer } from './store/Data/dataState.reducers';
-import { userReducer } from './store/User/user.reducer';
-import { UserEffects } from './store/User/user.effects';
 import { DataEffects } from './store/Data/dataState.effects';
 import { timelineReducer } from './store/Timeline/timeline.reducer';
+import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { refreshInterceptor } from './core/interceptors/refresh.interceptor';
+import { provideAuthBootstrap } from './core/auth/auth.bootstrap';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,10 +22,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideStore({
       dataState: dataStateReducer,
-      userState: userReducer,
-      timelineState: timelineReducer
+      timelineState: timelineReducer,
     }),
-    provideEffects(UserEffects, DataEffects),
-    provideHttpClient()
-  ]
+    provideEffects(DataEffects),
+    provideHttpClient(withInterceptors([jwtInterceptor, refreshInterceptor])),
+    provideAuthBootstrap(),
+  ],
 };

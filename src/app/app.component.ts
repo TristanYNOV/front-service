@@ -1,12 +1,11 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { HeaderComponent } from './header/header.component';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
-import {MiniComponent} from './components/data-item-container/Minified/mini.component';
-import {selectIdleItems, selectSavedItems} from './store/Data/dataState.selectors';
-import { loadInitialState } from './store/User/user.actions';
-import {filter} from 'rxjs';
-import {LayoutEditModeService} from './core/services/layout-edit-mode.service';
+import { MiniComponent } from './components/data-item-container/Minified/mini.component';
+import { selectIdleItems, selectSavedItems } from './store/Data/dataState.selectors';
+import { filter } from 'rxjs';
+import { LayoutEditModeService } from './core/services/layout-edit-mode.service';
 
 @Component({
   selector: 'app-root',
@@ -23,12 +22,10 @@ export class AppComponent {
   showSidebar = true;
 
   constructor() {
-    this.store.dispatch(loadInitialState());
-
     this.showSidebar = !this.router.url.startsWith('/analyse');
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe(({urlAfterRedirects}) => {
+      .subscribe(({ urlAfterRedirects }) => {
         this.showSidebar = !urlAfterRedirects.startsWith('/analyse');
       });
   }
@@ -41,4 +38,3 @@ export class AppComponent {
     return this.store.selectSignal(selectSavedItems);
   }
 }
-

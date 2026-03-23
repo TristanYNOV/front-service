@@ -23,7 +23,7 @@ npm start
 ## Flow auth MVP (résumé)
 1. Au boot: tentative `POST /auth/refresh`, puis `GET /me` si succès.
 2. Login: `POST /auth/login`, token access en mémoire, puis `GET /me`.
-3. Register: `POST /users`, puis login automatique.
+3. Register: `POST /users` (pseudo optionnel dans l'UI, fallback email), puis login automatique.
 4. Logout: `POST /auth/logout`, nettoyage frontend même si erreur réseau.
 
 ## Environnements

@@ -25,7 +25,8 @@ Mettre en place une base d'authentification robuste côté Angular en respectant
    - `GET /me` pour hydrater l'utilisateur courant.
 
 3. **Register**
-   - `POST /users` (contrat backend)
+   - `POST /users` (contrat backend) avec `pseudo`
+   - si le pseudo n'est pas saisi côté UI, fallback automatique sur l'email
    - puis login automatique pour obtenir le JWT + `/me`.
 
 4. **Logout**

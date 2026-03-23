@@ -62,9 +62,12 @@ export class AuthSessionService {
     );
   }
 
-  register(email: string, password: string): Observable<UserPublicDto> {
+  register(email: string, password: string, pseudo?: string): Observable<UserPublicDto> {
+    // Le backend exige un pseudo: on fallback à l'email si le champ est vide côté UI.
+    const resolvedPseudo = pseudo?.trim() ? pseudo.trim() : email;
+
     // Contrat backend: /users ne retourne pas de token, on enchaîne avec login.
-    return this.authApi.register({ email, password }).pipe(
+    return this.authApi.register({ email, password, pseudo: resolvedPseudo }).pipe(
       switchMap(() => this.login(email, password))
     );
   }

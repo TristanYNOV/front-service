@@ -21,6 +21,7 @@ interface AuthModalData {
 }
 
 type AuthForm = FormGroup<{
+  pseudo: FormControl<string>;
   email: FormControl<string>;
   password: FormControl<string>;
 }>;
@@ -55,6 +56,7 @@ export class AuthModalComponent {
   constructor() {
     this.modalType = this.data.type === 'login' ? 'login' : 'register';
     this.form = new FormGroup({
+      pseudo: new FormControl('', { nonNullable: true }),
       email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
       password: new FormControl('', { nonNullable: true, validators: this.getPasswordValidators('login') }),
     });
@@ -69,7 +71,7 @@ export class AuthModalComponent {
     this.modalType = this.modalType === 'login' ? 'register' : 'login';
     this.form.controls.password.setValidators(this.getPasswordValidators(this.modalType));
     this.form.controls.password.updateValueAndValidity();
-    this.form.reset({ email: '', password: '' });
+    this.form.reset({ pseudo: '', email: '', password: '' });
     this.backendError = null;
     this.hidePassword = true;
   }
@@ -87,11 +89,11 @@ export class AuthModalComponent {
     this.backendError = null;
     this.isSubmitting = true;
 
-    const { email, password } = this.form.getRawValue();
+    const { pseudo, email, password } = this.form.getRawValue();
     const authRequest$ =
       this.modalType === 'login'
         ? this.authSession.login(email, password)
-        : this.authSession.register(email, password);
+        : this.authSession.register(email, password, pseudo);
 
     authRequest$
       .pipe(finalize(() => (this.isSubmitting = false)))

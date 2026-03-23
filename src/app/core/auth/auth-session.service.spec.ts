@@ -58,6 +58,22 @@ describe('AuthSessionService', () => {
     expect(service.state().bootstrapped).toBeTrue();
   }));
 
+
+  it('uses email as pseudo fallback when register pseudo is empty', fakeAsync(() => {
+    authApiMock.register.and.returnValue(of({ id: '3', pseudo: 'user@ab.fr', email: 'user@ab.fr' }));
+    authApiMock.login.and.returnValue(of('jwt-2'));
+    authApiMock.me.and.returnValue(of({ id: '3', pseudo: 'user@ab.fr', email: 'user@ab.fr' }));
+
+    service.register('user@ab.fr', 'Password1!', '   ').subscribe();
+    tick();
+
+    expect(authApiMock.register).toHaveBeenCalledWith({
+      email: 'user@ab.fr',
+      password: 'Password1!',
+      pseudo: 'user@ab.fr',
+    });
+  }));
+
   it('logs in and hydrates current user', fakeAsync(() => {
     authApiMock.login.and.returnValue(of('jwt-1'));
     authApiMock.me.and.returnValue(of({ id: '2', pseudo: 'user', email: 'user@ab.fr' }));

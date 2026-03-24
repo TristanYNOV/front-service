@@ -1,6 +1,6 @@
 services:
   front:
-    image: ghcr.io/<owner>/<repo-front>:master
+    image: ghcr.io/<owner_lower>/front-service:prod
     container_name: front
     restart: unless-stopped
     ports:

@@ -6,13 +6,15 @@ import {PriceTableMiniComponent} from '../../specialized-data/PriceTable/Minifie
 import {TextBlockMiniComponent} from '../../specialized-data/TextBlock/Minified/text-block-mini.component';
 import { displayFromIdle, displayFromSaved } from '../../../store/Data/dataState.actions';
 import { selectDisplayedItems } from '../../../store/Data/dataState.selectors';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-mini',
   standalone: true,
   imports: [
     PriceTableMiniComponent,
-    TextBlockMiniComponent
+    TextBlockMiniComponent,
+    MatIconModule
   ],
   templateUrl: './mini.component.html',
 })

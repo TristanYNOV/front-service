@@ -2,6 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthModalComponent } from '../core/shared/modals/auth/auth-modal.component';
 import { LayoutEditModeService } from '../core/services/layout-edit-mode.service';
@@ -11,7 +12,7 @@ import { AuthSessionService } from '../core/auth/auth-session.service';
   selector: 'app-header',
   templateUrl: './header.component.html',
   standalone: true,
-  imports: [MatMenuModule, MatButtonModule, RouterLink],
+  imports: [MatMenuModule, MatButtonModule, MatIconModule, RouterLink],
 })
 export class HeaderComponent {
   @Input({ required: true }) currentSpace!: string;

@@ -54,15 +54,23 @@
 }
 
 .seq-btn-event {
+  border-radius: 2rem;
   background-color: var(--sequencer-event-bg) !important;
   border-color: var(--sequencer-event-border) !important;
   color: var(--sequencer-event-text);
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
 .seq-btn-label {
+  border-radius: 2rem;
   background-color: var(--sequencer-label-bg) !important;
   border-color: var(--sequencer-label-border) !important;
   color: var(--sequencer-label-text);
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
 .seq-btn-event-card {

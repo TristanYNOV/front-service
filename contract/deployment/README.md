@@ -6,8 +6,9 @@ Ce dossier est la source de vérité à copier/consommer depuis le futur repo `i
 L'image `front` embarque le runtime **Angular SSR (Node/Express)**. Elle sert le HTML rendu côté serveur (SEO), les assets statiques Angular et une route de healthcheck.
 
 ## Image GHCR attendue
-- `ghcr.io/<owner>/<repo-front>:master`
-- Exemple pour ce repo : `ghcr.io/<org>/front-service:master`
+- `ghcr.io/<owner_lower>/front-service:prod`
+- `ghcr.io/<owner_lower>/front-service:sha-<full_sha>`
+- Image GHCR privée (consommée par le repo `infra` via droits de lecture GHCR).
 
 Voir aussi `ghcr-tags.md`.
 
@@ -20,7 +21,7 @@ Voir aussi `ghcr-tags.md`.
 ```bash
 docker run --rm -p 4000:4000 \
   -e AUTH_API_PREFIX=http://localhost:3000 \
-  ghcr.io/<owner>/<repo-front>:master
+  ghcr.io/<owner_lower>/front-service:prod
 ```
 
 ## Port exposé

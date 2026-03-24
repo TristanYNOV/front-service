@@ -1,13 +1,21 @@
 # GHCR tag policy
 
-Publication uniquement via `publish-image.yml`, déclenché sur `push` vers `master`.
+Publication uniquement via `publish-image.yml`, déclenché sur `push` vers `prod`.
+
+## Image publiée
+- `ghcr.io/<owner_lower>/front-service` (image privée GHCR)
+- Exemple : `ghcr.io/<org_lower>/front-service`
 
 ## Tags publiés
-- `master`: tag stable de la branche `master`.
-- `sha-<shortsha>`: tag immuable pour chaque commit publié.
-- tags Git (`refs/tags/*`): publiés si le workflow est adapté ultérieurement à des triggers tags.
-- SemVer (`x.y.z`, `x.y`) : générés quand des tags SemVer Git existent.
+- `prod`: tag stable de la branche `prod`.
+- `sha-<full_sha>`: tag immuable pour chaque commit publié (SHA Git complet).
 
 ## Contraintes
 - **Jamais de publication sur Pull Request.**
-- **Jamais de publication sur une branche autre que `master`.**
+- **Jamais de publication sur une branche autre que `prod`.**
+- **Aucun tag `latest`, `master` ou `main`.**
+
+## Repérer la bonne image rapidement
+- Dans GHCR : filtrer sur le package `front-service`, puis prendre `prod` ou le tag `sha-<full_sha>` du commit ciblé.
+- Dans le workflow GitHub Actions : lire le résumé de job (step summary) qui expose l'image, les deux tags et le digest final.
+- Côté infra : consommer idéalement le digest (`image@sha256:...`) pour un déploiement immuable.

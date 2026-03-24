@@ -1,28 +1,43 @@
 <div #panelRoot class="bg-elevated text-default flex h-full min-h-0 flex-col gap-3 p-3 text-xs">
   @if (compactMode()) {
     <div class="grid grid-cols-[auto_1fr] items-center gap-2">
-      <button mat-stroked-button [matMenuTriggerFor]="menu">A</button>
+      <button mat-stroked-button [matMenuTriggerFor]="menu" aria-label="Menu actions" title="Menu actions">
+        <mat-icon aria-hidden="true">menu</mat-icon>
+      </button>
       <div class="text-muted text-[11px]">Agrandir pour éditer le Sequencer Canvas.</div>
     </div>
     <mat-menu #menu="matMenu">
+      <button mat-menu-item type="button" (click)="toggleRename()">
+        <mat-icon aria-hidden="true">edit</mat-icon>
+        <span>Renommer</span>
+      </button>
       <button mat-menu-item disabled>Export</button>
       <button mat-menu-item disabled>Import</button>
       <button mat-menu-item disabled>Save</button>
       <button mat-menu-item disabled>SeeAllMyPanels</button>
     </mat-menu>
   } @else {
-    <div class="grid grid-cols-[repeat(4,auto)_1fr_auto] items-center gap-2">
-      <button mat-stroked-button [matMenuTriggerFor]="menu">A</button>
+    <div class="grid grid-cols-[repeat(3,auto)_1fr_auto] items-center gap-2">
+      <button mat-stroked-button [matMenuTriggerFor]="menu" aria-label="Menu actions" title="Menu actions">
+        <mat-icon aria-hidden="true">menu</mat-icon>
+      </button>
       <mat-menu #menu="matMenu">
+        <button mat-menu-item type="button" (click)="toggleRename()">
+          <mat-icon aria-hidden="true">edit</mat-icon>
+          <span>Renommer</span>
+        </button>
         <button mat-menu-item disabled>Export</button>
         <button mat-menu-item disabled>Import</button>
         <button mat-menu-item disabled>Save</button>
         <button mat-menu-item disabled>SeeAllMyPanels</button>
       </mat-menu>
 
-      <button mat-stroked-button type="button" class="seq-btn-event" (click)="openEventDialog()">E</button>
-      <button mat-stroked-button type="button" class="seq-btn-label" (click)="openLabelDialog()">L</button>
-      <button mat-stroked-button type="button" (click)="toggleRename()">N</button>
+      <button mat-stroked-button type="button" class="seq-btn-event" (click)="openEventDialog()" aria-label="Créer un event" title="Créer un event">
+        <mat-icon aria-hidden="true">calendar_add_on</mat-icon>
+      </button>
+      <button mat-stroked-button type="button" class="seq-btn-label" (click)="openLabelDialog()" aria-label="Créer un label" title="Créer un label">
+        <mat-icon aria-hidden="true">new_label</mat-icon>
+      </button>
 
       <div class="flex min-w-0 items-center">
         @if (showRenameInput()) {
@@ -39,7 +54,9 @@
         }
       </div>
 
-      <button mat-stroked-button type="button" (click)="toggleEditMode()">M</button>
+      <button mat-stroked-button type="button" (click)="toggleEditMode()" aria-label="Mode édition" title="Mode édition">
+        <mat-icon aria-hidden="true">edit_square</mat-icon>
+      </button>
     </div>
   }
 

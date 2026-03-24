@@ -5,6 +5,7 @@ import { PriceTableComponent } from '../specialized-data/PriceTable/price-table.
 import { TextBlockComponent } from '../specialized-data/TextBlock/text-block.component';
 import { Store } from '@ngrx/store';
 import { removeFromDisplay, saveFromDisplay } from '../../store/Data/dataState.actions';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-data-item-container',
@@ -13,6 +14,7 @@ import { removeFromDisplay, saveFromDisplay } from '../../store/Data/dataState.a
     CommonModule,
     PriceTableComponent,
     TextBlockComponent,
+    MatIconModule,
   ],
   templateUrl: './data-item-container.component.html',
 })

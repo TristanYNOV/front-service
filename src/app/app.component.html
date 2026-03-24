@@ -11,7 +11,10 @@
       <section class="w-[20%] min-w-[200px] max-w-[300px] bg-layer-1 p-2 flex flex-col gap-4 overflow-y-auto">
         <!-- IDLE -->
         <div id="idle-section" class="bg-layer-3 rounded-xl shadow p-2 h-1/2 light-text">
-          <h2 class="text-sm font-semibold mb-2">🟡 Données en attente</h2>
+          <h2 class="text-sm font-semibold mb-2 flex items-center gap-1">
+            <mat-icon aria-hidden="true">cloud</mat-icon>
+            <span>Données en attente</span>
+          </h2>
           @if (idleItems().length > 0) {
             <div class="space-y-2">
               @for (item of idleItems(); track item.id) {
@@ -25,7 +28,10 @@
 
         <!-- SAVED -->
         <div id="saved-section" class="bg-layer-3 rounded-xl shadow p-2 h-1/2 light-text">
-          <h2 class="text-sm font-semibold mb-2">💾 Données sauvegardées</h2>
+          <h2 class="text-sm font-semibold mb-2 flex items-center gap-1">
+            <mat-icon aria-hidden="true">save_clock</mat-icon>
+            <span>Données sauvegardées</span>
+          </h2>
           @if (savedItems().length > 0) {
             <div class="space-y-2">
               @for (item of savedItems(); track item.id) {

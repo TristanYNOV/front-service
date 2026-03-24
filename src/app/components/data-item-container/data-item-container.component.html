@@ -8,7 +8,11 @@
     }
   }
   <div class="flex justify-end gap-2 mt-4">
-    <button class="text-sm text-red-600 hover:underline" (click)="onDelete()">🗑 Supprimer</button>
-    <button class="text-sm text-blue-600 hover:underline" (click)="onSave()">💾 Sauvegarder</button>
+    <button class="text-sm text-red-600 hover:underline flex items-center" (click)="onDelete()" aria-label="Supprimer" title="Supprimer">
+      <mat-icon aria-hidden="true">delete</mat-icon>
+    </button>
+    <button class="text-sm text-blue-600 hover:underline flex items-center" (click)="onSave()" aria-label="Sauvegarder" title="Sauvegarder">
+      <mat-icon aria-hidden="true">save</mat-icon>
+    </button>
   </div>
 </div>

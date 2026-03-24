@@ -25,11 +25,19 @@
       }
     </div>
 
-    <button class="btn-secondary" (click)="timebase.playPause()">{{ timebase.isPlaying() ? 'Pause' : 'Play' }}</button>
-    <button class="btn-secondary" (click)="timebase.play()" *ngIf="timebase.mode() === 'clock'">Démarrer un chrono</button>
+    <button class="btn-secondary flex items-center" (click)="timebase.playPause()" aria-label="Play / Pause" title="Play / Pause">
+      <mat-icon aria-hidden="true">play_arrow</mat-icon>
+    </button>
+    <button class="btn-secondary flex items-center" (click)="timebase.play()" *ngIf="timebase.mode() === 'clock'" aria-label="Démarrer un chronomètre" title="Démarrer un chronomètre">
+      <mat-icon aria-hidden="true">timer</mat-icon>
+    </button>
     <button class="btn-secondary" (click)="facade.setAutoFollow(!facade.autoFollow())">Auto-follow {{ facade.autoFollow() ? 'ON' : 'OFF' }}</button>
-    <button class="btn-secondary" (click)="recenter()">Recentrer</button>
-    <button class="btn-secondary" (click)="facade.playSelection()">Play selection</button>
+    <button class="btn-secondary flex items-center" (click)="recenter()" aria-label="Centrer" title="Centrer">
+      <mat-icon aria-hidden="true">format_align_center</mat-icon>
+    </button>
+    <button class="btn-secondary flex items-center" (click)="facade.playSelection()" aria-label="Play selection" title="Play selection">
+      <mat-icon aria-hidden="true">playlist_play</mat-icon>
+    </button>
 
     <app-zoom-controls
       class="mx-2"
@@ -139,8 +147,12 @@
       <button class="btn-secondary" (click)="nudgeSelection(1000)">+1s</button>
       <button class="btn-secondary" (click)="facade.shift(1000, 'SELECTION')">Shift +1s</button>
       <button class="btn-secondary" (click)="facade.shift(1000, 'ALL')">Shift all +1s</button>
-      <button class="btn-secondary" (click)="facade.undoShiftOrAlign()" [disabled]="!facade.canUndoShiftOrAlign()">Annuler décalage</button>
-      <button class="btn-secondary" (click)="facade.undoRemove()" [disabled]="!facade.canUndoRemove()">Annuler suppression</button>
+      <button class="btn-secondary flex items-center" (click)="facade.undoShiftOrAlign()" [disabled]="!facade.canUndoShiftOrAlign()" aria-label="Annuler décalage" title="Annuler décalage">
+        <mat-icon aria-hidden="true">undo</mat-icon>
+      </button>
+      <button class="btn-secondary flex items-center" (click)="facade.undoRemove()" [disabled]="!facade.canUndoRemove()" aria-label="Annuler suppression" title="Annuler suppression">
+        <mat-icon aria-hidden="true">restore_from_trash</mat-icon>
+      </button>
     </div>
   }
 </div>

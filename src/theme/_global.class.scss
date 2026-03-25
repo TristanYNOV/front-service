@@ -73,6 +73,16 @@
   }
 }
 
+.seq-btn-stat {
+  border-radius: 2rem;
+  background-color: var(--sequencer-stat-bg) !important;
+  border-color: var(--sequencer-stat-border) !important;
+  color: var(--sequencer-stat-text);
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 .seq-btn-event-card {
   border-color: var(--sequencer-event-border) !important;
 }

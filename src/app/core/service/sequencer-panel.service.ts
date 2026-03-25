@@ -1,5 +1,15 @@
 import { Injectable, signal } from '@angular/core';
-import { EventBtn, LabelBtn, SequencerBtn } from '../../interfaces/sequencer-btn.interface';
+import {
+  EventBtn,
+  LabelBtn,
+  SequencerBtn,
+  SequencerStatDefinition,
+  SequencerStatEditorTerm,
+  SequencerStatExpressionToken,
+  SequencerStatNode,
+  SequencerStatQuery,
+  StatBtn,
+} from '../../interfaces/sequencer-btn.interface';
 import { SequencerBtnLayout } from '../../interfaces/sequencer-btn-layout.interface';
 import {
   defaultButtonHeightPx,
@@ -8,6 +18,11 @@ import {
   minButtonWidthPx,
   placementSpiral,
 } from '../../utils/sequencer/sequencer-canvas-defaults.util';
+
+interface SequencerPanelDocument {
+  panelName: string;
+  btnList: SequencerBtn[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -68,6 +83,42 @@ export class SequencerPanelService {
     newBtn.layout = this.ensureLayout(newBtn);
     this.btnListSignal.set([...this.btnListSignal(), newBtn]);
     return newBtn;
+  }
+
+  addStatBtn(payload: Omit<StatBtn, 'type'>): StatBtn | null {
+    const id = payload.id.trim();
+    if (!this.isIdAvailable(id)) {
+      return null;
+    }
+    const newBtn: StatBtn = {
+      ...payload,
+      id,
+      type: 'stat',
+      deactivateIds: this.normalizeLinkIds(payload.deactivateIds),
+      activateIds: this.normalizeLinkIds(payload.activateIds),
+    };
+    newBtn.layout = this.ensureLayout(newBtn);
+    this.btnListSignal.set([...this.btnListSignal(), newBtn]);
+    return newBtn;
+  }
+
+  exportAsJson(): string {
+    const document: SequencerPanelDocument = {
+      panelName: this.panelNameSignal(),
+      btnList: this.btnListSignal(),
+    };
+    return JSON.stringify(document, null, 2);
+  }
+
+  importFromJson(rawJson: string): boolean {
+    const parsed = JSON.parse(rawJson) as unknown;
+    if (!isSequencerPanelDocument(parsed)) {
+      return false;
+    }
+
+    this.panelNameSignal.set(parsed.panelName.trim() || 'My Panel');
+    this.btnListSignal.set(parsed.btnList.map(btn => ({ ...btn, layout: this.ensureLayout(btn) })));
+    return true;
   }
 
   ensureAllLayouts() {
@@ -254,4 +305,114 @@ export class SequencerPanelService {
 
     return points;
   }
+}
+
+function isSequencerPanelDocument(value: unknown): value is SequencerPanelDocument {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as Partial<SequencerPanelDocument>;
+  if (typeof candidate.panelName !== 'string' || !Array.isArray(candidate.btnList)) {
+    return false;
+  }
+
+  return candidate.btnList.every(isSequencerBtn);
+}
+
+function isSequencerBtn(value: unknown): value is SequencerBtn {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as Partial<SequencerBtn>;
+  if (typeof candidate.id !== 'string' || typeof candidate.name !== 'string') {
+    return false;
+  }
+
+  if (candidate.type === 'event') {
+    return !!candidate.eventProps;
+  }
+  if (candidate.type === 'label') {
+    return !!candidate.labelProps;
+  }
+  if (candidate.type === 'stat') {
+    return !!candidate.stat && isStatDefinition(candidate.stat);
+  }
+  return false;
+}
+
+function isStatDefinition(value: unknown): value is SequencerStatDefinition {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as SequencerStatDefinition;
+  if (candidate.mode === 'simple') {
+    return isStatQuery(candidate.query);
+  }
+
+  if (candidate.mode === 'complex') {
+    return isStatNode(candidate.expression)
+      && (!candidate.editor || isStatEditor(candidate.editor));
+  }
+
+  return false;
+}
+
+function isStatQuery(value: unknown): value is SequencerStatQuery {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  const candidate = value as SequencerStatQuery;
+  const validColors = !candidate.labelColorById || Object.values(candidate.labelColorById).every(color => typeof color === 'string');
+  return Array.isArray(candidate.eventIds)
+    && Array.isArray(candidate.labelIds)
+    && candidate.metric === 'count'
+    && candidate.labelMatch === 'all'
+    && validColors;
+}
+
+
+function isStatEditor(value: unknown): value is { terms: SequencerStatEditorTerm[]; tokens: SequencerStatExpressionToken[] } {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as { terms?: SequencerStatEditorTerm[]; tokens?: SequencerStatExpressionToken[] };
+  if (!Array.isArray(candidate.terms) || !Array.isArray(candidate.tokens)) {
+    return false;
+  }
+
+  const termsOk = candidate.terms.every(term =>
+    typeof term.id === 'string'
+    && typeof term.displayName === 'string'
+    && (term.kind === 'query' || term.kind === 'constant')
+    && (term.kind === 'query' ? !!term.query && isStatQuery(term.query) : typeof term.constantValue === 'number'),
+  );
+
+  const tokenOk = candidate.tokens.every(token =>
+    (token.kind === 'term' && typeof token.termId === 'string')
+    || (token.kind === 'operator' && ['+', '-', '*', '/'].includes(token.op))
+    || (token.kind === 'paren' && (token.value === '(' || token.value === ')')),
+  );
+
+  return termsOk && tokenOk;
+}
+function isStatNode(value: unknown): value is SequencerStatNode {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as SequencerStatNode;
+  if (candidate.kind === 'constant') {
+    return typeof candidate.value === 'number' && Number.isFinite(candidate.value);
+  }
+  if (candidate.kind === 'query') {
+    return isStatQuery(candidate.query);
+  }
+  if (candidate.kind === 'group') {
+    return ['+', '-', '*', '/'].includes(candidate.op) && isStatNode(candidate.left) && isStatNode(candidate.right);
+  }
+  return false;
 }

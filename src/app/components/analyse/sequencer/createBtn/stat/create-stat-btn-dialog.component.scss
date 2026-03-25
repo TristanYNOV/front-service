@@ -1,0 +1,13 @@
+.stats-dialog-content {
+  max-height: min(72vh, 860px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 0.75rem;
+}
+
+.stats-dialog-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding-bottom: 0.75rem;
+}

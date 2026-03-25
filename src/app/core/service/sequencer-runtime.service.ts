@@ -44,7 +44,7 @@ export class SequencerRuntimeService {
   trigger(btnId: string, source: 'hotkey' | 'click') {
     void source;
     const btn = this.panelService.getBtnById(btnId);
-    if (!btn || this.panelService.editMode()) {
+    if (!btn || this.panelService.editMode() || btn.type === 'stat') {
       return;
     }
 

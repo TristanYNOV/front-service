@@ -17,9 +17,10 @@ import { MatInputModule } from '@angular/material/input';
 import { SequencerPanelService } from '../../../core/service/sequencer-panel.service';
 import { SequencerRuntimeService } from '../../../core/service/sequencer-runtime.service';
 import { HotkeysService } from '../../../core/services/hotkeys.service';
-import { EventBtn, LabelBtn, SequencerBtn } from '../../../interfaces/sequencer-btn.interface';
+import { EventBtn, LabelBtn, SequencerBtn, StatBtn } from '../../../interfaces/sequencer-btn.interface';
 import { CreateEventBtnDialogComponent } from './createBtn/event/create-event-btn-dialog.component';
 import { CreateLabelBtnDialogComponent } from './createBtn/label/create-label-btn-dialog.component';
+import { CreateStatBtnDialogComponent } from './createBtn/stat/create-stat-btn-dialog.component';
 import { SequencerCanvasComponent } from './canvas/sequencer-canvas.component';
 
 @Component({
@@ -102,8 +103,16 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+
+  openStatDialog(btn?: StatBtn) {
+    this.dialog.open(CreateStatBtnDialogComponent, {
+      width: '70%',
+      data: { mode: btn ? 'edit' : 'create', btn },
+    });
+  }
+
   onBtnClick(btn: SequencerBtn) {
-    if (this.editMode()) {
+    if (this.editMode() || btn.type === 'stat') {
       return;
     }
     this.runtimeService.trigger(btn.id, 'click');
@@ -112,9 +121,15 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   openEditDialog(btn: SequencerBtn) {
     if (btn.type === 'event') {
       this.openEventDialog(btn);
-    } else {
-      this.openLabelDialog(btn);
+      return;
     }
+
+    if (btn.type === 'label') {
+      this.openLabelDialog(btn);
+      return;
+    }
+
+    this.openStatDialog(btn);
   }
 
   deleteBtn(btn: SequencerBtn) {

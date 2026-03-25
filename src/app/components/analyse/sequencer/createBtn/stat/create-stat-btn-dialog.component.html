@@ -1,0 +1,198 @@
+<h2 mat-dialog-title class="bg-layer-3 light-text m-0 text-center">
+  {{ isEdit ? 'Éditer un Stat' : 'Créer un Stat' }}
+</h2>
+
+<mat-dialog-content class="bg-layer-3 light-text stats-dialog-content">
+  <form [formGroup]="form" class="flex flex-col gap-4 pb-2">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3">
+      <mat-form-field appearance="fill">
+        <mat-label>ID</mat-label>
+        <input matInput formControlName="id" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+    </div>
+
+    <div class="border-layer rounded-md border p-3">
+      <div class="mb-2 text-[13px] font-semibold">Couleur du bouton</div>
+      <div class="flex items-center gap-3">
+        <input id="stat-color" type="color" formControlName="colorHex" class="timeline-color-input" />
+        <div class="h-8 w-8 rounded border border-layer" [style.background]="colorPreview()"></div>
+        <span class="text-xs text-muted">{{ colorPreview() }}</span>
+      </div>
+      @if (colorError()) {
+        <div class="alert-text mt-2 text-xs">{{ colorError() }}</div>
+      }
+    </div>
+
+    <mat-radio-group class="flex justify-center gap-2" [formControl]="modeControl">
+      <mat-radio-button value="simple">Recherche simple</mat-radio-button>
+      <mat-radio-button value="complex">Recherche complexe</mat-radio-button>
+    </mat-radio-group>
+
+    @if (modeControl.value === 'simple') {
+      <div class="border-layer rounded-md border p-3">
+        <div class="text-[13px] font-semibold mb-2">Requête simple</div>
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <mat-form-field appearance="fill">
+            <mat-label>Events ciblés *</mat-label>
+            <mat-select [value]="simpleEventIds()" (valueChange)="simpleEventIds.set($event)" multiple>
+              @for (event of availableEvents(); track event.id) {
+                <mat-option [value]="event.id">{{ event.id }} · {{ event.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Labels filtres</mat-label>
+            <mat-select [value]="simpleLabelIds()" (valueChange)="simpleLabelIds.set($event)" multiple>
+              @for (label of availableLabels(); track label.id) {
+                <mat-option [value]="label.id">{{ label.id }} · {{ label.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        @if (selectedSimpleLabels().length) {
+          <div class="mt-2 grid gap-2 md:grid-cols-2">
+            @for (label of selectedSimpleLabels(); track label!.id) {
+              <div class="border-layer flex items-center justify-between rounded-md border p-2">
+                <span class="text-xs">{{ label!.name }}</span>
+                <input
+                  type="color"
+                  class="timeline-color-input"
+                  [value]="simpleLabelColorById()[label!.id] || '#1f4b73'"
+                  (input)="updateSimpleLabelColor(label!.id, $any($event.target).value)"
+                />
+              </div>
+            }
+          </div>
+        }
+
+        @if (simpleError()) {
+          <div class="alert-text mt-2 text-xs">{{ simpleError() }}</div>
+        }
+      </div>
+    } @else {
+      <div class="border-layer rounded-md border p-3 flex flex-col gap-3">
+        <div class="text-[13px] font-semibold">Expression mathématique</div>
+
+        <div class="flex flex-wrap gap-2">
+          @for (term of complexTerms(); track term.id) {
+            <button mat-stroked-button type="button" (click)="addToken({ kind: 'term', termId: term.id })">
+              {{ term.displayName || 'Sans nom' }}
+            </button>
+          }
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '+' })">+</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '-' })">-</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '*' })">*</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '/' })">/</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'paren', value: '(' })">(</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'paren', value: ')' })">)</button>
+          <button mat-stroked-button type="button" (click)="removeLastToken()">Backspace</button>
+          <button mat-stroked-button type="button" (click)="clearExpression()">Effacer</button>
+        </div>
+
+        <div class="bg-layer-1 border-layer min-h-14 rounded-md border p-2">
+          <div class="text-[10px] text-muted mb-1">Aperçu</div>
+          <div class="font-mono text-sm">{{ expressionText() || '—' }}</div>
+        </div>
+
+        @if (expressionValidation().error) {
+          <div class="alert-text text-xs">{{ expressionValidation().error }}</div>
+        }
+      </div>
+
+      <div class="border-layer rounded-md border p-3 flex flex-col gap-3">
+        <div class="text-[13px] font-semibold">Termes disponibles</div>
+
+        @for (term of complexTerms(); track term.id) {
+          <div class="border-layer rounded-md border p-2 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <mat-form-field appearance="fill" class="flex-1">
+                <mat-label>Nom du terme</mat-label>
+                <input matInput [value]="term.displayName" (input)="updateTermDisplayName(term.id, $any($event.target).value)" />
+              </mat-form-field>
+              <button mat-icon-button type="button" [disabled]="complexTerms().length <= 1" (click)="removeComplexTerm(term.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+            <div class="grid gap-2 md:grid-cols-3">
+              <mat-form-field appearance="fill">
+                <mat-label>Type</mat-label>
+                <mat-select [value]="term.kind" (valueChange)="updateTermKind(term.id, $event)">
+                  <mat-option value="query">Requête</mat-option>
+                  <mat-option value="constant">Constante</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              @if (term.kind === 'constant') {
+                <mat-form-field appearance="fill" class="md:col-span-2">
+                  <mat-label>Valeur</mat-label>
+                  <input matInput type="number" [value]="term.constantValue" (input)="updateTermConstantValue(term.id, +$any($event.target).value)" />
+                </mat-form-field>
+              } @else {
+                <mat-form-field appearance="fill">
+                  <mat-label>Events *</mat-label>
+                  <mat-select [value]="term.eventIds" (valueChange)="updateTermEventIds(term.id, $event)" multiple>
+                    @for (event of availableEvents(); track event.id) {
+                      <mat-option [value]="event.id">{{ event.id }} · {{ event.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="fill" class="md:col-span-2">
+                  <mat-label>Labels</mat-label>
+                  <mat-select [value]="term.labelIds" (valueChange)="updateTermLabelIds(term.id, $event)" multiple>
+                    @for (label of availableLabels(); track label.id) {
+                      <mat-option [value]="label.id">{{ label.id }} · {{ label.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              }
+            </div>
+
+            @if (term.kind === 'query' && getTermSelectedLabels(term).length) {
+              <div class="grid gap-2 md:grid-cols-2">
+                @for (label of getTermSelectedLabels(term); track label!.id) {
+                  <div class="border-layer flex items-center justify-between rounded-md border p-2">
+                    <span class="text-xs">{{ label!.name }}</span>
+                    <input
+                      type="color"
+                      class="timeline-color-input"
+                      [value]="term.labelColorById[label!.id] || '#1f4b73'"
+                      (input)="updateTermLabelColor(term.id, label!.id, $any($event.target).value)"
+                    />
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <div>
+          <button mat-stroked-button type="button" (click)="addComplexTerm()">
+            <mat-icon>add</mat-icon>
+            Ajouter un terme
+          </button>
+        </div>
+
+        @if (complexTermError()) {
+          <div class="alert-text text-xs">{{ complexTermError() }}</div>
+        }
+      </div>
+    }
+
+    @if (idNameError()) {
+      <div class="alert-text text-xs">{{ idNameError() }}</div>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center" class="bg-layer-3 light-text stats-dialog-actions">
+  <button mat-stroked-button type="button" (click)="close()">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="!canSave()">
+    {{ isEdit ? 'Mettre à jour' : 'Créer' }}
+  </button>
+</mat-dialog-actions>

@@ -14,6 +14,7 @@
             [class.seq-btn-event-card]="btn.type === 'event'"
             [class.seq-btn-label]="btn.type === 'label'"
             [class.seq-btn-event-active]="btn.type === 'event' && isActive(btn.id)"
+            [class.seq-btn-stat]="btn.type === 'stat'"
             [ngStyle]="btnStyle(btn)"
             [class.is-pressed]="lastTriggeredBtnId === btn.id"
             (mousedown)="onBtnMouseDown($event, btn)"
@@ -26,7 +27,7 @@
                   class="flex h-4 w-4 min-h-4 min-w-4 items-center justify-center"
                   (click)="onEditIconClick($event, btn)"
                 >
-                  <mat-icon class="h-3 w-3 text-[12px]">edit</mat-icon>
+                  <mat-icon class="h-3 w-3 text-[12px]">{{ btn.type === 'stat' ? 'gesture_select' : 'edit' }}</mat-icon>
                 </button>
               </div>
               <div class="absolute right-1 top-1 z-20">
@@ -43,9 +44,12 @@
             <div class="min-w-0 max-w-full px-1">
               <div class="text-[10px] font-medium">{{ btn.id }}</div>
               <div class="truncate text-xs font-semibold">{{ btn.name }}</div>
+              @if (btn.type === 'stat') {
+                <div class="text-sm font-bold">{{ getStatDisplayValue(btn.id) }}</div>
+              }
             </div>
 
-            <div class="w-full text-[10px]">{{ formatHotkey(btn.hotkeyNormalized) }}</div>
+            <div class="w-full text-[10px]">{{ btn.type === 'stat' ? 'Live stat' : formatHotkey(btn.hotkeyNormalized) }}</div>
 
             @if (editMode) {
               <span

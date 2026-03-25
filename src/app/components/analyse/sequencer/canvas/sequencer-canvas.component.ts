@@ -18,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SequencerPanelService } from '../../../../core/service/sequencer-panel.service';
 import { SequencerZoomService } from '../../../../core/services/sequencer-zoom.service';
+import { SequencerStatsService } from '../../../../core/services/sequencer-stats.service';
 import { SequencerBtn } from '../../../../interfaces/sequencer-btn.interface';
 import {
   contentMinHeightPx,
@@ -44,8 +45,10 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
 
   private readonly minZoomContainerPx = 250;
   private readonly defaultEventColor = '#1F3D28';
+  private readonly defaultStatColor = '#1f4b73';
   private readonly panelService = inject(SequencerPanelService);
   readonly sequencerZoom = inject(SequencerZoomService);
+  readonly statsService = inject(SequencerStatsService);
   readonly containerWidthPx = signal(0);
   readonly showZoom = computed(() => this.containerWidthPx() >= this.minZoomContainerPx);
 
@@ -158,8 +161,8 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
       zIndex: `${layout.z ?? 1}`,
     };
 
-    if (btn.type === 'event') {
-      const background = btn.colorHex || this.defaultEventColor;
+    if (btn.type === 'event' || btn.type === 'stat') {
+      const background = btn.colorHex || (btn.type === 'event' ? this.defaultEventColor : this.defaultStatColor);
       style['backgroundColor'] = background;
       style['color'] = getReadableTextColor(background);
     }
@@ -278,7 +281,7 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
 
   onBtnClick(event: MouseEvent, btn: SequencerBtn) {
     event.stopPropagation();
-    if (this.editMode) {
+    if (this.editMode || btn.type === 'stat') {
       return;
     }
     this.triggerBtn.emit(btn);
@@ -300,6 +303,10 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
 
   formatHotkey(normalized?: string | null) {
     return formatNormalizedHotkey(normalized) || '—';
+  }
+
+  getStatDisplayValue(btnId: string) {
+    return this.statsService.getDisplayValue(btnId);
   }
 
   private clampLayoutWithinCanvas(btnId: string, patch: { x?: number; y?: number; w?: number; h?: number }) {

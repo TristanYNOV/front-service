@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -8,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { merge } from 'rxjs';
+import { startWith } from 'rxjs/operators';
 import { SequencerPanelService } from '../../../../../core/service/sequencer-panel.service';
 import {
   SequencerStatDefinition,
@@ -90,6 +93,19 @@ export class CreateStatBtnDialogComponent {
     this.initialComplex?.tokens ?? [],
   );
 
+
+  readonly modeValue = toSignal(this.modeControl.valueChanges.pipe(startWith(this.modeControl.value)), {
+    initialValue: this.modeControl.value,
+  });
+
+  private readonly formSync = toSignal(
+    merge(
+      this.form.valueChanges,
+      this.form.statusChanges,
+      this.modeControl.valueChanges,
+    ).pipe(startWith(null)),
+    { initialValue: null },
+  );
   readonly availableEvents = computed(() => this.panelService.btnList().filter(btn => btn.type === 'event'));
   readonly availableLabels = computed(() => this.panelService.btnList().filter(btn => btn.type === 'label'));
   readonly selectedSimpleLabels = computed(() => this.simpleLabelIds().map(id => this.availableLabels().find(label => label.id === id)).filter(Boolean));
@@ -98,6 +114,7 @@ export class CreateStatBtnDialogComponent {
   readonly expressionText = computed(() => this.expressionTokens().map(token => this.tokenLabel(token)).join(' '));
 
   readonly idNameError = computed(() => {
+    this.formSync();
     const show = this.submitted() || this.form.controls.id.touched || this.form.controls.name.touched;
     if (!show) {
       return null;
@@ -111,6 +128,7 @@ export class CreateStatBtnDialogComponent {
   });
 
   readonly colorError = computed(() => {
+    this.formSync();
     const control = this.form.controls.colorHex;
     if (!(this.submitted() || control.touched) || !control.invalid) {
       return null;
@@ -119,7 +137,8 @@ export class CreateStatBtnDialogComponent {
   });
 
   readonly simpleError = computed(() => {
-    if (this.modeControl.value !== 'simple') {
+    this.formSync();
+    if (this.modeValue() !== 'simple') {
       return null;
     }
 
@@ -127,7 +146,8 @@ export class CreateStatBtnDialogComponent {
   });
 
   readonly complexTermError = computed(() => {
-    if (this.modeControl.value !== 'complex') {
+    this.formSync();
+    if (this.modeValue() !== 'complex') {
       return null;
     }
 
@@ -147,27 +167,31 @@ export class CreateStatBtnDialogComponent {
   });
 
   readonly expressionValidation = computed(() => {
-    if (this.modeControl.value !== 'complex') {
+    this.formSync();
+    if (this.modeValue() !== 'complex') {
       return { ok: true, error: null as string | null, node: null as SequencerStatNode | null };
     }
 
     return buildExpressionTree(this.expressionTokens(), this.complexTerms());
   });
 
-  readonly formError = computed(() =>
-    this.idNameError()
+  readonly formError = computed(() => {
+    this.formSync();
+    return this.idNameError()
     ?? this.colorError()
     ?? this.simpleError()
     ?? this.complexTermError()
-    ?? this.expressionValidation().error,
-  );
+    ?? this.expressionValidation().error;
+  });
 
   readonly canSave = computed(() => {
+    this.formSync();
     if (this.form.invalid || this.idNameError() || this.colorError()) {
       return false;
     }
 
-    if (this.modeControl.value === 'simple') {
+    const mode = this.modeValue();
+    if (mode === 'simple') {
       return this.simpleEventIds().length > 0;
     }
 
@@ -249,7 +273,7 @@ export class CreateStatBtnDialogComponent {
     const name = this.form.controls.name.value.trim();
     const colorHex = normalizeColor(this.form.controls.colorHex.value);
 
-    const statDefinition = this.modeControl.value === 'simple'
+    const statDefinition = this.modeValue() === 'simple'
       ? this.buildSimpleDefinition()
       : this.buildComplexDefinition();
 

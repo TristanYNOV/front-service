@@ -53,6 +53,45 @@ describe('CreateStatBtnDialogComponent', () => {
     expect(component.idNameError()).toBeNull();
   });
 
+
+  it('updates canSave reactively when id changes', () => {
+    component.form.controls.name.setValue('Simple');
+    component.simpleEventIds.set(['evt-shot']);
+    expect(component.canSave()).toBeFalse();
+
+    component.form.controls.id.setValue('stat-id');
+    expect(component.canSave()).toBeTrue();
+  });
+
+  it('updates canSave reactively when name changes', () => {
+    component.form.controls.id.setValue('stat-name');
+    component.simpleEventIds.set(['evt-shot']);
+    expect(component.canSave()).toBeFalse();
+
+    component.form.controls.name.setValue('Nom');
+    expect(component.canSave()).toBeTrue();
+  });
+
+  it('updates canSave reactively when color changes', () => {
+    component.form.controls.id.setValue('stat-color');
+    component.form.controls.name.setValue('Color');
+    component.simpleEventIds.set(['evt-shot']);
+
+    component.form.controls.colorHex.setValue('invalid');
+    expect(component.canSave()).toBeFalse();
+
+    component.form.controls.colorHex.setValue('#123456');
+    expect(component.canSave()).toBeTrue();
+  });
+
+  it('updates canSave when simple event selection changes', () => {
+    component.form.controls.id.setValue('stat-simple');
+    component.form.controls.name.setValue('Simple');
+    expect(component.canSave()).toBeFalse();
+
+    component.simpleEventIds.set(['evt-shot']);
+    expect(component.canSave()).toBeTrue();
+  });
   it('enables create in simple mode when everything is valid', () => {
     component.form.controls.id.setValue('stat-simple');
     component.form.controls.name.setValue('Simple');
@@ -82,6 +121,28 @@ describe('CreateStatBtnDialogComponent', () => {
     expect(component.canSave()).toBeTrue();
   });
 
+
+  it('updates canSave when complex terms/tokens change', () => {
+    component.modeControl.setValue('complex');
+    component.form.controls.id.setValue('stat-complex-tick');
+    component.form.controls.name.setValue('Complex tick');
+
+    const terms = component.complexTerms();
+    component.updateTermDisplayName(terms[0].id, 'Tirs');
+    component.updateTermEventIds(terms[0].id, ['evt-shot']);
+
+    component.updateTermDisplayName(terms[1].id, 'Possessions');
+    component.updateTermKind(terms[1].id, 'query');
+    component.updateTermEventIds(terms[1].id, ['evt-possession']);
+
+    expect(component.canSave()).toBeFalse();
+
+    component.addToken({ kind: 'term', termId: terms[0].id });
+    component.addToken({ kind: 'operator', op: '/' });
+    component.addToken({ kind: 'term', termId: terms[1].id });
+
+    expect(component.canSave()).toBeTrue();
+  });
   it('persists displayName for complex terms in JSON payload', () => {
     component.modeControl.setValue('complex');
     component.form.controls.id.setValue('stat-complex');
@@ -109,6 +170,19 @@ describe('CreateStatBtnDialogComponent', () => {
     }
   });
 
+
+  it('keeps non-regression on save for simple mode', () => {
+    component.form.controls.id.setValue('stat-save-simple');
+    component.form.controls.name.setValue('Simple save');
+    component.simpleEventIds.set(['evt-shot']);
+    component.simpleLabelIds.set(['lbl-success']);
+
+    component.save();
+
+    expect(panelService.addStatBtn).toHaveBeenCalled();
+    const payload = panelService.addStatBtn.calls.mostRecent().args[0];
+    expect(payload.stat.mode).toBe('simple');
+  });
   it('loads renamed terms when reopening in edit mode', async () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({

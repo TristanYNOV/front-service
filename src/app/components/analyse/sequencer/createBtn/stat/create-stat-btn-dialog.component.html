@@ -2,8 +2,8 @@
   {{ isEdit ? 'Éditer un Stat' : 'Créer un Stat' }}
 </h2>
 
-<mat-dialog-content class="bg-layer-3 light-text pt-3">
-  <form [formGroup]="form" class="flex flex-col gap-4">
+<mat-dialog-content class="bg-layer-3 light-text stats-dialog-content">
+  <form [formGroup]="form" class="flex flex-col gap-4 pb-2">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3">
       <mat-form-field appearance="fill">
         <mat-label>ID</mat-label>
@@ -15,9 +15,22 @@
       </mat-form-field>
     </div>
 
-    <div class="flex items-center gap-3">
-      <label for="stat-color" class="text-xs font-semibold">Couleur</label>
-      <input id="stat-color" type="color" formControlName="colorHex" class="timeline-color-input" />
+    <div class="border-layer rounded-md border p-3">
+      <div class="mb-2 text-[13px] font-semibold">Couleur du bouton</div>
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-[auto_1fr] md:items-center">
+        <input id="stat-color" type="color" formControlName="colorHex" class="timeline-color-input" />
+
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="h-8 w-8 rounded border border-layer" [style.background]="colorPreview()"></div>
+          <div class="rounded-md border border-layer px-3 py-2 text-xs" [style.background]="colorPreview()" [style.color]="'#fff'">
+            Aperçu bouton stats
+          </div>
+          <span class="text-xs text-muted">{{ colorPreview() }}</span>
+        </div>
+      </div>
+      @if (colorError()) {
+        <div class="alert-text mt-2 text-xs">{{ colorError() }}</div>
+      }
     </div>
 
     <mat-radio-group class="flex justify-center gap-2" [formControl]="modeControl">
@@ -30,7 +43,7 @@
         <div class="text-[13px] font-semibold mb-2">Requête simple</div>
         <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
           <mat-form-field appearance="fill">
-            <mat-label>Events ciblés</mat-label>
+            <mat-label>Events ciblés *</mat-label>
             <mat-select [value]="simpleEventIds()" (valueChange)="simpleEventIds.set($event)" multiple>
               @for (event of availableEvents(); track event.id) {
                 <mat-option [value]="event.id">{{ event.id }} · {{ event.name }}</mat-option>
@@ -46,22 +59,19 @@
             </mat-select>
           </mat-form-field>
         </div>
+        @if (simpleError()) {
+          <div class="alert-text text-xs">{{ simpleError() }}</div>
+        }
       </div>
     } @else {
       <div class="border-layer rounded-md border p-3 flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <div class="text-[13px] font-semibold">Expression complexe</div>
-          <button mat-stroked-button type="button" (click)="addComplexTerm()">
-            <mat-icon>add</mat-icon>
-            Ajouter un terme
-          </button>
-        </div>
+        <div class="text-[13px] font-semibold">Termes disponibles</div>
 
         @for (term of complexTerms(); track $index) {
           <div class="border-layer rounded-md border p-2">
             <div class="flex items-center justify-between mb-2">
-              <div class="text-[12px] font-semibold">Opérande {{ $index + 1 }}</div>
-              <button mat-icon-button type="button" [disabled]="complexTerms().length <= 2" (click)="removeComplexTerm($index)">
+              <div class="text-[12px] font-semibold">{{ aliasList()[$index] }} = {{ term.kind === 'query' ? 'Requête' : 'Constante' }}</div>
+              <button mat-icon-button type="button" [disabled]="complexTerms().length <= 1" (click)="removeComplexTerm($index)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
@@ -82,7 +92,7 @@
                 </mat-form-field>
               } @else {
                 <mat-form-field appearance="fill">
-                  <mat-label>Events</mat-label>
+                  <mat-label>Events *</mat-label>
                   <mat-select [value]="term.eventIds" (valueChange)="updateTerm($index, { eventIds: $event })" multiple>
                     @for (event of availableEvents(); track event.id) {
                       <mat-option [value]="event.id">{{ event.id }} · {{ event.name }}</mat-option>
@@ -99,35 +109,56 @@
                 </mat-form-field>
               }
             </div>
-
-            @if ($index < complexOperators().length) {
-              <div class="mt-3 grid gap-2 md:grid-cols-2">
-                <mat-form-field appearance="fill">
-                  <mat-label>Opérateur</mat-label>
-                  <mat-select [value]="complexOperators()[$index].op" (valueChange)="updateOperator($index, { op: $event })">
-                    <mat-option value="+">+</mat-option>
-                    <mat-option value="-">-</mat-option>
-                    <mat-option value="*">*</mat-option>
-                    <mat-option value="/">/</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="fill">
-                  <mat-label>Priorité</mat-label>
-                  <mat-select [value]="complexOperators()[$index].precedence" (valueChange)="updateOperator($index, { precedence: $event })">
-                    <mat-option [value]="1">Normale (1)</mat-option>
-                    <mat-option [value]="2">Haute (2)</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            }
           </div>
         }
+
+        <div>
+          <button mat-stroked-button type="button" (click)="addComplexTerm()">
+            <mat-icon>add</mat-icon>
+            Ajouter un terme
+          </button>
+        </div>
+
+        @if (complexTermError()) {
+          <div class="alert-text text-xs">{{ complexTermError() }}</div>
+        }
       </div>
+
+      <div class="border-layer rounded-md border p-3 flex flex-col gap-3">
+        <div class="text-[13px] font-semibold">Expression mathématique</div>
+
+        <div class="flex flex-wrap gap-2">
+          @for (alias of aliasList(); track alias) {
+            <button mat-stroked-button type="button" (click)="addToken({ kind: 'term', alias })">{{ alias }}</button>
+          }
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '+' })">+</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '-' })">-</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '*' })">*</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '/' })">/</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'paren', value: '(' })">(</button>
+          <button mat-stroked-button type="button" (click)="addToken({ kind: 'paren', value: ')' })">)</button>
+          <button mat-stroked-button type="button" (click)="removeLastToken()">Backspace</button>
+          <button mat-stroked-button type="button" (click)="clearExpression()">Effacer</button>
+        </div>
+
+        <div class="bg-layer-1 border-layer min-h-14 rounded-md border p-2">
+          <div class="text-[10px] text-muted mb-1">Aperçu</div>
+          <div class="font-mono text-sm">{{ expressionText() || '—' }}</div>
+        </div>
+
+        @if (expressionValidation().error) {
+          <div class="alert-text text-xs">{{ expressionValidation().error }}</div>
+        }
+      </div>
+    }
+
+    @if (formError()) {
+      <div class="alert-text text-xs">{{ formError() }}</div>
     }
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align="center" class="bg-layer-3 light-text pb-3">
+<mat-dialog-actions align="center" class="bg-layer-3 light-text stats-dialog-actions">
   <button mat-stroked-button type="button" (click)="close()">Annuler</button>
   <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="!canSave()">
     {{ isEdit ? 'Mettre à jour' : 'Créer' }}

@@ -247,12 +247,14 @@ Checklist
 ## 19) Sequencer Stats Buttons (V1)
 - Nouveau type de bouton natif `stat` dans `SequencerBtn` avec payload `stat` sérialisable :
   - mode `simple` avec `query: { eventIds[], labelIds[], metric:'count', labelMatch:'all' }`
-  - mode `complex` avec expression JSON arborescente (`constant`, `query`, `group` + opérateurs `+ - * /`).
+  - mode `complex` évalué sur AST (`constant`, `query`, `group` + opérateurs `+ - * /`).
+  - UX d’édition complexe orientée expression mathématique visuelle : termes (`A`, `B`, `C`...) + tokens (`terme`, opérateur, parenthèses), sans champ “priorité”.
 - Topbar sequencer (`/analyse`) : bouton **Stats** (`query_stats`) pour créer un bouton `stat`.
 - Canvas :
   - un bouton `stat` est rendu comme un vrai bouton (layout drag/resize inchangé),
   - en mode run il affiche `name + valeur live`, informatif uniquement (aucune action timeline au clic/hotkey),
-  - l’icône `gesture_select` ouvre la configuration de stats en mode édition.
+  - l’icône `gesture_select` ouvre la configuration de stats en mode édition,
+  - la modale est scrollable verticalement (header/actions stables) pour gérer de longues expressions.
 - Service dédié `SequencerStatsService` (signals/computed) :
   - centralise le calcul de stats à partir des occurrences d’analyse,
   - évalue les requêtes simples (`count`) et expressions complexes,
@@ -265,6 +267,11 @@ Checklist
   - arrondi d’affichage uniquement,
   - entier sans décimales,
   - décimal avec maximum 2 décimales.
+- Validation UX modale stats :
+  - couleur prévisualisée (swatch + mini aperçu bouton),
+  - mode simple valide uniquement si au moins un event est sélectionné,
+  - mode complexe valide avec expression complète (tokens), parenthèses équilibrées, termes valides,
+  - division statique par zéro bloquée à la configuration (division dynamique laissée au runtime, affichée `—`).
 - Import/export JSON sequencer :
   - `SequencerPanelService.exportAsJson()` / `importFromJson()` prennent en charge `event`, `label`, `stat`,
   - la définition de stats reste stockée dans chaque bouton `stat` (source de vérité unique).

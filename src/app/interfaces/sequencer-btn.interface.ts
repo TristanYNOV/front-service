@@ -5,6 +5,7 @@ export type SequencerStatOperator = '+' | '-' | '*' | '/';
 export interface SequencerStatQuery {
   eventIds: string[];
   labelIds: string[];
+  labelColorById?: Record<string, string>;
   metric: 'count';
   labelMatch: 'all';
 }
@@ -19,6 +20,19 @@ export type SequencerStatNode =
       right: SequencerStatNode;
     };
 
+export interface SequencerStatEditorTerm {
+  id: string;
+  displayName: string;
+  kind: 'query' | 'constant';
+  query?: SequencerStatQuery;
+  constantValue?: number;
+}
+
+export type SequencerStatExpressionToken =
+  | { kind: 'term'; termId: string }
+  | { kind: 'operator'; op: SequencerStatOperator }
+  | { kind: 'paren'; value: '(' | ')' };
+
 export type SequencerStatDefinition =
   | {
       mode: 'simple';
@@ -27,6 +41,10 @@ export type SequencerStatDefinition =
   | {
       mode: 'complex';
       expression: SequencerStatNode;
+      editor?: {
+        terms: SequencerStatEditorTerm[];
+        tokens: SequencerStatExpressionToken[];
+      };
     };
 
 export type SequencerBtn = EventBtn | LabelBtn | StatBtn;

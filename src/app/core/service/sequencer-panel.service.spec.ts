@@ -70,4 +70,31 @@ describe('SequencerPanelService', () => {
     expect(types).toContain('event');
     expect(types).toContain('label');
   });
+
+  it('keeps complex editor displayName during json round-trip', () => {
+    service.addStatBtn({
+      id: 'stat-editor',
+      name: 'Editor',
+      stat: {
+        mode: 'complex',
+        expression: { kind: 'constant', value: 1 },
+        editor: {
+          terms: [
+            { id: 'term_1', displayName: 'Possessions', kind: 'query', query: { eventIds: ['evt_pos'], labelIds: [], metric: 'count', labelMatch: 'all' } },
+          ],
+          tokens: [{ kind: 'term', termId: 'term_1' }],
+        },
+      },
+    });
+
+    const exported = service.exportAsJson();
+    const imported = service.importFromJson(exported);
+
+    expect(imported).toBeTrue();
+    const btn = service.getBtnById('stat-editor');
+    expect(btn?.type).toBe('stat');
+    if (btn?.type === 'stat' && btn.stat.mode === 'complex') {
+      expect(btn.stat.editor?.terms[0].displayName).toBe('Possessions');
+    }
+  });
 });

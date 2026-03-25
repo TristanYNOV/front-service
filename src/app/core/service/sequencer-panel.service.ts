@@ -4,6 +4,8 @@ import {
   LabelBtn,
   SequencerBtn,
   SequencerStatDefinition,
+  SequencerStatEditorTerm,
+  SequencerStatExpressionToken,
   SequencerStatNode,
   SequencerStatQuery,
   StatBtn,
@@ -351,7 +353,8 @@ function isStatDefinition(value: unknown): value is SequencerStatDefinition {
   }
 
   if (candidate.mode === 'complex') {
-    return isStatNode(candidate.expression);
+    return isStatNode(candidate.expression)
+      && (!candidate.editor || isStatEditor(candidate.editor));
   }
 
   return false;
@@ -362,12 +365,40 @@ function isStatQuery(value: unknown): value is SequencerStatQuery {
     return false;
   }
   const candidate = value as SequencerStatQuery;
+  const validColors = !candidate.labelColorById || Object.values(candidate.labelColorById).every(color => typeof color === 'string');
   return Array.isArray(candidate.eventIds)
     && Array.isArray(candidate.labelIds)
     && candidate.metric === 'count'
-    && candidate.labelMatch === 'all';
+    && candidate.labelMatch === 'all'
+    && validColors;
 }
 
+
+function isStatEditor(value: unknown): value is { terms: SequencerStatEditorTerm[]; tokens: SequencerStatExpressionToken[] } {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as { terms?: SequencerStatEditorTerm[]; tokens?: SequencerStatExpressionToken[] };
+  if (!Array.isArray(candidate.terms) || !Array.isArray(candidate.tokens)) {
+    return false;
+  }
+
+  const termsOk = candidate.terms.every(term =>
+    typeof term.id === 'string'
+    && typeof term.displayName === 'string'
+    && (term.kind === 'query' || term.kind === 'constant')
+    && (term.kind === 'query' ? !!term.query && isStatQuery(term.query) : typeof term.constantValue === 'number'),
+  );
+
+  const tokenOk = candidate.tokens.every(token =>
+    (token.kind === 'term' && typeof token.termId === 'string')
+    || (token.kind === 'operator' && ['+', '-', '*', '/'].includes(token.op))
+    || (token.kind === 'paren' && (token.value === '(' || token.value === ')')),
+  );
+
+  return termsOk && tokenOk;
+}
 function isStatNode(value: unknown): value is SequencerStatNode {
   if (!value || typeof value !== 'object') {
     return false;

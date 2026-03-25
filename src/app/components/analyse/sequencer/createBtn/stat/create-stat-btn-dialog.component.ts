@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,22 +11,22 @@ import { MatSelectModule } from '@angular/material/select';
 import { SequencerPanelService } from '../../../../../core/service/sequencer-panel.service';
 import {
   SequencerStatDefinition,
+  SequencerStatEditorTerm,
+  SequencerStatExpressionToken,
   SequencerStatNode,
   SequencerStatOperator,
   StatBtn,
 } from '../../../../../interfaces/sequencer-btn.interface';
 
-interface StatTermForm {
+interface EditableStatTerm {
+  id: string;
+  displayName: string;
   kind: 'query' | 'constant';
   constantValue: number;
   eventIds: string[];
   labelIds: string[];
+  labelColorById: Record<string, string>;
 }
-
-type ExpressionToken =
-  | { kind: 'term'; alias: string }
-  | { kind: 'operator'; op: SequencerStatOperator }
-  | { kind: 'paren'; value: '(' | ')' };
 
 export interface StatBtnDialogData {
   mode: 'create' | 'edit';
@@ -56,12 +56,14 @@ export class CreateStatBtnDialogComponent {
   private readonly panelService = inject(SequencerPanelService);
 
   readonly isEdit = this.data.mode === 'edit';
+  readonly submitted = signal(false);
+
   readonly modeControl = new FormControl<'simple' | 'complex'>(this.data.btn?.stat.mode ?? 'simple', { nonNullable: true });
 
   readonly form = new FormGroup({
-    id: new FormControl({ value: this.data.btn?.id ?? '', disabled: this.isEdit }, [Validators.required]),
-    name: new FormControl(this.data.btn?.name ?? '', [Validators.required]),
-    colorHex: new FormControl(this.normalizeColor(this.data.btn?.colorHex), {
+    id: new FormControl(this.data.btn?.id ?? '', { nonNullable: true, validators: [Validators.required, trimmedRequiredValidator()] }),
+    name: new FormControl(this.data.btn?.name ?? '', { nonNullable: true, validators: [Validators.required, trimmedRequiredValidator()] }),
+    colorHex: new FormControl(normalizeColor(this.data.btn?.colorHex), {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern(/^#[0-9a-fA-F]{6}$/)],
     }),
@@ -73,68 +75,75 @@ export class CreateStatBtnDialogComponent {
   readonly simpleLabelIds = signal<string[]>(
     this.data.btn?.stat.mode === 'simple' ? this.data.btn.stat.query.labelIds : [],
   );
-
-  private readonly initialComplex = this.data.btn?.stat.mode === 'complex'
-    ? this.extractTermsAndTokensFromAst(this.data.btn.stat.expression)
-    : null;
-
-  readonly complexTerms = signal<StatTermForm[]>(
-    this.initialComplex?.terms ?? [this.buildEmptyQueryTerm(), this.buildEmptyConstantTerm()],
+  readonly simpleLabelColorById = signal<Record<string, string>>(
+    this.data.btn?.stat.mode === 'simple' ? { ...(this.data.btn.stat.query.labelColorById ?? {}) } : {},
   );
 
-  readonly expressionTokens = signal<ExpressionToken[]>(
-    this.initialComplex?.tokens ?? [
-      { kind: 'term', alias: 'A' },
-      { kind: 'operator', op: '+' },
-      { kind: 'term', alias: 'B' },
-    ],
+  private readonly initialComplex = this.data.btn?.stat.mode === 'complex'
+    ? this.getInitialComplexEditorState(this.data.btn.stat)
+    : null;
+
+  readonly complexTerms = signal<EditableStatTerm[]>(
+    this.initialComplex?.terms ?? [this.createQueryTerm(), this.createConstantTerm()],
+  );
+  readonly expressionTokens = signal<SequencerStatExpressionToken[]>(
+    this.initialComplex?.tokens ?? [],
   );
 
   readonly availableEvents = computed(() => this.panelService.btnList().filter(btn => btn.type === 'event'));
   readonly availableLabels = computed(() => this.panelService.btnList().filter(btn => btn.type === 'label'));
-  readonly aliasList = computed(() => this.complexTerms().map((_, index) => indexToAlias(index)));
+  readonly selectedSimpleLabels = computed(() => this.simpleLabelIds().map(id => this.availableLabels().find(label => label.id === id)).filter(Boolean));
 
-  readonly expressionText = computed(() =>
-    this.expressionTokens()
-      .map(token => {
-        if (token.kind === 'term') {
-          return token.alias;
-        }
-        if (token.kind === 'operator') {
-          return token.op;
-        }
-        return token.value;
-      })
-      .join(' '),
-  );
+  readonly colorPreview = computed(() => normalizeColor(this.form.controls.colorHex.value));
+  readonly expressionText = computed(() => this.expressionTokens().map(token => this.tokenLabel(token)).join(' '));
 
-  readonly colorPreview = computed(() => this.normalizeColor(this.form.controls.colorHex.value));
+  readonly idNameError = computed(() => {
+    const show = this.submitted() || this.form.controls.id.touched || this.form.controls.name.touched;
+    if (!show) {
+      return null;
+    }
+
+    if (this.form.controls.id.invalid || this.form.controls.name.invalid) {
+      return 'ID et nom sont requis.';
+    }
+
+    return null;
+  });
+
   readonly colorError = computed(() => {
     const control = this.form.controls.colorHex;
-    if (!control.invalid || !control.touched) {
+    if (!(this.submitted() || control.touched) || !control.invalid) {
       return null;
     }
     return 'Couleur invalide (format #RRGGBB).';
   });
 
-  readonly simpleError = computed(() =>
-    this.modeControl.value === 'simple' && this.simpleEventIds().length === 0
-      ? 'Sélectionne au moins un event.'
-      : null,
-  );
+  readonly simpleError = computed(() => {
+    if (this.modeControl.value !== 'simple') {
+      return null;
+    }
+
+    return this.simpleEventIds().length > 0 ? null : 'Sélectionne au moins un event.';
+  });
 
   readonly complexTermError = computed(() => {
     if (this.modeControl.value !== 'complex') {
       return null;
     }
 
-    const invalid = this.complexTerms().some(term =>
-      term.kind === 'query'
-        ? term.eventIds.length === 0
-        : !Number.isFinite(term.constantValue),
-    );
+    const invalidTerm = this.complexTerms().some(term => {
+      if (!term.displayName.trim()) {
+        return true;
+      }
 
-    return invalid ? 'Chaque terme doit être défini (event requis pour une requête, constante numérique valide).' : null;
+      if (term.kind === 'query') {
+        return term.eventIds.length === 0;
+      }
+
+      return !Number.isFinite(term.constantValue);
+    });
+
+    return invalidTerm ? 'Chaque terme doit avoir un nom et une définition valide.' : null;
   });
 
   readonly expressionValidation = computed(() => {
@@ -142,17 +151,19 @@ export class CreateStatBtnDialogComponent {
       return { ok: true, error: null as string | null, node: null as SequencerStatNode | null };
     }
 
-    const termsMap = this.buildAliasTermMap();
-    return buildExpressionNode(this.expressionTokens(), termsMap);
+    return buildExpressionTree(this.expressionTokens(), this.complexTerms());
   });
 
-  readonly canSave = computed(() => {
-    if (this.form.invalid) {
-      return false;
-    }
+  readonly formError = computed(() =>
+    this.idNameError()
+    ?? this.colorError()
+    ?? this.simpleError()
+    ?? this.complexTermError()
+    ?? this.expressionValidation().error,
+  );
 
-    const id = (this.form.controls.id.value ?? '').trim();
-    if (!this.isEdit && !this.panelService.isIdAvailable(id)) {
+  readonly canSave = computed(() => {
+    if (this.form.invalid || this.idNameError() || this.colorError()) {
       return false;
     }
 
@@ -163,67 +174,22 @@ export class CreateStatBtnDialogComponent {
     return !this.complexTermError() && this.expressionValidation().ok;
   });
 
-  readonly formError = computed(() => {
-    if (this.form.controls.id.invalid || this.form.controls.name.invalid) {
-      return 'ID et nom sont requis.';
+  constructor() {
+    if (this.isEdit) {
+      this.form.controls.id.disable({ emitEvent: false });
     }
-
-    if (this.colorError()) {
-      return this.colorError();
-    }
-
-    if (this.simpleError()) {
-      return this.simpleError();
-    }
-
-    if (this.complexTermError()) {
-      return this.complexTermError();
-    }
-
-    return this.expressionValidation().error;
-  });
+  }
 
   addComplexTerm() {
-    this.complexTerms.set([...this.complexTerms(), this.buildEmptyQueryTerm()]);
+    this.complexTerms.set([...this.complexTerms(), this.createQueryTerm()]);
   }
 
-  removeComplexTerm(index: number) {
-    const terms = this.complexTerms();
-    if (terms.length <= 1) {
-      return;
-    }
-
-    const aliasToRemove = indexToAlias(index);
-    const nextTerms = terms.filter((_, idx) => idx !== index);
-    this.complexTerms.set(nextTerms);
-
-    const nextTokens = this.expressionTokens()
-      .map(token => {
-        if (token.kind !== 'term') {
-          return token;
-        }
-
-        if (token.alias === aliasToRemove) {
-          return null;
-        }
-
-        const oldIndex = aliasToIndex(token.alias);
-        if (oldIndex > index) {
-          return { kind: 'term', alias: indexToAlias(oldIndex - 1) } as ExpressionToken;
-        }
-        return token;
-      })
-      .filter((token): token is ExpressionToken => token !== null);
-
-    this.expressionTokens.set(nextTokens);
+  removeComplexTerm(termId: string) {
+    this.complexTerms.set(this.complexTerms().filter(term => term.id !== termId));
+    this.expressionTokens.set(this.expressionTokens().filter(token => token.kind !== 'term' || token.termId !== termId));
   }
 
-  updateTerm(index: number, patch: Partial<StatTermForm>) {
-    const next = this.complexTerms().map((term, idx) => (idx === index ? { ...term, ...patch } : term));
-    this.complexTerms.set(next);
-  }
-
-  addToken(token: ExpressionToken) {
+  addToken(token: SequencerStatExpressionToken) {
     this.expressionTokens.set([...this.expressionTokens(), token]);
   }
 
@@ -235,18 +201,56 @@ export class CreateStatBtnDialogComponent {
     this.expressionTokens.set([]);
   }
 
+
+  updateTermDisplayName(termId: string, displayName: string) {
+    this.patchTerm(termId, { displayName });
+  }
+
+  updateTermKind(termId: string, kind: 'query' | 'constant') {
+    this.patchTerm(termId, { kind });
+  }
+
+  updateTermConstantValue(termId: string, constantValue: number) {
+    this.patchTerm(termId, { constantValue });
+  }
+
+  updateTermEventIds(termId: string, eventIds: string[]) {
+    this.patchTerm(termId, { eventIds });
+  }
+
+  updateTermLabelIds(termId: string, labelIds: string[]) {
+    this.patchTerm(termId, { labelIds });
+  }
+  updateSimpleLabelColor(labelId: string, color: string) {
+    const normalized = normalizeColor(color);
+    this.simpleLabelColorById.set({
+      ...this.simpleLabelColorById(),
+      [labelId]: normalized,
+    });
+  }
+
+  updateTermLabelColor(termId: string, labelId: string, color: string) {
+    const normalized = normalizeColor(color);
+    this.complexTerms.set(this.complexTerms().map(term =>
+      term.id === termId
+        ? { ...term, labelColorById: { ...term.labelColorById, [labelId]: normalized } }
+        : term,
+    ));
+  }
+
   save() {
+    this.submitted.set(true);
     this.form.markAllAsTouched();
     if (!this.canSave()) {
       return;
     }
 
-    const id = (this.form.controls.id.value ?? '').trim();
-    const name = (this.form.controls.name.value ?? '').trim();
-    const colorHex = this.normalizeColor(this.form.controls.colorHex.value);
+    const id = this.form.controls.id.value.trim();
+    const name = this.form.controls.name.value.trim();
+    const colorHex = normalizeColor(this.form.controls.colorHex.value);
 
     const statDefinition = this.modeControl.value === 'simple'
-      ? this.buildSimpleDefinition(this.simpleEventIds(), this.simpleLabelIds())
+      ? this.buildSimpleDefinition()
       : this.buildComplexDefinition();
 
     if (!statDefinition) {
@@ -254,18 +258,9 @@ export class CreateStatBtnDialogComponent {
     }
 
     if (this.isEdit) {
-      this.panelService.updateBtn(id, {
-        name,
-        colorHex,
-        stat: statDefinition,
-      });
+      this.panelService.updateBtn(id, { name, colorHex, stat: statDefinition });
     } else {
-      this.panelService.addStatBtn({
-        id,
-        name,
-        colorHex,
-        stat: statDefinition,
-      });
+      this.panelService.addStatBtn({ id, name, colorHex, stat: statDefinition });
     }
 
     this.dialogRef.close(true);
@@ -275,12 +270,22 @@ export class CreateStatBtnDialogComponent {
     this.dialogRef.close(false);
   }
 
-  private buildSimpleDefinition(eventIds: string[], labelIds: string[]): SequencerStatDefinition {
+
+  private patchTerm(termId: string, patch: Partial<EditableStatTerm>) {
+    this.complexTerms.set(this.complexTerms().map(term => term.id === termId ? { ...term, ...patch } : term));
+  }
+  private buildSimpleDefinition(): SequencerStatDefinition {
+    const selectedLabels = new Set(this.simpleLabelIds());
+    const colorById = Object.fromEntries(
+      Object.entries(this.simpleLabelColorById()).filter(([labelId]) => selectedLabels.has(labelId)),
+    );
+
     return {
       mode: 'simple',
       query: {
-        eventIds,
-        labelIds,
+        eventIds: [...this.simpleEventIds()],
+        labelIds: [...this.simpleLabelIds()],
+        labelColorById: colorById,
         metric: 'count',
         labelMatch: 'all',
       },
@@ -288,86 +293,227 @@ export class CreateStatBtnDialogComponent {
   }
 
   private buildComplexDefinition(): SequencerStatDefinition | null {
-    const result = this.expressionValidation();
-    if (!result.ok || !result.node) {
+    const compiled = this.expressionValidation();
+    if (!compiled.ok || !compiled.node) {
       return null;
     }
 
+    const terms: SequencerStatEditorTerm[] = this.complexTerms().map(term =>
+      term.kind === 'query'
+        ? {
+            id: term.id,
+            displayName: term.displayName.trim(),
+            kind: 'query',
+            query: {
+              eventIds: [...term.eventIds],
+              labelIds: [...term.labelIds],
+              labelColorById: { ...term.labelColorById },
+              metric: 'count',
+              labelMatch: 'all',
+            },
+          }
+        : {
+            id: term.id,
+            displayName: term.displayName.trim(),
+            kind: 'constant',
+            constantValue: term.constantValue,
+          },
+    );
+
     return {
       mode: 'complex',
-      expression: result.node,
+      expression: compiled.node,
+      editor: {
+        terms,
+        tokens: [...this.expressionTokens()],
+      },
     };
   }
 
-  private buildAliasTermMap() {
-    const map = new Map<string, StatTermForm>();
-    this.complexTerms().forEach((term, index) => {
-      map.set(indexToAlias(index), term);
-    });
-    return map;
-  }
-
-  private extractTermsAndTokensFromAst(root: SequencerStatNode): { terms: StatTermForm[]; tokens: ExpressionToken[] } {
-    const terms: StatTermForm[] = [];
-    const tokens: ExpressionToken[] = [];
-
-    const visit = (node: SequencerStatNode) => {
-      if (node.kind === 'group') {
-        tokens.push({ kind: 'paren', value: '(' });
-        visit(node.left);
-        tokens.push({ kind: 'operator', op: node.op });
-        visit(node.right);
-        tokens.push({ kind: 'paren', value: ')' });
-        return;
-      }
-
-      if (node.kind === 'constant') {
-        const alias = indexToAlias(terms.length);
-        terms.push({ kind: 'constant', constantValue: node.value, eventIds: [], labelIds: [] });
-        tokens.push({ kind: 'term', alias });
-        return;
-      }
-
-      const alias = indexToAlias(terms.length);
-      terms.push({
-        kind: 'query',
-        constantValue: 0,
-        eventIds: [...node.query.eventIds],
-        labelIds: [...node.query.labelIds],
-      });
-      tokens.push({ kind: 'term', alias });
-    };
-
-    visit(root);
-
-    return { terms, tokens };
-  }
-
-  private buildEmptyQueryTerm(): StatTermForm {
-    return { kind: 'query', constantValue: 0, eventIds: [], labelIds: [] };
-  }
-
-  private buildEmptyConstantTerm(): StatTermForm {
-    return { kind: 'constant', constantValue: 1, eventIds: [], labelIds: [] };
-  }
-
-  private normalizeColor(value: string | null | undefined) {
-    if (value && /^#[0-9a-fA-F]{6}$/.test(value)) {
-      return value;
+  private getInitialComplexEditorState(statDefinition: Extract<SequencerStatDefinition, { mode: 'complex' }>) {
+    if (statDefinition.editor) {
+      return {
+        terms: statDefinition.editor.terms.map(term =>
+          term.kind === 'query'
+            ? {
+                id: term.id,
+                displayName: term.displayName,
+                kind: 'query' as const,
+                constantValue: 0,
+                eventIds: [...(term.query?.eventIds ?? [])],
+                labelIds: [...(term.query?.labelIds ?? [])],
+                labelColorById: { ...(term.query?.labelColorById ?? {}) },
+              }
+            : {
+                id: term.id,
+                displayName: term.displayName,
+                kind: 'constant' as const,
+                constantValue: term.constantValue ?? 0,
+                eventIds: [],
+                labelIds: [],
+                labelColorById: {},
+              },
+        ),
+        tokens: [...statDefinition.editor.tokens],
+      };
     }
-    return '#1f4b73';
+
+    return flattenAstForEditing(statDefinition.expression);
+  }
+
+  private createQueryTerm(): EditableStatTerm {
+    return {
+      id: `term_${cryptoRandom()}`,
+      displayName: 'Nouvelle requête',
+      kind: 'query',
+      constantValue: 0,
+      eventIds: [],
+      labelIds: [],
+      labelColorById: {},
+    };
+  }
+
+  private createConstantTerm(): EditableStatTerm {
+    return {
+      id: `term_${cryptoRandom()}`,
+      displayName: 'Constante',
+      kind: 'constant',
+      constantValue: 1,
+      eventIds: [],
+      labelIds: [],
+      labelColorById: {},
+    };
+  }
+
+  tokenLabel(token: SequencerStatExpressionToken): string {
+    if (token.kind === 'operator') {
+      return token.op;
+    }
+    if (token.kind === 'paren') {
+      return token.value;
+    }
+
+    const term = this.complexTerms().find(item => item.id === token.termId);
+    return term?.displayName || token.termId;
+  }
+
+  getTermSelectedLabels(term: EditableStatTerm) {
+    return term.labelIds.map(id => this.availableLabels().find(label => label.id === id)).filter(Boolean);
   }
 }
 
-function indexToAlias(index: number): string {
-  return String.fromCharCode(65 + index);
+function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: EditableStatTerm[]) {
+  if (!tokens.length) {
+    return { ok: false, error: 'L’expression est vide.', node: null as SequencerStatNode | null };
+  }
+
+  const termById = new Map(terms.map(term => [term.id, term]));
+  const operators: (SequencerStatOperator | '(')[] = [];
+  const nodes: SequencerStatNode[] = [];
+
+  const reduce = () => {
+    const op = operators.pop();
+    const right = nodes.pop();
+    const left = nodes.pop();
+    if (!op || op === '(' || !left || !right) {
+      return false;
+    }
+    if (op === '/' && right.kind === 'constant' && right.value === 0) {
+      return false;
+    }
+    nodes.push({ kind: 'group', left, op, right });
+    return true;
+  };
+
+  let expectOperand = true;
+  let openParens = 0;
+
+  for (const token of tokens) {
+    if (token.kind === 'term') {
+      if (!expectOperand) {
+        return { ok: false, error: 'Opérateur manquant entre deux termes.', node: null };
+      }
+      const term = termById.get(token.termId);
+      if (!term) {
+        return { ok: false, error: 'Un terme référencé est introuvable.', node: null };
+      }
+      const node = toNode(term);
+      if (!node) {
+        return { ok: false, error: `Le terme "${term.displayName}" est invalide.`, node: null };
+      }
+      nodes.push(node);
+      expectOperand = false;
+      continue;
+    }
+
+    if (token.kind === 'paren') {
+      if (token.value === '(') {
+        if (!expectOperand) {
+          return { ok: false, error: 'Parenthèse ouvrante mal placée.', node: null };
+        }
+        operators.push('(');
+        openParens += 1;
+        continue;
+      }
+
+      if (expectOperand || openParens <= 0) {
+        return { ok: false, error: 'Parenthèses non équilibrées.', node: null };
+      }
+
+      while (operators.length && operators[operators.length - 1] !== '(') {
+        if (!reduce()) {
+          return { ok: false, error: 'Division statique par zéro détectée.', node: null };
+        }
+      }
+
+      operators.pop();
+      openParens -= 1;
+      expectOperand = false;
+      continue;
+    }
+
+    if (expectOperand) {
+      return { ok: false, error: 'Opérateur sans opérande.', node: null };
+    }
+
+    while (operators.length) {
+      const top = operators[operators.length - 1];
+      if (top === '(' || precedence(top) < precedence(token.op)) {
+        break;
+      }
+      if (!reduce()) {
+        return { ok: false, error: 'Division statique par zéro détectée.', node: null };
+      }
+    }
+
+    operators.push(token.op);
+    expectOperand = true;
+  }
+
+  if (expectOperand) {
+    return { ok: false, error: 'L’expression est incomplète.', node: null };
+  }
+
+  if (openParens !== 0) {
+    return { ok: false, error: 'Parenthèses non équilibrées.', node: null };
+  }
+
+  while (operators.length) {
+    if (!reduce()) {
+      return { ok: false, error: 'Division statique par zéro détectée.', node: null };
+    }
+  }
+
+  return nodes.length === 1
+    ? { ok: true, error: null, node: nodes[0] }
+    : { ok: false, error: 'L’expression est invalide.', node: null };
 }
 
-function aliasToIndex(alias: string): number {
-  return alias.charCodeAt(0) - 65;
-}
+function toNode(term: EditableStatTerm): SequencerStatNode | null {
+  if (!term.displayName.trim()) {
+    return null;
+  }
 
-function termToNode(term: StatTermForm): SequencerStatNode | null {
   if (term.kind === 'constant') {
     if (!Number.isFinite(term.constantValue)) {
       return null;
@@ -382,129 +528,76 @@ function termToNode(term: StatTermForm): SequencerStatNode | null {
   return {
     kind: 'query',
     query: {
-      eventIds: term.eventIds,
-      labelIds: term.labelIds,
+      eventIds: [...term.eventIds],
+      labelIds: [...term.labelIds],
+      labelColorById: { ...term.labelColorById },
       metric: 'count',
       labelMatch: 'all',
     },
   };
 }
 
-function buildExpressionNode(tokens: ExpressionToken[], aliasToTerm: Map<string, StatTermForm>) {
-  if (!tokens.length) {
-    return { ok: false, error: 'L’expression est vide.', node: null };
-  }
+function flattenAstForEditing(root: SequencerStatNode): { terms: EditableStatTerm[]; tokens: SequencerStatExpressionToken[] } {
+  const terms: EditableStatTerm[] = [];
+  const tokens: SequencerStatExpressionToken[] = [];
 
-  const operators: (SequencerStatOperator | "(")[] = [];
-  const nodes: SequencerStatNode[] = [];
-
-  const reduce = () => {
-    const op = operators.pop();
-    const right = nodes.pop();
-    const left = nodes.pop();
-    if (!op || op === '(' || !left || !right) {
-      return false;
+  const visit = (node: SequencerStatNode) => {
+    if (node.kind === 'group') {
+      tokens.push({ kind: 'paren', value: '(' });
+      visit(node.left);
+      tokens.push({ kind: 'operator', op: node.op });
+      visit(node.right);
+      tokens.push({ kind: 'paren', value: ')' });
+      return;
     }
 
-    if (op === '/' && right.kind === 'constant' && right.value === 0) {
-      return false;
+    const termId = `term_${cryptoRandom()}`;
+
+    if (node.kind === 'constant') {
+      terms.push({
+        id: termId,
+        displayName: `Constante ${terms.length + 1}`,
+        kind: 'constant',
+        constantValue: node.value,
+        eventIds: [],
+        labelIds: [],
+        labelColorById: {},
+      });
+    } else {
+      terms.push({
+        id: termId,
+        displayName: `Requête ${terms.length + 1}`,
+        kind: 'query',
+        constantValue: 0,
+        eventIds: [...node.query.eventIds],
+        labelIds: [...node.query.labelIds],
+        labelColorById: { ...(node.query.labelColorById ?? {}) },
+      });
     }
 
-    nodes.push({ kind: 'group', left, op, right });
-    return true;
+    tokens.push({ kind: 'term', termId });
   };
 
-  let expectOperand = true;
-  let balance = 0;
-
-  for (const token of tokens) {
-    if (token.kind === 'term') {
-      if (!expectOperand) {
-        return { ok: false, error: 'Opérateur manquant entre deux termes.', node: null };
-      }
-      const term = aliasToTerm.get(token.alias);
-      if (!term) {
-        return { ok: false, error: `Terme ${token.alias} introuvable.`, node: null };
-      }
-      const node = termToNode(term);
-      if (!node) {
-        return { ok: false, error: `Terme ${token.alias} invalide.`, node: null };
-      }
-      nodes.push(node);
-      expectOperand = false;
-      continue;
-    }
-
-    if (token.kind === 'paren') {
-      if (token.value === '(') {
-        if (!expectOperand) {
-          return { ok: false, error: 'Parenthèse ouvrante mal placée.', node: null };
-        }
-        operators.push('(');
-        balance += 1;
-        continue;
-      }
-
-      if (expectOperand || balance <= 0) {
-        return { ok: false, error: 'Parenthèses non équilibrées.', node: null };
-      }
-
-      while (operators.length && operators[operators.length - 1] !== '(') {
-        if (!reduce()) {
-          return { ok: false, error: 'Division statique par zéro détectée.', node: null };
-        }
-      }
-
-      if (operators.pop() !== '(') {
-        return { ok: false, error: 'Parenthèses non équilibrées.', node: null };
-      }
-      balance -= 1;
-      expectOperand = false;
-      continue;
-    }
-
-    if (expectOperand) {
-      return { ok: false, error: 'Opérateur sans opérande.', node: null };
-    }
-
-    while (operators.length) {
-      const topOperator = operators[operators.length - 1];
-      if (topOperator === '(' || precedence(topOperator) < precedence(token.op)) {
-        break;
-      }
-      if (!reduce()) {
-        return { ok: false, error: 'Division statique par zéro détectée.', node: null };
-      }
-    }
-
-    operators.push(token.op);
-    expectOperand = true;
-  }
-
-  if (expectOperand || balance !== 0) {
-    return { ok: false, error: 'L’expression est incomplète.', node: null };
-  }
-
-  while (operators.length) {
-    const top = operators[operators.length - 1];
-    if (top === '(') {
-      return { ok: false, error: 'Parenthèses non équilibrées.', node: null };
-    }
-    if (!reduce()) {
-      return { ok: false, error: 'Division statique par zéro détectée.', node: null };
-    }
-  }
-
-  if (nodes.length !== 1) {
-    return { ok: false, error: 'L’expression est invalide.', node: null };
-  }
-
-  return { ok: true, error: null, node: nodes[0] };
+  visit(root);
+  return { terms, tokens };
 }
 
 function precedence(op: SequencerStatOperator): number {
-  if (op === '+' || op === '-') {
-    return 1;
+  return op === '+' || op === '-' ? 1 : 2;
+}
+
+function trimmedRequiredValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null =>
+    `${control.value ?? ''}`.trim().length ? null : { trimmedRequired: true };
+}
+
+function normalizeColor(value: string | null | undefined): string {
+  if (value && /^#[0-9a-fA-F]{6}$/.test(value)) {
+    return value;
   }
-  return 2;
+  return '#1f4b73';
+}
+
+function cryptoRandom(): string {
+  return Math.random().toString(36).slice(2, 9);
 }

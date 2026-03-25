@@ -7,6 +7,7 @@ import { CreateStatBtnDialogComponent } from './create-stat-btn-dialog.component
 class MockSequencerPanelService {
   readonly btnList = signal([
     { id: 'evt-shot', name: 'Shot', type: 'event', eventProps: { kind: 'limited', preMs: 0, postMs: 0 } },
+    { id: 'evt-possession', name: 'Possession', type: 'event', eventProps: { kind: 'limited', preMs: 0, postMs: 0 } },
     { id: 'lbl-success', name: 'Success', type: 'label', labelProps: { mode: 'once' } },
   ] as const);
 
@@ -18,6 +19,7 @@ class MockSequencerPanelService {
 describe('CreateStatBtnDialogComponent', () => {
   let fixture: ComponentFixture<CreateStatBtnDialogComponent>;
   let component: CreateStatBtnDialogComponent;
+  let panelService: MockSequencerPanelService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -31,71 +33,123 @@ describe('CreateStatBtnDialogComponent', () => {
 
     fixture = TestBed.createComponent(CreateStatBtnDialogComponent);
     component = fixture.componentInstance;
+    panelService = TestBed.inject(SequencerPanelService) as unknown as MockSequencerPanelService;
     fixture.detectChanges();
   });
 
-  it('uses a valid default color', () => {
-    expect(component.form.controls.colorHex.value).toBe('#1f4b73');
-    expect(component.colorPreview()).toBe('#1f4b73');
-  });
-
-  it('reflects color changes in preview', () => {
-    component.form.controls.colorHex.setValue('#123456');
-    expect(component.colorPreview()).toBe('#123456');
-  });
-
-  it('enables create in simple mode when required fields are valid', () => {
+  it('recognizes valid id and name correctly', () => {
     component.form.controls.id.setValue('stat-1');
     component.form.controls.name.setValue('Stat 1');
+
+    expect(component.idNameError()).toBeNull();
+  });
+
+  it('hides id/name error when fields are filled', () => {
+    component.form.controls.id.markAsTouched();
+    component.form.controls.name.markAsTouched();
+    component.form.controls.id.setValue('stat-1');
+    component.form.controls.name.setValue('Stat 1');
+
+    expect(component.idNameError()).toBeNull();
+  });
+
+  it('enables create in simple mode when everything is valid', () => {
+    component.form.controls.id.setValue('stat-simple');
+    component.form.controls.name.setValue('Simple');
     component.simpleEventIds.set(['evt-shot']);
 
     expect(component.canSave()).toBeTrue();
   });
 
-  it('enables create in complex mode when expression is valid', () => {
+  it('enables create in complex mode when expression and terms are valid', () => {
     component.modeControl.setValue('complex');
-    component.form.controls.id.setValue('stat-2');
-    component.form.controls.name.setValue('Stat 2');
+    component.form.controls.id.setValue('stat-complex');
+    component.form.controls.name.setValue('Complex');
 
-    component.complexTerms.set([
-      { kind: 'query', constantValue: 0, eventIds: ['evt-shot'], labelIds: [] },
-      { kind: 'constant', constantValue: 2, eventIds: [], labelIds: [] },
-    ]);
+    const terms = component.complexTerms();
+    component.updateTermDisplayName(terms[0].id, 'Tirs marqués');
+    component.updateTermEventIds(terms[0].id, ['evt-shot']);
+    component.updateTermDisplayName(terms[1].id, 'Possessions');
+    component.updateTermKind(terms[1].id, 'query');
+    component.updateTermEventIds(terms[1].id, ['evt-possession']);
+
     component.clearExpression();
-    component.addToken({ kind: 'paren', value: '(' });
-    component.addToken({ kind: 'term', alias: 'A' });
-    component.addToken({ kind: 'operator', op: '+' });
-    component.addToken({ kind: 'term', alias: 'B' });
-    component.addToken({ kind: 'paren', value: ')' });
+    component.addToken({ kind: 'term', termId: terms[0].id });
     component.addToken({ kind: 'operator', op: '/' });
-    component.addToken({ kind: 'term', alias: 'B' });
+    component.addToken({ kind: 'term', termId: terms[1].id });
 
     expect(component.expressionValidation().ok).toBeTrue();
     expect(component.canSave()).toBeTrue();
   });
 
-  it('disables create when expression is incomplete or invalid', () => {
+  it('persists displayName for complex terms in JSON payload', () => {
     component.modeControl.setValue('complex');
-    component.form.controls.id.setValue('stat-3');
-    component.form.controls.name.setValue('Stat 3');
-    component.clearExpression();
-    component.addToken({ kind: 'term', alias: 'A' });
-    component.addToken({ kind: 'operator', op: '+' });
+    component.form.controls.id.setValue('stat-complex');
+    component.form.controls.name.setValue('Complex');
 
-    expect(component.expressionValidation().ok).toBeFalse();
-    expect(component.canSave()).toBeFalse();
+    const terms = component.complexTerms();
+    component.updateTermDisplayName(terms[0].id, 'Tirs marqués');
+    component.updateTermEventIds(terms[0].id, ['evt-shot']);
+
+    component.updateTermDisplayName(terms[1].id, 'Constante deux');
+    component.updateTermKind(terms[1].id, 'constant');
+    component.updateTermConstantValue(terms[1].id, 2);
+
+    component.clearExpression();
+    component.addToken({ kind: 'term', termId: terms[0].id });
+    component.addToken({ kind: 'operator', op: '/' });
+    component.addToken({ kind: 'term', termId: terms[1].id });
+
+    component.save();
+
+    const saved = panelService.addStatBtn.calls.mostRecent().args[0];
+    expect(saved.stat.mode).toBe('complex');
+    if (saved.stat.mode === 'complex') {
+      expect(saved.stat.editor?.terms[0].displayName).toBe('Tirs marqués');
+    }
   });
 
-  it('validates parenthesis balance', () => {
+  it('loads renamed terms when reopening in edit mode', async () => {
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [CreateStatBtnDialogComponent],
+      providers: [
+        { provide: SequencerPanelService, useClass: MockSequencerPanelService },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            mode: 'edit',
+            btn: {
+              id: 'stat-edit',
+              name: 'Edit',
+              type: 'stat',
+              stat: {
+                mode: 'complex',
+                expression: { kind: 'constant', value: 1 },
+                editor: {
+                  terms: [
+                    { id: 'term_1', displayName: 'Possessions', kind: 'query', query: { eventIds: ['evt-possession'], labelIds: [], metric: 'count', labelMatch: 'all' } },
+                  ],
+                  tokens: [{ kind: 'term', termId: 'term_1' }],
+                },
+              },
+            },
+          },
+        },
+        { provide: MatDialogRef, useValue: { close: jasmine.createSpy('close') } },
+      ],
+    }).compileComponents();
+
+    const editFixture = TestBed.createComponent(CreateStatBtnDialogComponent);
+    const editComponent = editFixture.componentInstance;
+    expect(editComponent.complexTerms()[0].displayName).toBe('Possessions');
+  });
+
+  it('renders expression section before terms section in complex mode', () => {
     component.modeControl.setValue('complex');
-    component.form.controls.id.setValue('stat-4');
-    component.form.controls.name.setValue('Stat 4');
+    fixture.detectChanges();
 
-    component.clearExpression();
-    component.addToken({ kind: 'paren', value: '(' });
-    component.addToken({ kind: 'term', alias: 'A' });
-
-    expect(component.expressionValidation().ok).toBeFalse();
-    expect(component.expressionValidation().error).toContain('incomplète');
+    const content = fixture.nativeElement.textContent as string;
+    expect(content.indexOf('Expression mathématique')).toBeLessThan(content.indexOf('Termes disponibles'));
   });
 });

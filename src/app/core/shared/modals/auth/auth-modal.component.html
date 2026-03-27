@@ -33,7 +33,15 @@
     <mat-form-field>
       <mat-label>Mot de passe</mat-label>
       <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" matInput required />
-      <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" [attr.aria-label]="hidePassword ? 'Afficher le mot de passe' : 'Masquer le mot de passe'">
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-label]="hidePassword ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+        [attr.aria-pressed]="!hidePassword"
+        [attr.title]="hidePassword ? 'Mot de passe masqué' : 'Mot de passe visible'"
+      >
         <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
       </button>
     </mat-form-field>

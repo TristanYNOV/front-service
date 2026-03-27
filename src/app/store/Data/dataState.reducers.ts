@@ -19,21 +19,20 @@ export interface DataState {
   saved: AnyDataItems[];
 }
 
-// TODO: Store it in special service
 const appPrice: AnyDataItems = {
   id: 'price-table-default',
   type: DataItemType.Price,
-  state: DataItemState.Displayed,
+  state: DataItemState.Idle,
   plans: [
     {
       name: 'Indépendant',
-      features: ['Analyse vidéo sans club', 'Hébergement 12h'],
+      features: ['Analyse vidéo personnelle', 'Hébergement 12h'],
       videoRetention: '12h',
       price: 3,
     },
     {
       name: 'Indépendant Premium',
-      features: ['Analyse vidéo sans club', 'Hébergement 1 semaine'],
+      features: ['Analyse vidéo personnelle', 'Hébergement 1 semaine'],
       videoRetention: '1 semaine',
       price: 5,
     },
@@ -58,25 +57,44 @@ const appPrice: AnyDataItems = {
   ],
 };
 
-const idleAppPrice = {
-  ...appPrice,
-  state: DataItemState.Idle,
-}
+const projectGoal: AnyDataItems = {
+  id: 'project-goal',
+  type: DataItemType.Text,
+  state: DataItemState.Displayed,
+};
 
-const clubGuide: AnyDataItems = {
-  id: 'club-guide',
+const uxUiWorkflow: AnyDataItems = {
+  id: 'ux-ui-workflow',
+  type: DataItemType.Text,
+  state: DataItemState.Displayed,
+};
+
+const analysisPageOverview: AnyDataItems = {
+  id: 'analysis-page-overview',
+  type: DataItemType.Text,
+  state: DataItemState.Displayed,
+};
+
+const videoShortcuts: AnyDataItems = {
+  id: 'video-shortcuts',
   type: DataItemType.Text,
   state: DataItemState.Idle,
 };
 
-const cguInfo: AnyDataItems = {
-  id: 'cgu',
+const sequencerOverview: AnyDataItems = {
+  id: 'sequencer-overview',
   type: DataItemType.Text,
   state: DataItemState.Idle,
 };
 
-const upcomingFeatures: AnyDataItems = {
-  id: 'upcoming-features',
+const timelineOverview: AnyDataItems = {
+  id: 'timeline-overview',
+  type: DataItemType.Text,
+  state: DataItemState.Idle,
+};
+
+const ffmpegInstallation: AnyDataItems = {
+  id: 'ffmpeg-installation',
   type: DataItemType.Text,
   state: DataItemState.Idle,
 };
@@ -91,24 +109,24 @@ export const dataStateReducer = createReducer(
   initialDataState,
   on(loadDiscoverData, state => ({
     ...state,
-    idle: [idleAppPrice, clubGuide, cguInfo, upcomingFeatures],
-    displayed: [appPrice],
+    idle: [appPrice, videoShortcuts, sequencerOverview, timelineOverview, ffmpegInstallation],
+    displayed: [projectGoal, uxUiWorkflow, analysisPageOverview],
   })),
   on(clearIdleData, state => ({
     ...state,
     idle: [],
     displayed: [],
   })),
-  // IDLE PART
   on(addToIdle, (state, { item }) => {
-    // Empêche l'ajout d'un élément déjà présent dans l'un des états
     const exists =
       state.idle.some(el => el.id === item.id) ||
       state.displayed.some(el => el.id === item.id) ||
       state.saved.some(el => el.id === item.id);
+
     if (exists) {
       return state;
     }
+
     return {
       ...state,
       idle: [...state.idle, item],
@@ -120,10 +138,10 @@ export const dataStateReducer = createReducer(
   })),
   on(displayFromIdle, (state, { id }) => {
     const item = state.idle.find(el => el.id === id);
-    // Ne rien faire si l'élément n'existe pas ou est déjà affiché
     if (!item || state.displayed.some(el => el.id === id)) {
       return state;
     }
+
     return {
       ...state,
       displayed: [...state.displayed, { ...item, state: DataItemState.Displayed }],
@@ -131,41 +149,37 @@ export const dataStateReducer = createReducer(
   }),
   on(saveFromIdle, (state, { id }) => {
     const item = state.idle.find(el => el.id === id);
-    // Ne rien faire si l'élément n'existe pas ou est déjà sauvegardé
     if (!item || state.saved.some(el => el.id === id)) {
       return state;
     }
+
     return {
       ...state,
       saved: [...state.saved, { ...item, state: DataItemState.Saved }],
     };
   }),
-
-  // DISPLAY PART
   on(removeFromDisplay, (state, { id }) => ({
     ...state,
     displayed: state.displayed.filter(item => item.id !== id),
   })),
   on(saveFromDisplay, (state, { id }) => {
     const item = state.displayed.find(el => el.id === id);
-    // Ne rien faire si l'élément n'existe pas ou est déjà sauvegardé
     if (!item || state.saved.some(el => el.id === id)) {
       return state;
     }
+
     return {
       ...state,
       displayed: state.displayed.filter(el => el.id !== id),
       saved: [...state.saved, { ...item, state: DataItemState.Saved }],
     };
   }),
-
-  // SAVED PART
   on(displayFromSaved, (state, { id }) => {
     const item = state.saved.find(el => el.id === id);
-    // Ne rien faire si l'élément n'existe pas ou est déjà affiché
     if (!item || state.displayed.some(el => el.id === id)) {
       return state;
     }
+
     return {
       ...state,
       saved: state.saved.filter(el => el.id !== id),

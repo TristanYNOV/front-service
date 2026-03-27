@@ -1,15 +1,2 @@
-<div class="text-sm">
-  <h3 class="font-semibold mb-2">Plans tarifaires</h3>
-  <ul class="space-y-1">
-    @for (plan of item.plans; track plan.name) {
-      <li class="border p-2 rounded">
-        <p class="font-medium">{{ plan.name }} - {{ plan.price }}€</p>
-        <ul class="pl-4 list-disc text-xs">
-          @for (feature of plan.features; track feature) {
-            <li>{{ feature }}</li>
-          }
-        </ul>
-      </li>
-    }
-  </ul>
-</div>
+<p class="text-xs text-slate-600">{{ item.plans.length }} offres disponibles</p>
+<p class="text-sm font-semibold text-indigo-700">À partir de {{ minPrice }} € / mois</p>

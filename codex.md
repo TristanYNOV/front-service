@@ -281,3 +281,14 @@ Checklist
   - pas de référence inter-boutons stats,
   - pas de métriques de durée (count seulement),
   - `labelMatch: 'any'` non implémenté (prévu plus tard).
+
+## 20) Discover Home Content (UX orientée utilisateur)
+- Les contenus Discover reposent sur un registre centralisé dans `src/app/components/specialized-data/data-item-content.registry.ts` (titre, tags/badges, résumé minifié, contenu textuel).
+- Les cartes affichées par défaut sur `/discover` sont maintenant :
+  - `project-goal`
+  - `ux-ui-workflow`
+  - `analysis-page-overview`
+- Les cartes prêtes à afficher depuis la sidebar : `video-shortcuts`, `sequencer-overview`, `timeline-overview`, `ffmpeg-installation`, `price-table-default`.
+- `DataItemContainerComponent` et `MiniComponent` utilisent les mêmes métadonnées (titre + tags) pour garantir la cohérence entre vue étendue/minifiée.
+- Le composant prix reste disponible et a été simplifié en version minifiée (aperçu léger + prix d’entrée).
+

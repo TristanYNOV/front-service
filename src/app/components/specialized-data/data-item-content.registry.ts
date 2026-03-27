@@ -69,13 +69,27 @@ const textContentRegistry: Record<string, TextBlockContent> = {
     title: 'Raccourcis vidéo par défaut',
     tags: ['Vidéo', 'Raccourcis', 'Gain de temps'],
     miniDescription: 'Pilotez la lecture et l’exploration vidéo sans quitter votre clavier.',
-    intro: 'Les raccourcis vidéo vous aident à analyser plus vite, surtout pendant une session intense.',
+    intro: 'Ces raccourcis vous permettent d’analyser une action sans casser votre concentration ni perdre du temps dans les menus.',
     sections: [
       {
+        heading: 'Les actions utiles au quotidien',
         bullets: [
-          'Lancer ou mettre en pause instantanément la lecture.',
-          'Avancer ou reculer rapidement dans la séquence.',
-          'Ajuster la vitesse et naviguer image par image pour plus de précision.',
+          'Lecture / pause rapide pour arrêter exactement au bon moment.',
+          'Navigation plus précise pour revenir sur une séquence clé en quelques secondes.',
+          'Analyse image par image pour vérifier un détail technique ou tactique.',
+          'Ralenti et variation de vitesse pour mieux lire les déplacements et les timings.',
+        ],
+      },
+      {
+        heading: 'Ce que le composant vidéo vous apporte',
+        paragraphs: [
+          'Vous pouvez revoir plusieurs fois la même action, comparer deux passages et valider plus sereinement votre observation.',
+          'L’objectif est simple : vous offrir un confort d’analyse fluide, même lors d’un débrief rapide après match ou entraînement.',
+        ],
+      },
+      {
+        paragraphs: [
+          'Le lecteur est pensé pour rester compatible avec les usages vidéo courants, afin de démarrer rapidement sans complexifier votre routine.',
         ],
       },
     ],
@@ -84,13 +98,22 @@ const textContentRegistry: Record<string, TextBlockContent> = {
     title: 'Comprendre le panneau de séquençage',
     tags: ['Séquenceur', 'Observation', 'Suivi'],
     miniDescription: 'Structurez vos événements et labels pour garder une lecture claire du match.',
-    intro: 'Le séquenceur vous permet d’organiser vos repères pour suivre une logique d’analyse cohérente.',
+    intro: 'Le panneau de séquençage vous aide à organiser vos repères pour analyser avec méthode, pendant l’action puis au moment du bilan.',
     sections: [
       {
+        heading: 'Trois notions simples',
         bullets: [
-          'Créez des repères adaptés à votre méthode et à votre sport.',
-          'Déclenchez vos actions plus rapidement pendant l’observation.',
-          'Conservez une base de travail claire pour le débrief et le suivi.',
+          'Event : un moment important que vous souhaitez repérer (exemple : tir, récupération, perte de balle).',
+          'Label : une étiquette pour qualifier l’action (zone, intention, résultat, contexte).',
+          'Stat : une synthèse pour suivre des tendances et appuyer vos décisions.',
+        ],
+      },
+      {
+        heading: 'Pourquoi c’est utile en pratique',
+        bullets: [
+          'Pendant l’analyse, vous capturez les informations au fil de la vidéo sans perdre le fil.',
+          'Après l’analyse, vous retrouvez rapidement les passages clés pour préparer un retour clair à votre groupe.',
+          'Vous gagnez du temps pour comparer, prioriser et partager les points qui comptent vraiment.',
         ],
       },
     ],
@@ -99,13 +122,22 @@ const textContentRegistry: Record<string, TextBlockContent> = {
     title: 'Lire la timeline efficacement',
     tags: ['Timeline', 'Raccourcis', 'Préparation'],
     miniDescription: 'Situez chaque séquence dans le temps pour préparer des retours ciblés.',
-    intro: 'La timeline donne une vision globale de votre analyse et vous aide à revenir immédiatement au bon moment.',
+    intro: 'La timeline vous donne une lecture chronologique claire du match ou de l’entraînement pour retrouver un passage en un instant.',
     sections: [
       {
+        heading: 'Ce que vous pouvez faire rapidement',
         bullets: [
-          'Repérez les temps forts et les enchaînements importants.',
-          'Naviguez rapidement entre les périodes grâce aux repères temporels.',
-          'Préparez des retours plus précis pour les séances suivantes.',
+          'Visualiser les moments clés dans l’ordre où ils se produisent.',
+          'Repérer une séquence importante et relancer une lecture ciblée.',
+          'Naviguer facilement dans l’analyse pour comparer plusieurs situations.',
+          'Sélectionner des événements pour construire un débrief plus structuré.',
+        ],
+      },
+      {
+        heading: 'Bénéfice au quotidien',
+        paragraphs: [
+          'Au lieu de chercher longtemps dans la vidéo, vous accédez directement aux passages utiles pour expliquer, corriger ou valoriser une action.',
+          'Si des raccourcis de navigation sont activés, ils renforcent encore la fluidité pour passer d’une séquence à l’autre.',
         ],
       },
     ],

@@ -15,7 +15,7 @@
             <mat-icon aria-hidden="true">cloud</mat-icon>
           </h2>
           @if (idleItems().length > 0) {
-            <div class="space-y-2 overflow-y-auto min-h-0 pr-1">
+            <div class="space-y-3 overflow-y-auto min-h-0 pr-1">
               @for (item of idleItems(); track item.id) {
                 <app-mini [item]="item"/>
               }
@@ -31,7 +31,7 @@
             <mat-icon aria-hidden="true">bookmark</mat-icon>
           </h2>
           @if (savedItems().length > 0) {
-            <div class="space-y-2 overflow-y-auto min-h-0 pr-1">
+            <div class="space-y-3 overflow-y-auto min-h-0 pr-1">
               @for (item of savedItems(); track item.id) {
                 <app-mini [item]="item" />
               }

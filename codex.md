@@ -291,4 +291,5 @@ Checklist
 - Les cartes prêtes à afficher depuis la sidebar : `video-shortcuts`, `sequencer-overview`, `timeline-overview`, `ffmpeg-installation`, `price-table-default`.
 - `DataItemContainerComponent` et `MiniComponent` utilisent les mêmes métadonnées (titre + tags) pour garantir la cohérence entre vue étendue/minifiée.
 - Le composant prix reste disponible et a été simplifié en version minifiée (aperçu léger + prix d’entrée).
+- Les classes visuelles Discover passent par le thème (`discover-card`, `discover-tag`, `discover-muted`, `discover-panel`, `discover-canvas-item`) défini dans `src/theme/_global.class.scss` ; éviter les couleurs Tailwind dans ces composants.
 

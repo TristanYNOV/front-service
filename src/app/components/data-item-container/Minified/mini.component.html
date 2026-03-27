@@ -1,17 +1,17 @@
-<div class="flex flex-col border border-slate-200 rounded-md p-2 gap-2 bg-white/70">
+<div class="border border-layer rounded-md p-2 discover-card">
   <div class="flex items-start gap-2">
-    <div class="min-w-0">
-      <h3 class="font-semibold text-sm leading-5 line-clamp-2">{{ metadata.title }}</h3>
-      <div class="flex flex-wrap gap-1 mt-1">
+    <div class="min-w-0 flex-1">
+      <div class="flex flex-wrap gap-1 mb-1">
         @for (tag of metadata.tags; track tag) {
-          <span class="text-[10px] px-1.5 py-0.5 rounded-full border border-slate-200 bg-slate-100 text-slate-600">{{ tag }}</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full border discover-tag">{{ tag }}</span>
         }
       </div>
+      <h3 class="font-semibold text-sm leading-5 truncate">{{ metadata.title }}</h3>
     </div>
 
     <button
       (click)="displayData()"
-      class="btn-accent w-fit px-2 ml-auto flex items-center"
+      class="btn-accent w-fit px-2 flex items-center shrink-0"
       [disabled]="isDisplayed()"
       aria-label="Afficher"
       title="Afficher"
@@ -19,17 +19,4 @@
       <mat-icon aria-hidden="true">display_settings</mat-icon>
     </button>
   </div>
-
-  @if (metadata.miniDescription) {
-    <p class="text-xs text-slate-600 line-clamp-2">{{ metadata.miniDescription }}</p>
-  }
-
-  @switch (item.type) {
-    @case (DataItemType.Price) {
-      <app-price-table-mini [item]="item" />
-    }
-    @case (DataItemType.Text) {
-      <app-text-block-mini [item]="item" />
-    }
-  }
 </div>

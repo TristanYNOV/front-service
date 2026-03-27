@@ -8,36 +8,36 @@
   <div class="flex-1 overflow-hidden" [class.flex]="showSidebar">
     @if(showSidebar){
       <!-- Sidebar gauche : Idle + Saved -->
-      <section class="w-[20%] min-w-[200px] max-w-[300px] bg-layer-1 p-2 flex flex-col gap-4 overflow-y-auto">
+      <section class="w-[20%] min-w-[220px] max-w-[320px] bg-layer-1 p-2 flex flex-col gap-4 overflow-hidden">
         <!-- IDLE -->
-        <div id="idle-section" class="bg-layer-3 rounded-xl shadow p-2 h-1/2 light-text">
+        <div id="idle-section" class="discover-panel rounded-xl shadow p-2 light-text flex flex-col flex-1 min-h-0">
           <h2 class="text-sm font-semibold mb-2 flex items-center gap-1">
             <mat-icon aria-hidden="true">cloud</mat-icon>
           </h2>
           @if (idleItems().length > 0) {
-            <div class="space-y-2">
+            <div class="space-y-2 overflow-y-auto min-h-0 pr-1">
               @for (item of idleItems(); track item.id) {
                 <app-mini [item]="item"/>
               }
             </div>
           } @else {
-            <p class="text-xs text-gray-500">Aucune donnée en attente.</p>
+            <p class="text-xs text-muted">Aucune donnée en attente.</p>
           }
         </div>
 
         <!-- SAVED -->
-        <div id="saved-section" class="bg-layer-3 rounded-xl shadow p-2 h-1/2 light-text">
+        <div id="saved-section" class="discover-panel rounded-xl shadow p-2 light-text flex flex-col flex-1 min-h-0">
           <h2 class="text-sm font-semibold mb-2 flex items-center gap-1">
             <mat-icon aria-hidden="true">bookmark</mat-icon>
           </h2>
           @if (savedItems().length > 0) {
-            <div class="space-y-2">
+            <div class="space-y-2 overflow-y-auto min-h-0 pr-1">
               @for (item of savedItems(); track item.id) {
                 <app-mini [item]="item" />
               }
             </div>
           } @else {
-            <p class="text-xs text-gray-500">Aucune donnée sauvegardée.</p>
+            <p class="text-xs text-muted">Aucune donnée sauvegardée.</p>
           }
         </div>
       </section>

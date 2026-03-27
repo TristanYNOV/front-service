@@ -1,16 +1,16 @@
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
   @for (plan of data.plans; track plan.name) {
-    <article class="rounded-xl border border-slate-200 bg-slate-50/80 p-4 h-full flex flex-col">
+    <article class="rounded-xl border border-layer p-4 h-full flex flex-col discover-card">
       <h3 class="text-lg font-semibold">{{ plan.name }}</h3>
-      <p class="mt-1 text-xs text-slate-600">Conservation vidéo : <strong>{{ plan.videoRetention }}</strong></p>
+      <p class="mt-1 text-xs discover-muted">Conservation vidéo : <strong>{{ plan.videoRetention }}</strong></p>
 
-      <ul class="mt-3 text-sm list-disc list-inside space-y-1 text-slate-700 flex-1">
+      <ul class="mt-3 text-sm list-disc list-inside space-y-1 discover-muted flex-1">
         @for (feature of plan.features; track feature) {
           <li>{{ feature }}</li>
         }
       </ul>
 
-      <p class="mt-3 text-lg font-bold text-indigo-600">{{ plan.price }} € / mois</p>
+      <p class="mt-3 text-lg font-bold primary-text">{{ plan.price }} € / mois</p>
     </article>
   }
 </div>

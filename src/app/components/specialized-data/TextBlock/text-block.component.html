@@ -1,7 +1,7 @@
 <section class="flex flex-col gap-4">
   <header class="space-y-2">
     <h3 class="text-lg font-semibold">{{ content.title }}</h3>
-    <p class="text-sm leading-6 text-slate-700">{{ content.intro }}</p>
+    <p class="text-sm leading-6 discover-muted">{{ content.intro }}</p>
   </header>
 
   @if (content.sections?.length) {
@@ -14,12 +14,12 @@
 
           @if (section.paragraphs?.length) {
             @for (paragraph of section.paragraphs; track paragraph) {
-              <p class="text-sm leading-6 text-slate-700">{{ paragraph }}</p>
+              <p class="text-sm leading-6 discover-muted">{{ paragraph }}</p>
             }
           }
 
           @if (section.bullets?.length) {
-            <ul class="list-disc list-inside space-y-1 text-sm leading-6 text-slate-700">
+            <ul class="list-disc list-inside space-y-1 text-sm leading-6 discover-muted">
               @for (bullet of section.bullets; track bullet) {
                 <li>{{ bullet }}</li>
               }

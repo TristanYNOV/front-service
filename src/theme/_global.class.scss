@@ -153,3 +153,28 @@
 .is-active {
   border-color: var(--interactive-active-border);
 }
+
+.discover-card {
+  background-color: var(--discover-card-bg);
+  border-color: var(--discover-card-border);
+  color: var(--discover-card-text);
+}
+
+.discover-muted {
+  color: var(--discover-card-muted);
+}
+
+.discover-tag {
+  background-color: var(--discover-tag-bg);
+  border-color: var(--discover-tag-border);
+  color: var(--discover-tag-text);
+}
+
+.discover-panel {
+  background-color: var(--bg-layer-2);
+  border: 1px solid var(--border-layer);
+}
+
+.discover-canvas-item {
+  border: 1px solid var(--border-layer);
+}

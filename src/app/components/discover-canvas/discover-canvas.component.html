@@ -5,7 +5,7 @@
       [cdkDragBoundary]="canvas"
       [cdkDragFreeDragPosition]="positions[item.id]"
       (cdkDragEnded)="onDragEnd(item, $event)"
-      class="absolute border rounded-xl shadow bg-white mb-4 resize overflow-auto"
+      class="absolute rounded-xl shadow mb-4 resize overflow-hidden discover-canvas-item"
     >
       <app-data-item-container [item]="item" />
     </div>

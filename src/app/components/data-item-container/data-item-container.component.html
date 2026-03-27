@@ -1,18 +1,30 @@
-<div class="p-4 w-full h-full">
-  @switch (item.type) {
-    @case ('price') {
-      <app-price-table [data]="item" />
+<article class="p-4 w-full h-full flex flex-col gap-4 discover-card">
+  <header class="space-y-2 border-b border-layer pb-3 shrink-0">
+    <div class="flex flex-wrap gap-2">
+      @for (tag of metadata.tags; track tag) {
+        <span class="text-[11px] px-2 py-1 rounded-full border discover-tag">{{ tag }}</span>
+      }
+    </div>
+    <h2 class="text-xl font-semibold">{{ metadata.title }}</h2>
+  </header>
+
+  <section class="flex-1 min-h-0 overflow-y-auto pr-1">
+    @switch (item.type) {
+      @case ('price') {
+        <app-price-table [data]="item" />
+      }
+      @case ('text') {
+        <app-text-block [data]="item" />
+      }
     }
-    @case ('text') {
-      <app-text-block [data]="item" />
-    }
-  }
-  <div class="flex justify-end gap-2 mt-4">
-    <button class="text-sm text-red-600 hover:underline flex items-center" (click)="onDelete()" aria-label="Supprimer" title="Supprimer">
+  </section>
+
+  <footer class="flex justify-end gap-2 pt-3 border-t border-layer shrink-0">
+    <button class="text-sm alert-text hover:underline flex items-center" (click)="onDelete()" aria-label="Supprimer" title="Supprimer">
       <mat-icon aria-hidden="true">delete</mat-icon>
     </button>
-    <button class="text-sm text-blue-600 hover:underline flex items-center" (click)="onSave()" aria-label="Sauvegarder" title="Sauvegarder">
+    <button class="text-sm primary-text hover:underline flex items-center" (click)="onSave()" aria-label="Sauvegarder" title="Sauvegarder">
       <mat-icon aria-hidden="true">save</mat-icon>
     </button>
-  </div>
-</div>
+  </footer>
+</article>

@@ -49,6 +49,7 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
 
   readonly panelName = this.panelService.panelName;
   readonly btnList = this.panelService.btnList;
+  readonly panel = this.panelService.panel;
   readonly editMode = this.panelService.editMode;
   readonly lastTriggeredBtnId = this.runtimeService.lastTriggeredBtnId;
   readonly activeIndefiniteIds = this.runtimeService.activeIndefiniteIds;
@@ -157,6 +158,10 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
       return;
     }
     this.renameDraft.set(target.value);
+  }
+
+  handleExportSequencer() {
+    console.log('[Sequencer Export]', this.panel());
   }
 
 }

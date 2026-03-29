@@ -489,6 +489,10 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
     this.facade.setAutoFollow(true);
   }
 
+  handleExportTimeline() {
+    console.log('[Timeline Export]', this.facade.timelineState());
+  }
+
   private isTextInputTarget(target: EventTarget | null) {
     if (!(target instanceof HTMLElement)) {
       return false;

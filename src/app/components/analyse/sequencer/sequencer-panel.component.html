@@ -8,7 +8,7 @@
       <div class="text-muted text-[11px]">Agrandir pour éditer le Sequencer Canvas.</div>
     </div>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item disabled>Export</button>
+      <button mat-menu-item type="button" (click)="handleExportSequencer()">Export</button>
       <button mat-menu-item disabled>Import</button>
       <button mat-menu-item disabled>Save</button>
       <button mat-menu-item disabled>SeeAllMyPanels</button>
@@ -23,7 +23,9 @@
           <mat-icon aria-hidden="true">edit</mat-icon>
           <span>Renommer</span>
         </button>
-        <button mat-menu-item disabled>Export</button>
+        <button mat-menu-item type="button" (click)="handleExportSequencer()">
+          <span>Export</span>
+        </button>
         <button mat-menu-item disabled>Import</button>
         <button mat-menu-item disabled>Save</button>
         <button mat-menu-item disabled>SeeAllMyPanels</button>

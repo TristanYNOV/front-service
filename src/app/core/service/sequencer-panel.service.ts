@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import {
   EventBtn,
   LabelBtn,
@@ -36,6 +36,10 @@ export class SequencerPanelService {
 
   private readonly editModeSignal = signal(false);
   readonly editMode = this.editModeSignal.asReadonly();
+  readonly panel = computed(() => ({
+    panelName: this.panelNameSignal(),
+    btnList: this.btnListSignal(),
+  }));
 
   private zCounter = 0;
 

@@ -35,6 +35,7 @@ import {
   selectTimelineOccurrences,
   selectTimelineScroll,
   selectTimelineSelectionIds,
+  selectTimelineState,
 } from '../../store/Timeline/timeline.selectors';
 import { mergeIntervalsForPlayback, normalizeTiming } from '../../utils/timeline/timeline-time.utils';
 
@@ -55,6 +56,7 @@ export class TimelineFacadeService {
   readonly canUndoShiftOrAlign = this.store.selectSignal(selectTimelineCanUndoShiftAlign);
   readonly canUndoRemove = this.store.selectSignal(selectTimelineCanUndoRemove);
   readonly allOccurrencesSelected = this.store.selectSignal(selectTimelineAllOccurrencesSelected);
+  readonly timelineState = this.store.selectSignal(selectTimelineState);
 
   readonly hasChronoOrVideo: Signal<boolean> = computed(
     () => this.timebase.mode() === 'video' || this.timebase.currentTimeMs() > 0,

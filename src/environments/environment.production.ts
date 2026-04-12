@@ -14,4 +14,10 @@ export const environment: AppEnvironment = {
     logout: '/auth/logout',
     me: '/me',
   },
+  analysisStoreEndpoints: {
+    importsTimelinesValidate: '/api/imports/timelines/validate',
+    importsPanelsValidate: '/api/imports/panels/validate',
+    timelines: '/api/timelines',
+    panels: '/api/panels',
+  },
 };

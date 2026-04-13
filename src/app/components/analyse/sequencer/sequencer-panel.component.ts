@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  effect,
   ElementRef,
   OnDestroy,
   ViewChild,
@@ -14,14 +15,29 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Store } from '@ngrx/store';
+import { AnalysisStoreApi } from '../../../core/api/analysis-store.api';
+import { mapPanelStateToSequencerPanelV1 } from '../../../core/mappers/analysis-store/panel-analysis-store.mapper';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { SequencerPanelService } from '../../../core/service/sequencer-panel.service';
 import { SequencerRuntimeService } from '../../../core/service/sequencer-runtime.service';
 import { HotkeysService } from '../../../core/services/hotkeys.service';
+import { AnalysisStoreVisibility } from '../../../interfaces/analysis-store';
 import { EventBtn, LabelBtn, SequencerBtn, StatBtn } from '../../../interfaces/sequencer-btn.interface';
+import {
+  analysisStoreLoadPanelFromValidatedPayload,
+  analysisStoreSavePanel,
+  analysisStoreSetCurrentPanel,
+} from '../../../store/AnalysisStore/analysis-store.actions';
+import { selectAnalysisStorePanelState } from '../../../store/AnalysisStore/analysis-store.selectors';
+import { hasImportDataLoss } from '../../../utils/sequencer/sequencer-panel-import.util';
 import { CreateEventBtnDialogComponent } from './createBtn/event/create-event-btn-dialog.component';
 import { CreateLabelBtnDialogComponent } from './createBtn/label/create-label-btn-dialog.component';
 import { CreateStatBtnDialogComponent } from './createBtn/stat/create-stat-btn-dialog.component';
 import { SequencerCanvasComponent } from './canvas/sequencer-canvas.component';
+import { PanelDescriptionDialogComponent } from './modals/panel-description-dialog/panel-description-dialog.component';
+import { PanelPublishDialogComponent } from './modals/panel-publish-dialog/panel-publish-dialog.component';
 
 @Component({
   selector: 'app-sequencer-panel',
@@ -35,17 +51,24 @@ import { SequencerCanvasComponent } from './canvas/sequencer-canvas.component';
     MatIconModule,
     MatDialogModule,
     MatInputModule,
+    MatSnackBarModule,
     SequencerCanvasComponent,
   ],
 })
 export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   @ViewChild('panelRoot', { static: true }) panelRoot?: ElementRef<HTMLElement>;
+  @ViewChild('panelFileInput', { static: true }) panelFileInput?: ElementRef<HTMLInputElement>;
 
   private readonly panelService = inject(SequencerPanelService);
   private readonly runtimeService = inject(SequencerRuntimeService);
   private readonly hotkeysService = inject(HotkeysService);
+  private readonly analysisStoreApi = inject(AnalysisStoreApi);
+  private readonly confirmDialogService = inject(ConfirmDialogService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly store = inject(Store);
   private readonly dialog = inject(MatDialog);
   private resizeObserver?: ResizeObserver;
+  private readonly panelState = this.store.selectSignal(selectAnalysisStorePanelState);
 
   readonly panelName = this.panelService.panelName;
   readonly btnList = this.panelService.btnList;
@@ -59,6 +82,13 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   readonly showEditIcons = computed(() => this.editMode() && !this.compactMode());
 
   readonly sortedBtnList = computed(() => [...this.btnList()]);
+
+  constructor() {
+    effect(() => {
+      const panel = this.panelService.getPanel();
+      this.store.dispatch(analysisStoreSetCurrentPanel({ panel }));
+    });
+  }
 
   ngAfterViewInit() {
     this.panelService.ensureAllLayouts();
@@ -159,4 +189,125 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
     this.renameDraft.set(target.value);
   }
 
+  triggerImportPanel() {
+    this.panelFileInput?.nativeElement.click();
+  }
+
+  async onImportPanelFileSelected(event: Event) {
+    const target = event.target as HTMLInputElement | null;
+    const file = target?.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    target.value = '';
+    try {
+      const rawContent = await file.text();
+      const parsedPayload = JSON.parse(rawContent) as Record<string, unknown>;
+      this.analysisStoreApi.validatePanelImport(parsedPayload).subscribe({
+        next: async response => {
+          if (!response.valid || !response.normalizedPayload) {
+            this.snackBar.open('Import invalide: vérifiez le fichier JSON.', 'Fermer', { duration: 3500 });
+            return;
+          }
+
+          if (hasImportDataLoss(this.panelService.getPanel(), response.normalizedPayload)) {
+            const shouldContinue = await this.confirmDialogService.confirm({
+              title: 'Écraser le panel courant ?',
+              message: 'Des boutons seront perdus. Voulez-vous continuer ?',
+              confirmLabel: 'Écraser',
+              cancelLabel: 'Annuler',
+            });
+            if (!shouldContinue) {
+              return;
+            }
+          }
+
+          this.store.dispatch(analysisStoreLoadPanelFromValidatedPayload({ payload: response.normalizedPayload }));
+          this.snackBar.open('Panel importé avec succès.', 'Fermer', { duration: 2500 });
+        },
+        error: () => {
+          this.snackBar.open('Échec de validation du panel importé.', 'Fermer', { duration: 3500 });
+        },
+      });
+    } catch {
+      this.snackBar.open('Le fichier sélectionné n’est pas un JSON valide.', 'Fermer', { duration: 3500 });
+      return;
+    }
+  }
+
+  exportPanel() {
+    const mapped = mapPanelStateToSequencerPanelV1(this.panelService.getPanel());
+    const blob = new Blob([JSON.stringify(mapped, null, 2)], { type: 'application/json' });
+    const fileName = `${mapped.panelName || 'panel'}.json`;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    this.snackBar.open('Export JSON généré.', 'Fermer', { duration: 2000 });
+  }
+
+  savePrivatePanel() {
+    this.store.dispatch(
+      analysisStoreSavePanel({
+        payload: {
+          visibility: 'private',
+          clubId: null,
+        },
+      }),
+    );
+  }
+
+  openEditDescriptionDialog() {
+    const dialogRef = this.dialog.open(PanelDescriptionDialogComponent, {
+      width: '460px',
+      data: { description: this.panelState().description },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      this.store.dispatch(
+        analysisStoreSavePanel({
+          payload: {
+            description: result.description,
+          },
+        }),
+      );
+    });
+  }
+
+  openPublishDialog() {
+    const panelState = this.panelState();
+    const dialogRef = this.dialog.open(PanelPublishDialogComponent, {
+      width: '420px',
+      data: {
+        hasClubId: !!panelState.clubId,
+        currentVisibility: panelState.visibility,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+
+      this.dispatchPublishSave(result.visibility);
+    });
+  }
+
+  private dispatchPublishSave(visibility: AnalysisStoreVisibility) {
+    const panelState = this.panelState();
+    const clubId = visibility === 'club' ? panelState.clubId : null;
+    this.store.dispatch(
+      analysisStoreSavePanel({
+        payload: {
+          visibility,
+          clubId,
+        },
+      }),
+    );
+  }
 }

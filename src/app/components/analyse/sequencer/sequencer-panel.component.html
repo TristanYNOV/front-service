@@ -8,10 +8,26 @@
       <div class="text-muted text-[11px]">Agrandir pour éditer le Sequencer Canvas.</div>
     </div>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item disabled>Export</button>
-      <button mat-menu-item disabled>Import</button>
-      <button mat-menu-item disabled>Save</button>
-      <button mat-menu-item disabled>SeeAllMyPanels</button>
+      <button mat-menu-item type="button" (click)="openEditDescriptionDialog()">
+        <mat-icon aria-hidden="true">description</mat-icon>
+        <span>Description</span>
+      </button>
+      <button mat-menu-item type="button" (click)="exportPanel()">
+        <mat-icon aria-hidden="true">download</mat-icon>
+        <span>Exporter</span>
+      </button>
+      <button mat-menu-item type="button" (click)="triggerImportPanel()">
+        <mat-icon aria-hidden="true">upload_file</mat-icon>
+        <span>Importer</span>
+      </button>
+      <button mat-menu-item type="button" (click)="savePrivatePanel()">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        <span>Sauvegarder</span>
+      </button>
+      <button mat-menu-item type="button" (click)="openPublishDialog()">
+        <mat-icon aria-hidden="true">publish</mat-icon>
+        <span>Publier</span>
+      </button>
     </mat-menu>
   } @else {
     <div class="flex items-center gap-2">
@@ -23,10 +39,26 @@
           <mat-icon aria-hidden="true">edit</mat-icon>
           <span>Renommer</span>
         </button>
-        <button mat-menu-item disabled>Export</button>
-        <button mat-menu-item disabled>Import</button>
-        <button mat-menu-item disabled>Save</button>
-        <button mat-menu-item disabled>SeeAllMyPanels</button>
+        <button mat-menu-item type="button" (click)="openEditDescriptionDialog()">
+          <mat-icon aria-hidden="true">description</mat-icon>
+          <span>Description</span>
+        </button>
+        <button mat-menu-item type="button" (click)="exportPanel()">
+          <mat-icon aria-hidden="true">download</mat-icon>
+          <span>Exporter</span>
+        </button>
+        <button mat-menu-item type="button" (click)="triggerImportPanel()">
+          <mat-icon aria-hidden="true">upload_file</mat-icon>
+          <span>Importer</span>
+        </button>
+        <button mat-menu-item type="button" (click)="savePrivatePanel()">
+          <mat-icon aria-hidden="true">save</mat-icon>
+          <span>Sauvegarder</span>
+        </button>
+        <button mat-menu-item type="button" (click)="openPublishDialog()">
+          <mat-icon aria-hidden="true">publish</mat-icon>
+          <span>Publier</span>
+        </button>
       </mat-menu>
 
       <button type="button" class="seq-btn-event icon p-2" (click)="openEventDialog()" aria-label="Créer un event"
@@ -67,6 +99,10 @@
           <mat-icon aria-hidden="true">lock</mat-icon>
         }
       </button>
+
+      <button type="button" class="icon p-2" (click)="savePrivatePanel()" aria-label="Sauvegarder en privé" title="Sauvegarder">
+        <mat-icon aria-hidden="true">save</mat-icon>
+      </button>
     </div>
   }
 
@@ -81,4 +117,6 @@
       (deleteBtn)="deleteBtn($event)"
     ></app-sequencer-canvas>
   </div>
+
+  <input #panelFileInput type="file" accept="application/json,.json" class="hidden" (change)="onImportPanelFileSelected($event)" />
 </div>

@@ -1,13 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, map, of, switchMap, withLatestFrom } from 'rxjs';
+import { catchError, map, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import { AnalysisStoreApi } from '../../core/api/analysis-store.api';
 import {
   hasAnonymizedButtons,
   mapPanelStateToSequencerPanelV1,
   mapSequencerPanelV1ToPanelState,
 } from '../../core/mappers/analysis-store/panel-analysis-store.mapper';
+import { SequencerPanelService } from '../../core/service/sequencer-panel.service';
 import {
   mapAnalysisTimelineV1ToTimelineDocument,
   mapTimelineStateToAnalysisTimelineV1,
@@ -33,6 +34,7 @@ export class AnalysisStoreEffects {
   private readonly actions$ = inject(Actions);
   private readonly store = inject(Store);
   private readonly analysisStoreApi = inject(AnalysisStoreApi);
+  private readonly sequencerPanelService = inject(SequencerPanelService);
 
   readonly savePanel$ = createEffect(() =>
     this.actions$.pipe(
@@ -95,6 +97,15 @@ export class AnalysisStoreEffects {
         }),
       ),
     ),
+  );
+
+  readonly syncHydratedPanelToSequencerService$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreHydratePanelFromValidatedPayload),
+        tap(({ panel }) => this.sequencerPanelService.setPanel(panel)),
+      ),
+    { dispatch: false },
   );
 
   readonly loadTimelineFromValidatedPayload$ = createEffect(() =>

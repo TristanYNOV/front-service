@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Publier le panel</h2>
+
+<mat-dialog-content>
+  <p>Choisissez la visibilité de publication.</p>
+
+  <mat-radio-group [ngModel]="visibility()" (ngModelChange)="visibility.set($event)">
+    <mat-radio-button value="public">Public</mat-radio-button>
+    <mat-radio-button value="club" [disabled]="!data.hasClubId">Club</mat-radio-button>
+  </mat-radio-group>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="close()">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">Publier</button>
+</mat-dialog-actions>

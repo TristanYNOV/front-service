@@ -24,6 +24,10 @@
         <mat-icon aria-hidden="true">save</mat-icon>
         <span>Sauvegarder</span>
       </button>
+      <button mat-menu-item type="button" (click)="openPanelFinderDialog()">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        <span>Trouver un panel</span>
+      </button>
       <button mat-menu-item type="button" (click)="openPublishDialog()">
         <mat-icon aria-hidden="true">publish</mat-icon>
         <span>Publier</span>
@@ -54,6 +58,10 @@
         <button mat-menu-item type="button" (click)="savePrivatePanel()">
           <mat-icon aria-hidden="true">save</mat-icon>
           <span>Sauvegarder</span>
+        </button>
+        <button mat-menu-item type="button" (click)="openPanelFinderDialog()">
+          <mat-icon aria-hidden="true">search</mat-icon>
+          <span>Trouver un panel</span>
         </button>
         <button mat-menu-item type="button" (click)="openPublishDialog()">
           <mat-icon aria-hidden="true">publish</mat-icon>
@@ -102,6 +110,10 @@
 
       <button type="button" class="icon p-2" (click)="savePrivatePanel()" aria-label="Sauvegarder en privé" title="Sauvegarder">
         <mat-icon aria-hidden="true">save</mat-icon>
+      </button>
+
+      <button type="button" class="icon p-2" (click)="openPanelFinderDialog()" aria-label="Trouver un panel" title="Trouver un panel">
+        <mat-icon aria-hidden="true">search</mat-icon>
       </button>
     </div>
   }

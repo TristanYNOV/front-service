@@ -17,7 +17,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
+import { firstValueFrom } from 'rxjs';
 import { AnalysisStoreApi } from '../../../core/api/analysis-store.api';
+import { AuthSessionService } from '../../../core/auth/auth-session.service';
 import { mapPanelStateToSequencerPanelV1 } from '../../../core/mappers/analysis-store/panel-analysis-store.mapper';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { SequencerPanelService } from '../../../core/service/sequencer-panel.service';
@@ -36,6 +38,7 @@ import { CreateEventBtnDialogComponent } from './createBtn/event/create-event-bt
 import { CreateLabelBtnDialogComponent } from './createBtn/label/create-label-btn-dialog.component';
 import { CreateStatBtnDialogComponent } from './createBtn/stat/create-stat-btn-dialog.component';
 import { SequencerCanvasComponent } from './canvas/sequencer-canvas.component';
+import { PanelFinderDialogComponent, PanelFinderDialogResult } from './modals/panel-finder-dialog/panel-finder-dialog.component';
 import { PanelDescriptionDialogComponent } from './modals/panel-description-dialog/panel-description-dialog.component';
 import { PanelPublishDialogComponent } from './modals/panel-publish-dialog/panel-publish-dialog.component';
 
@@ -62,6 +65,7 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   private readonly panelService = inject(SequencerPanelService);
   private readonly runtimeService = inject(SequencerRuntimeService);
   private readonly hotkeysService = inject(HotkeysService);
+  private readonly authSession = inject(AuthSessionService);
   private readonly analysisStoreApi = inject(AnalysisStoreApi);
   private readonly confirmDialogService = inject(ConfirmDialogService);
   private readonly snackBar = inject(MatSnackBar);
@@ -259,6 +263,35 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
     );
   }
 
+  async openPanelFinderDialog() {
+    try {
+      const panels = await firstValueFrom(this.analysisStoreApi.listPanels());
+      const dialogRef = this.dialog.open(PanelFinderDialogComponent, {
+        width: '980px',
+        maxWidth: '96vw',
+        data: {
+          panels,
+          currentUserId: this.authSession.user()?.id ?? null,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe(async (result: PanelFinderDialogResult | null) => {
+        if (!result) {
+          return;
+        }
+
+        if (result.action === 'use') {
+          await this.loadPanelResource(result.panel.id, result.panel);
+          return;
+        }
+
+        await this.copyAndLoadPanel(result.panel.id);
+      });
+    } catch {
+      this.snackBar.open('Impossible de charger la liste des panels.', 'Fermer', { duration: 3500 });
+    }
+  }
+
   openEditDescriptionDialog() {
     const dialogRef = this.dialog.open(PanelDescriptionDialogComponent, {
       width: '460px',
@@ -309,5 +342,48 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
         },
       }),
     );
+  }
+
+  private async loadPanelResource(panelId: string, contextResource: { id: string; title: string; description: string | null; visibility: AnalysisStoreVisibility; clubId: string | null; hasAnonymizedContent: boolean; }) {
+    try {
+      const payload = await firstValueFrom(this.analysisStoreApi.exportPanel(panelId));
+      if (hasImportDataLoss(this.panelService.getPanel(), payload)) {
+        const shouldContinue = await this.confirmDialogService.confirm({
+          title: 'Écraser le panel courant ?',
+          message: 'Le panel courant sera remplacé. Voulez-vous continuer ?',
+          confirmLabel: 'Écraser',
+          cancelLabel: 'Annuler',
+        });
+        if (!shouldContinue) {
+          return;
+        }
+      }
+
+      this.store.dispatch(
+        analysisStoreLoadPanelFromValidatedPayload({
+          payload,
+          context: {
+            resourceId: contextResource.id,
+            title: contextResource.title,
+            description: contextResource.description,
+            visibility: contextResource.visibility,
+            clubId: contextResource.clubId,
+            hasAnonymizedContent: contextResource.hasAnonymizedContent,
+          },
+        }),
+      );
+      this.snackBar.open('Panel chargé.', 'Fermer', { duration: 2200 });
+    } catch {
+      this.snackBar.open('Impossible de charger ce panel.', 'Fermer', { duration: 3500 });
+    }
+  }
+
+  private async copyAndLoadPanel(sourcePanelId: string) {
+    try {
+      const copied = await firstValueFrom(this.analysisStoreApi.copyPanel(sourcePanelId));
+      await this.loadPanelResource(copied.id, copied);
+    } catch {
+      this.snackBar.open('Impossible de copier ce panel.', 'Fermer', { duration: 3500 });
+    }
   }
 }

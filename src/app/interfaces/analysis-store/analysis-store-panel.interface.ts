@@ -17,6 +17,7 @@ export interface SequencerPanelLayoutV1 {
 export interface SequencerPanelBtnBaseV1 {
   id: string;
   name: string;
+  isAnonymized?: boolean;
   layout: SequencerPanelLayoutV1;
   hotkeyNormalized: string | null;
   deactivateIds: string[];

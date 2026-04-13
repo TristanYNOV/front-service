@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,6 +32,7 @@ export interface LabelBtnDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
@@ -70,6 +72,9 @@ export class CreateLabelBtnDialogComponent {
     ),
     name: new FormControl(this.data.btn?.name ?? '', [Validators.required]),
     mode: new FormControl<'once' | 'indefinite'>(this.data.btn?.labelProps.mode ?? 'once', {
+      nonNullable: true,
+    }),
+    isAnonymized: new FormControl<boolean>(this.data.btn?.isAnonymized ?? false, {
       nonNullable: true,
     }),
   });
@@ -131,6 +136,7 @@ export class CreateLabelBtnDialogComponent {
     const id = (this.form.controls.id.value ?? '').trim();
     const name = (this.form.controls.name.value ?? '').trim();
     const mode = this.form.controls.mode.value ?? 'once';
+    const isAnonymized = this.form.controls.isAnonymized.value ?? false;
 
     const chord = this.selectedChord();
     let hotkeyNormalized: string | null = null;
@@ -158,6 +164,7 @@ export class CreateLabelBtnDialogComponent {
       this.panelService.updateBtn(id, {
         name,
         hotkeyNormalized,
+        isAnonymized,
         deactivateIds,
         activateIds,
         labelProps: { mode },
@@ -167,6 +174,7 @@ export class CreateLabelBtnDialogComponent {
         id,
         name,
         hotkeyNormalized,
+        isAnonymized,
         deactivateIds,
         activateIds,
         labelProps: { mode },

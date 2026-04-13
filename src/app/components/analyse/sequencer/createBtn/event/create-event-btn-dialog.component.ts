@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,6 +33,7 @@ export interface EventBtnDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
@@ -78,6 +80,9 @@ export class CreateEventBtnDialogComponent {
       nonNullable: true,
     }),
     postSec: new FormControl<number>(this.data.btn ? this.data.btn.eventProps.postMs / 1000 : 0, {
+      nonNullable: true,
+    }),
+    isAnonymized: new FormControl<boolean>(this.data.btn?.isAnonymized ?? false, {
       nonNullable: true,
     }),
   });
@@ -142,6 +147,7 @@ export class CreateEventBtnDialogComponent {
     const kind = this.form.controls.kind.value ?? 'limited';
     const preMs = Math.max(0, Math.round((this.form.controls.preSec.value ?? 0) * 1000));
     const postMs = Math.max(0, Math.round((this.form.controls.postSec.value ?? 0) * 1000));
+    const isAnonymized = this.form.controls.isAnonymized.value ?? false;
 
     const chord = this.selectedChord();
     let hotkeyNormalized: string | null = null;
@@ -170,6 +176,7 @@ export class CreateEventBtnDialogComponent {
         name,
         colorHex,
         hotkeyNormalized,
+        isAnonymized,
         deactivateIds,
         activateIds,
         eventProps: { kind, preMs, postMs },
@@ -180,6 +187,7 @@ export class CreateEventBtnDialogComponent {
         name,
         colorHex,
         hotkeyNormalized,
+        isAnonymized,
         deactivateIds,
         activateIds,
         eventProps: { kind, preMs, postMs },

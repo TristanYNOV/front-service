@@ -8,4 +8,10 @@ export interface AppEnvironment {
     logout: string;
     me: string;
   };
+  analysisStoreEndpoints: {
+    importsTimelinesValidate: string;
+    importsPanelsValidate: string;
+    timelines: string;
+    panels: string;
+  };
 }

@@ -10,6 +10,7 @@ import {
   SequencerStatQuery,
   StatBtn,
 } from '../../interfaces/sequencer-btn.interface';
+import { SequencerPanel } from '../../interfaces/sequencer-panel.interface';
 import { SequencerBtnLayout } from '../../interfaces/sequencer-btn-layout.interface';
 import {
   defaultButtonHeightPx,
@@ -41,6 +42,18 @@ export class SequencerPanelService {
 
   setPanelName(name: string) {
     this.panelNameSignal.set(name.trim() || 'My Panel');
+  }
+
+  setPanel(panel: SequencerPanel) {
+    this.panelNameSignal.set(panel.panelName?.trim() || 'My Panel');
+    this.btnListSignal.set(panel.btnList.map(btn => ({ ...btn, layout: this.ensureLayout(btn) })));
+  }
+
+  getPanel(): SequencerPanel {
+    return {
+      panelName: this.panelNameSignal(),
+      btnList: this.btnListSignal(),
+    };
   }
 
   setEditMode(next: boolean) {

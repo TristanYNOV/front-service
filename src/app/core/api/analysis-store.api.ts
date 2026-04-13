@@ -44,7 +44,11 @@ export class AnalysisStoreApi {
   }
 
   upsertTimeline(payload: UpsertTimelineResourceBody): Observable<TimelineResourceResponse> {
-    return payload.id ? this.updateTimeline(payload.id, payload) : this.createTimeline(payload);
+    if (payload.id) {
+      return this.updateTimeline(payload.id, payload);
+    }
+
+    return this.createTimeline(payload as CreateTimelineResourceBody);
   }
 
   createTimeline(payload: CreateTimelineResourceBody): Observable<TimelineResourceResponse> {
@@ -72,7 +76,11 @@ export class AnalysisStoreApi {
   }
 
   upsertPanel(payload: UpsertPanelResourceBody): Observable<PanelResourceResponse> {
-    return payload.id ? this.updatePanel(payload.id, payload) : this.createPanel(payload);
+    if (payload.id) {
+      return this.updatePanel(payload.id, payload);
+    }
+
+    return this.createPanel(payload as CreatePanelResourceBody);
   }
 
   createPanel(payload: CreatePanelResourceBody): Observable<PanelResourceResponse> {

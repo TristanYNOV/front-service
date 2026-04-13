@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { catchError, map, of, switchMap, withLatestFrom } from 'rxjs';
 import { AnalysisStoreApi } from '../../core/api/analysis-store.api';
 import {
+  hasAnonymizedButtons,
   mapPanelStateToSequencerPanelV1,
   mapSequencerPanelV1ToPanelState,
 } from '../../core/mappers/analysis-store/panel-analysis-store.mapper';
@@ -43,13 +44,14 @@ export class AnalysisStoreEffects {
         }
 
         const mappedPanel = mapPanelStateToSequencerPanelV1(panelState.currentContent);
+        const hasAnonymizedContent = hasAnonymizedButtons(panelState.currentContent);
         const payload = {
           id: action.payload?.id ?? panelState.currentResourceId ?? undefined,
           title: action.payload?.title ?? panelState.title ?? mappedPanel.panelName,
           description: action.payload?.description ?? panelState.description,
           visibility: action.payload?.visibility ?? panelState.visibility,
           clubId: action.payload?.clubId ?? panelState.clubId,
-          hasAnonymizedContent: action.payload?.hasAnonymizedContent ?? panelState.hasAnonymizedContent,
+          hasAnonymizedContent,
           contentJson: mappedPanel as unknown as Record<string, unknown>,
         };
 

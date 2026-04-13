@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -46,6 +47,7 @@ export interface StatBtnDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
@@ -69,6 +71,9 @@ export class CreateStatBtnDialogComponent {
     colorHex: new FormControl(normalizeColor(this.data.btn?.colorHex), {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern(/^#[0-9a-fA-F]{6}$/)],
+    }),
+    isAnonymized: new FormControl(this.data.btn?.isAnonymized ?? false, {
+      nonNullable: true,
     }),
   });
 
@@ -272,6 +277,7 @@ export class CreateStatBtnDialogComponent {
     const id = this.form.controls.id.value.trim();
     const name = this.form.controls.name.value.trim();
     const colorHex = normalizeColor(this.form.controls.colorHex.value);
+    const isAnonymized = this.form.controls.isAnonymized.value;
 
     const statDefinition = this.modeValue() === 'simple'
       ? this.buildSimpleDefinition()
@@ -282,9 +288,9 @@ export class CreateStatBtnDialogComponent {
     }
 
     if (this.isEdit) {
-      this.panelService.updateBtn(id, { name, colorHex, stat: statDefinition });
+      this.panelService.updateBtn(id, { name, colorHex, isAnonymized, stat: statDefinition });
     } else {
-      this.panelService.addStatBtn({ id, name, colorHex, stat: statDefinition });
+      this.panelService.addStatBtn({ id, name, colorHex, isAnonymized, stat: statDefinition });
     }
 
     this.dialogRef.close(true);

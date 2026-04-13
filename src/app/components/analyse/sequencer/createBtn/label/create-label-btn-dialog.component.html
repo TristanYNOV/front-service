@@ -19,6 +19,12 @@
         <input matInput formControlName="name" />
       </mat-form-field>
     </div>
+    <div class="border-layer rounded-md border p-3">
+      <mat-checkbox formControlName="isAnonymized">Anonymiser ce bouton</mat-checkbox>
+      <p class="text-muted mt-1 text-xs italic">
+        Active l’obfuscation du nom du bouton dans les vues concernées.
+      </p>
+    </div>
 
     @if (isEdit) {
       <div class="border-layer rounded-md border p-3">

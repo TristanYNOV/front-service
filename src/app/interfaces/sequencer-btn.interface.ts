@@ -53,6 +53,7 @@ export interface SequencerBtnBase {
   id: string;
   name: string;
   type: 'event' | 'label' | 'stat';
+  isAnonymized?: boolean;
   hotkeyNormalized?: string | null;
   deactivateIds?: string[];
   activateIds?: string[];

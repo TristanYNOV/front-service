@@ -68,6 +68,7 @@ export function mapSequencerPanelV1ToPanelState(payload: SequencerPanelV1): Sequ
           type: 'event',
           id: btn.id,
           name: btn.name,
+          isAnonymized: !!btn.isAnonymized,
           hotkeyNormalized: btn.hotkeyNormalized,
           deactivateIds: btn.deactivateIds,
           activateIds: btn.activateIds,
@@ -88,6 +89,7 @@ export function mapSequencerPanelV1ToPanelState(payload: SequencerPanelV1): Sequ
           type: 'label',
           id: btn.id,
           name: btn.name,
+          isAnonymized: !!btn.isAnonymized,
           hotkeyNormalized: btn.hotkeyNormalized,
           deactivateIds: btn.deactivateIds,
           activateIds: btn.activateIds,
@@ -104,6 +106,7 @@ export function mapSequencerPanelV1ToPanelState(payload: SequencerPanelV1): Sequ
         type: 'stat',
         id: btn.id,
         name: btn.name,
+        isAnonymized: !!btn.isAnonymized,
         hotkeyNormalized: btn.hotkeyNormalized,
         deactivateIds: btn.deactivateIds,
         activateIds: btn.activateIds,
@@ -121,11 +124,16 @@ function mapCommonButtonFields(btn: SequencerBtn) {
   return {
     id: btn.id,
     name: btn.name,
+    isAnonymized: !!btn.isAnonymized,
     layout: { ...(btn.layout ?? { x: 16, y: 16, w: 240, h: 120 }), z: btn.layout?.z ?? 1 },
     hotkeyNormalized: btn.hotkeyNormalized ?? null,
     deactivateIds: btn.deactivateIds ?? [],
     activateIds: btn.activateIds ?? [],
   };
+}
+
+export function hasAnonymizedButtons(panel: SequencerPanel): boolean {
+  return panel.btnList.some(btn => !!btn.isAnonymized);
 }
 
 function extractStatNumericValue(definition: SequencerStatDefinition): number {

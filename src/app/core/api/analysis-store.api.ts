@@ -45,10 +45,10 @@ export class AnalysisStoreApi {
 
   upsertTimeline(payload: UpsertTimelineResourceBody): Observable<TimelineResourceResponse> {
     if (payload.id) {
-      return this.updateTimeline(payload.id, payload);
+      return this.updateTimeline(payload.id, this.toUpdateTimelineBody(payload));
     }
 
-    return this.createTimeline(payload as CreateTimelineResourceBody);
+    return this.createTimeline(this.toCreateTimelineBody(payload));
   }
 
   createTimeline(payload: CreateTimelineResourceBody): Observable<TimelineResourceResponse> {
@@ -77,10 +77,10 @@ export class AnalysisStoreApi {
 
   upsertPanel(payload: UpsertPanelResourceBody): Observable<PanelResourceResponse> {
     if (payload.id) {
-      return this.updatePanel(payload.id, payload);
+      return this.updatePanel(payload.id, this.toUpdatePanelBody(payload));
     }
 
-    return this.createPanel(payload as CreatePanelResourceBody);
+    return this.createPanel(this.toCreatePanelBody(payload));
   }
 
   createPanel(payload: CreatePanelResourceBody): Observable<PanelResourceResponse> {
@@ -105,5 +105,45 @@ export class AnalysisStoreApi {
 
   private buildExportUrl(collectionUrl: string, id: string): string {
     return `${this.buildResourceUrl(collectionUrl, id)}/export`;
+  }
+
+  private toCreateTimelineBody(payload: UpsertTimelineResourceBody): CreateTimelineResourceBody {
+    return {
+      title: payload.title ?? 'Timeline',
+      description: payload.description,
+      contentJson: payload.contentJson,
+      hasAnonymizedContent: payload.hasAnonymizedContent,
+    };
+  }
+
+  private toUpdateTimelineBody(payload: UpsertTimelineResourceBody): UpdateTimelineResourceBody {
+    return {
+      title: payload.title,
+      description: payload.description,
+      contentJson: payload.contentJson,
+      hasAnonymizedContent: payload.hasAnonymizedContent,
+    };
+  }
+
+  private toCreatePanelBody(payload: UpsertPanelResourceBody): CreatePanelResourceBody {
+    return {
+      title: payload.title ?? 'My Panel',
+      description: payload.description,
+      contentJson: payload.contentJson,
+      visibility: payload.visibility,
+      clubId: payload.clubId,
+      hasAnonymizedContent: payload.hasAnonymizedContent,
+    };
+  }
+
+  private toUpdatePanelBody(payload: UpsertPanelResourceBody): UpdatePanelResourceBody {
+    return {
+      title: payload.title,
+      description: payload.description,
+      contentJson: payload.contentJson,
+      visibility: payload.visibility,
+      clubId: payload.clubId,
+      hasAnonymizedContent: payload.hasAnonymizedContent,
+    };
   }
 }

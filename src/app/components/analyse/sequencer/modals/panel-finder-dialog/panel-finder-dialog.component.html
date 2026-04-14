@@ -1,0 +1,82 @@
+<h2 mat-dialog-title class="bg-layer-3 text-default m-0 text-center">Trouver un panel</h2>
+
+<mat-dialog-content class="bg-layer-3 text-default flex max-h-[70vh] flex-col gap-3 pt-3">
+  <div class="flex flex-wrap items-center gap-2">
+    <mat-button-toggle-group
+      [ngModel]="visibilityFilter()"
+      (ngModelChange)="visibilityFilter.set($event)"
+      aria-label="Filtrer par visibilité"
+    >
+      <mat-button-toggle value="all">Tous</mat-button-toggle>
+      <mat-button-toggle value="public">Public</mat-button-toggle>
+      <mat-button-toggle value="private">Privé</mat-button-toggle>
+      <mat-button-toggle value="club">Club</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-slide-toggle [ngModel]="onlyMine()" (ngModelChange)="onlyMine.set($event)">
+      Voir uniquement les miens
+    </mat-slide-toggle>
+  </div>
+
+  <input
+    class="bg-layer-2 border-subtle text-default w-full rounded border px-2 py-1 text-sm"
+    type="text"
+    placeholder="Rechercher un panel"
+    [ngModel]="searchTerm()"
+    (ngModelChange)="searchTerm.set($event)"
+  />
+
+  <div class="border-subtle bg-layer-2 overflow-auto rounded border">
+    <table mat-table [dataSource]="filteredPanels()" class="w-full">
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Nom du panel</th>
+        <td mat-cell *matCellDef="let panel">{{ panel.title }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="visibility">
+        <th mat-header-cell *matHeaderCellDef>Visibilité</th>
+        <td mat-cell *matCellDef="let panel">{{ visibilityLabel(panel.visibility) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="events">
+        <th mat-header-cell *matHeaderCellDef>Events</th>
+        <td mat-cell *matCellDef="let panel">
+          <button mat-icon-button type="button" (click)="showEvents(panel)" aria-label="Voir les events">
+            <mat-icon aria-hidden="true">event</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="labels">
+        <th mat-header-cell *matHeaderCellDef>Labels</th>
+        <td mat-cell *matCellDef="let panel">
+          <button mat-icon-button type="button" (click)="showLabels(panel)" aria-label="Voir les labels">
+            <mat-icon aria-hidden="true">label</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let panel">
+          @if (isOwner(panel)) {
+            <button mat-flat-button color="primary" type="button" (click)="usePanel(panel)">Utiliser</button>
+          } @else {
+            <button mat-stroked-button type="button" (click)="copyPanel(panel)">Copier</button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    @if (filteredPanels().length === 0) {
+      <div class="text-muted p-3 text-xs">Aucun panel ne correspond aux filtres.</div>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="bg-layer-3 pb-3 pr-3">
+  <button mat-button type="button" (click)="close()">Fermer</button>
+</mat-dialog-actions>

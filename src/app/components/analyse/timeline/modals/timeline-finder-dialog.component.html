@@ -1,0 +1,45 @@
+<h2 mat-dialog-title class="bg-layer-3 text-default m-0 text-center">Charger une timeline distante</h2>
+
+<mat-dialog-content class="bg-layer-3 text-default flex max-h-[70vh] flex-col gap-4 pt-4">
+  <input
+    class="bg-layer-2 border-subtle text-default w-full rounded border px-3 py-2 text-sm"
+    type="text"
+    placeholder="Rechercher une timeline"
+    [ngModel]="searchTerm()"
+    (ngModelChange)="searchTerm.set($event)"
+  />
+
+  <div class="border-subtle bg-layer-2 overflow-auto rounded border">
+    <table mat-table [dataSource]="filteredTimelines()" class="w-full">
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let timeline">{{ timeline.title }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="updatedAt">
+        <th mat-header-cell *matHeaderCellDef>Dernière mise à jour</th>
+        <td mat-cell *matCellDef="let timeline">{{ timeline.updatedAt | date: 'short' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let timeline">
+          <button mat-flat-button color="primary" type="button" (click)="select(timeline)">
+            Charger
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    @if (filteredTimelines().length === 0) {
+      <div class="text-muted p-3 text-xs">Aucune timeline ne correspond aux filtres.</div>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="bg-layer-3 pb-3 pr-3">
+  <button mat-button type="button" (click)="close()">Fermer</button>
+</mat-dialog-actions>

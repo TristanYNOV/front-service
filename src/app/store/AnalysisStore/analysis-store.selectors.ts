@@ -17,6 +17,20 @@ export const selectCurrentTimelineResourceId = createSelector(
   timelineState => timelineState.currentResourceId,
 );
 
+export const selectAnalysisStoreTimelineResources = createSelector(
+  selectAnalysisStoreTimelineState,
+  timelineState => timelineState.resources,
+);
+
+export const selectAnalysisStoreTimelineOps = createSelector(selectAnalysisStoreTimelineState, timelineState => ({
+  isLoadingList: timelineState.isLoadingList,
+  isLoadingRemote: timelineState.isLoadingRemote,
+  isImporting: timelineState.isImporting,
+  isExporting: timelineState.isExporting,
+  isSaving: timelineState.isSaving,
+  error: timelineState.error,
+}));
+
 export const selectHasCurrentPanelContent = createSelector(
   selectAnalysisStorePanelState,
   panelState => !!panelState.currentContent && panelState.currentContent.btnList.length > 0,

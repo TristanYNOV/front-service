@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -16,10 +17,22 @@ import {
 import { initTimeline } from '../Timeline/timeline.actions';
 import { selectTimelineState } from '../Timeline/timeline.selectors';
 import {
+  analysisStoreExportTimeline,
+  analysisStoreExportTimelineFailure,
+  analysisStoreExportTimelineSuccess,
   analysisStoreHydratePanelFromValidatedPayload,
   analysisStoreHydrateTimelineResourceMeta,
+  analysisStoreImportTimeline,
+  analysisStoreImportTimelineFailure,
+  analysisStoreImportTimelineSuccess,
   analysisStoreLoadPanelFromValidatedPayload,
+  analysisStoreLoadRemoteTimeline,
+  analysisStoreLoadRemoteTimelineFailure,
+  analysisStoreLoadRemoteTimelineSuccess,
   analysisStoreLoadTimelineFromValidatedPayload,
+  analysisStoreLoadTimelineList,
+  analysisStoreLoadTimelineListFailure,
+  analysisStoreLoadTimelineListSuccess,
   analysisStoreSavePanel,
   analysisStoreSavePanelFailure,
   analysisStoreSavePanelSuccess,
@@ -35,6 +48,7 @@ export class AnalysisStoreEffects {
   private readonly store = inject(Store);
   private readonly analysisStoreApi = inject(AnalysisStoreApi);
   private readonly sequencerPanelService = inject(SequencerPanelService);
+  private readonly document = inject(DOCUMENT);
 
   readonly savePanel$ = createEffect(() =>
     this.actions$.pipe(
@@ -127,6 +141,89 @@ export class AnalysisStoreEffects {
     this.actions$.pipe(
       ofType(analysisStoreLoadTimelineFromValidatedPayload),
       map(({ payload, context }) => analysisStoreHydrateTimelineResourceMeta({ timeline: payload, context })),
+    ),
+  );
+
+  readonly importTimeline$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreImportTimeline),
+      switchMap(({ payload, context }) =>
+        this.analysisStoreApi.validateTimelineImport(payload).pipe(
+          switchMap(response => {
+            if (!response.valid || !response.normalizedPayload) {
+              return of(analysisStoreImportTimelineFailure({ error: 'Import timeline invalide.' }));
+            }
+
+            return of(
+              analysisStoreLoadTimelineFromValidatedPayload({ payload: response.normalizedPayload, context }),
+              analysisStoreImportTimelineSuccess(),
+            );
+          }),
+          catchError(error =>
+            of(analysisStoreImportTimelineFailure({ error: error?.message ?? 'Timeline import validation failed' })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  readonly exportTimeline$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreExportTimeline),
+      withLatestFrom(this.store.select(selectTimelineState)),
+      tap(([, timelineState]) => {
+        const mappedTimeline = mapTimelineStateToAnalysisTimelineV1(timelineState);
+        const fileName = `${mappedTimeline.timelineName || 'timeline'}.json`;
+        const blob = new Blob([JSON.stringify(mappedTimeline, null, 2)], { type: 'application/json' });
+        const link = this.document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }),
+      map(() => analysisStoreExportTimelineSuccess()),
+      catchError(error => of(analysisStoreExportTimelineFailure({ error: error?.message ?? 'Timeline export failed' }))),
+    ),
+  );
+
+  readonly loadTimelineList$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreLoadTimelineList),
+      switchMap(() =>
+        this.analysisStoreApi.listTimelines().pipe(
+          map(resources => analysisStoreLoadTimelineListSuccess({ resources })),
+          catchError(error =>
+            of(analysisStoreLoadTimelineListFailure({ error: error?.message ?? 'Timeline list loading failed' })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  readonly loadRemoteTimeline$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreLoadRemoteTimeline),
+      switchMap(({ resource }) =>
+        this.analysisStoreApi.exportTimeline(resource.id).pipe(
+          switchMap(payload =>
+            of(
+              analysisStoreLoadTimelineFromValidatedPayload({
+                payload,
+                context: {
+                  resourceId: resource.id,
+                  title: resource.title,
+                  description: resource.description,
+                  hasAnonymizedContent: resource.hasAnonymizedContent,
+                },
+              }),
+              analysisStoreLoadRemoteTimelineSuccess(),
+            ),
+          ),
+          catchError(error =>
+            of(analysisStoreLoadRemoteTimelineFailure({ error: error?.message ?? 'Timeline loading failed' })),
+          ),
+        ),
+      ),
     ),
   );
 }

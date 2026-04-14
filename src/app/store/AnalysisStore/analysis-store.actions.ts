@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import {
   AnalysisStoreVisibility,
   AnalysisTimelineV1,
+  AnalysisStoreImportValidationPayload,
   PanelResourceResponse,
   SequencerPanelV1,
   TimelineResourceResponse,
@@ -81,5 +82,42 @@ export const analysisStoreSaveTimelineSuccess = createAction(
 );
 export const analysisStoreSaveTimelineFailure = createAction(
   '[Analysis Store] Save Timeline Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreImportTimeline = createAction(
+  '[Analysis Store] Import Timeline',
+  props<{ payload: AnalysisStoreImportValidationPayload; context?: AnalysisStoreLoadResourceContext }>(),
+);
+export const analysisStoreImportTimelineSuccess = createAction('[Analysis Store] Import Timeline Success');
+export const analysisStoreImportTimelineFailure = createAction(
+  '[Analysis Store] Import Timeline Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreExportTimeline = createAction('[Analysis Store] Export Timeline');
+export const analysisStoreExportTimelineSuccess = createAction('[Analysis Store] Export Timeline Success');
+export const analysisStoreExportTimelineFailure = createAction(
+  '[Analysis Store] Export Timeline Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreLoadTimelineList = createAction('[Analysis Store] Load Timeline List');
+export const analysisStoreLoadTimelineListSuccess = createAction(
+  '[Analysis Store] Load Timeline List Success',
+  props<{ resources: TimelineResourceResponse[] }>(),
+);
+export const analysisStoreLoadTimelineListFailure = createAction(
+  '[Analysis Store] Load Timeline List Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreLoadRemoteTimeline = createAction(
+  '[Analysis Store] Load Remote Timeline',
+  props<{ resource: TimelineResourceResponse }>(),
+);
+export const analysisStoreLoadRemoteTimelineSuccess = createAction('[Analysis Store] Load Remote Timeline Success');
+export const analysisStoreLoadRemoteTimelineFailure = createAction(
+  '[Analysis Store] Load Remote Timeline Failure',
   props<{ error: string }>(),
 );

@@ -11,6 +11,12 @@ export interface TimelineFinderDialogData {
   timelines: TimelineResourceResponse[];
 }
 
+interface TimelineFinderRow {
+  resource: TimelineResourceResponse;
+  displayName: string;
+  updatedAt: string;
+}
+
 @Component({
   selector: 'app-timeline-finder-dialog',
   standalone: true,
@@ -23,10 +29,18 @@ export class TimelineFinderDialogComponent {
   readonly searchTerm = signal('');
   readonly displayedColumns = ['title', 'updatedAt', 'action'];
 
+  readonly rows = computed<TimelineFinderRow[]>(() =>
+    this.data.timelines.map(resource => ({
+      resource,
+      displayName: this.resolveDisplayName(resource),
+      updatedAt: resource.updatedAt,
+    })),
+  );
+
   readonly filteredTimelines = computed(() => {
     const search = this.searchTerm().trim().toLowerCase();
-    return this.data.timelines
-      .filter(resource => !search || resource.title.toLowerCase().includes(search))
+    return this.rows()
+      .filter(row => !search || row.displayName.toLowerCase().includes(search))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   });
 
@@ -36,5 +50,25 @@ export class TimelineFinderDialogComponent {
 
   close() {
     this.dialogRef.close(null);
+  }
+
+  private resolveDisplayName(resource: TimelineResourceResponse): string {
+    const timelineName = this.readTimelineName(resource.contentJson);
+    if (timelineName) {
+      return timelineName;
+    }
+
+    const fallbackTitle = resource.title?.trim();
+    return fallbackTitle || 'Timeline';
+  }
+
+  private readTimelineName(contentJson: Record<string, unknown>): string | null {
+    const rawTimelineName = contentJson?.['timelineName'];
+    if (typeof rawTimelineName !== 'string') {
+      return null;
+    }
+
+    const trimmed = rawTimelineName.trim();
+    return trimmed.length > 0 ? trimmed : null;
   }
 }

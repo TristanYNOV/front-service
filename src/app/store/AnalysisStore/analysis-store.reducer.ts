@@ -2,8 +2,20 @@ import { createReducer, on } from '@ngrx/store';
 import { AnalysisStoreVisibility, PanelResourceResponse, TimelineResourceResponse } from '../../interfaces/analysis-store';
 import { SequencerPanel } from '../../interfaces/sequencer-panel.interface';
 import {
+  analysisStoreExportTimeline,
+  analysisStoreExportTimelineFailure,
+  analysisStoreExportTimelineSuccess,
   analysisStoreHydratePanelFromValidatedPayload,
   analysisStoreHydrateTimelineResourceMeta,
+  analysisStoreImportTimeline,
+  analysisStoreImportTimelineFailure,
+  analysisStoreImportTimelineSuccess,
+  analysisStoreLoadRemoteTimeline,
+  analysisStoreLoadRemoteTimelineFailure,
+  analysisStoreLoadRemoteTimelineSuccess,
+  analysisStoreLoadTimelineList,
+  analysisStoreLoadTimelineListFailure,
+  analysisStoreLoadTimelineListSuccess,
   analysisStoreSavePanel,
   analysisStoreSavePanelFailure,
   analysisStoreSavePanelSuccess,
@@ -30,6 +42,11 @@ export interface AnalysisStoreState {
     error: string | null;
   };
   timeline: AnalysisStoreResourceMetaState & {
+    resources: TimelineResourceResponse[];
+    isLoadingList: boolean;
+    isLoadingRemote: boolean;
+    isImporting: boolean;
+    isExporting: boolean;
     isSaving: boolean;
     error: string | null;
   };
@@ -56,6 +73,11 @@ export const initialAnalysisStoreState: AnalysisStoreState = {
   timeline: {
     ...initialResourceMetaState,
     title: 'Timeline',
+    resources: [],
+    isLoadingList: false,
+    isLoadingRemote: false,
+    isImporting: false,
+    isExporting: false,
     isSaving: false,
     error: null,
   },
@@ -147,6 +169,103 @@ export const analysisStoreReducer = createReducer(
     timeline: {
       ...state.timeline,
       isSaving: false,
+      error,
+    },
+  })),
+  on(analysisStoreImportTimeline, state => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isImporting: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreImportTimelineSuccess, state => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isImporting: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreImportTimelineFailure, (state, { error }) => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isImporting: false,
+      error,
+    },
+  })),
+  on(analysisStoreExportTimeline, state => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isExporting: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreExportTimelineSuccess, state => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isExporting: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreExportTimelineFailure, (state, { error }) => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isExporting: false,
+      error,
+    },
+  })),
+  on(analysisStoreLoadTimelineList, state => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isLoadingList: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreLoadTimelineListSuccess, (state, { resources }) => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      resources,
+      isLoadingList: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreLoadTimelineListFailure, (state, { error }) => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isLoadingList: false,
+      error,
+    },
+  })),
+  on(analysisStoreLoadRemoteTimeline, state => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isLoadingRemote: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreLoadRemoteTimelineSuccess, state => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isLoadingRemote: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreLoadRemoteTimelineFailure, (state, { error }) => ({
+    ...state,
+    timeline: {
+      ...state.timeline,
+      isLoadingRemote: false,
       error,
     },
   })),

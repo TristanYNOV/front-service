@@ -1,4 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { catchError, map, of, switchMap, tap, withLatestFrom } from 'rxjs';
@@ -16,10 +18,22 @@ import {
 import { initTimeline } from '../Timeline/timeline.actions';
 import { selectTimelineState } from '../Timeline/timeline.selectors';
 import {
+  analysisStoreExportTimeline,
+  analysisStoreExportTimelineFailure,
+  analysisStoreExportTimelineSuccess,
   analysisStoreHydratePanelFromValidatedPayload,
   analysisStoreHydrateTimelineResourceMeta,
+  analysisStoreImportTimeline,
+  analysisStoreImportTimelineFailure,
+  analysisStoreImportTimelineSuccess,
   analysisStoreLoadPanelFromValidatedPayload,
+  analysisStoreLoadRemoteTimeline,
+  analysisStoreLoadRemoteTimelineFailure,
+  analysisStoreLoadRemoteTimelineSuccess,
   analysisStoreLoadTimelineFromValidatedPayload,
+  analysisStoreLoadTimelineList,
+  analysisStoreLoadTimelineListFailure,
+  analysisStoreLoadTimelineListSuccess,
   analysisStoreSavePanel,
   analysisStoreSavePanelFailure,
   analysisStoreSavePanelSuccess,
@@ -35,6 +49,8 @@ export class AnalysisStoreEffects {
   private readonly store = inject(Store);
   private readonly analysisStoreApi = inject(AnalysisStoreApi);
   private readonly sequencerPanelService = inject(SequencerPanelService);
+  private readonly document = inject(DOCUMENT);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly savePanel$ = createEffect(() =>
     this.actions$.pipe(
@@ -128,5 +144,197 @@ export class AnalysisStoreEffects {
       ofType(analysisStoreLoadTimelineFromValidatedPayload),
       map(({ payload, context }) => analysisStoreHydrateTimelineResourceMeta({ timeline: payload, context })),
     ),
+  );
+
+  readonly importTimeline$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreImportTimeline),
+      switchMap(({ payload, context }) =>
+        this.analysisStoreApi.validateTimelineImport(payload).pipe(
+          switchMap(response => {
+            if (!response.valid || !response.normalizedPayload) {
+              return of(analysisStoreImportTimelineFailure({ error: 'Import timeline invalide.' }));
+            }
+
+            return of(
+              analysisStoreLoadTimelineFromValidatedPayload({ payload: response.normalizedPayload, context }),
+              analysisStoreImportTimelineSuccess(),
+            );
+          }),
+          catchError(error =>
+            of(analysisStoreImportTimelineFailure({ error: error?.message ?? 'Timeline import validation failed' })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  readonly exportTimeline$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreExportTimeline),
+      withLatestFrom(this.store.select(selectTimelineState)),
+      tap(([, timelineState]) => {
+        const mappedTimeline = mapTimelineStateToAnalysisTimelineV1(timelineState);
+        const fileName = `${mappedTimeline.timelineName || 'timeline'}.json`;
+        const blob = new Blob([JSON.stringify(mappedTimeline, null, 2)], { type: 'application/json' });
+        const link = this.document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }),
+      map(() => analysisStoreExportTimelineSuccess()),
+      catchError(error => of(analysisStoreExportTimelineFailure({ error: error?.message ?? 'Timeline export failed' }))),
+    ),
+  );
+
+  readonly loadTimelineList$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreLoadTimelineList),
+      switchMap(() =>
+        this.analysisStoreApi.listTimelines().pipe(
+          map(resources => analysisStoreLoadTimelineListSuccess({ resources })),
+          catchError(error =>
+            of(analysisStoreLoadTimelineListFailure({ error: error?.message ?? 'Timeline list loading failed' })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  readonly loadRemoteTimeline$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreLoadRemoteTimeline),
+      switchMap(({ resource }) =>
+        this.analysisStoreApi.exportTimeline(resource.id).pipe(
+          switchMap(payload =>
+            of(
+              analysisStoreLoadTimelineFromValidatedPayload({
+                payload,
+                context: {
+                  resourceId: resource.id,
+                  title: resource.title,
+                  description: resource.description,
+                  hasAnonymizedContent: resource.hasAnonymizedContent,
+                },
+              }),
+              analysisStoreLoadRemoteTimelineSuccess(),
+            ),
+          ),
+          catchError(error =>
+            of(analysisStoreLoadRemoteTimelineFailure({ error: error?.message ?? 'Timeline loading failed' })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  readonly notifyPanelSaveSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreSavePanelSuccess),
+        tap(() => this.snackBar.open('Panel sauvegardé avec succès.', 'Fermer', { duration: 2500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelSaveFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreSavePanelFailure),
+        tap(({ error }) => this.snackBar.open(error || 'Échec de sauvegarde du panel.', 'Fermer', { duration: 3500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineSaveSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreSaveTimelineSuccess),
+        tap(() => this.snackBar.open('Timeline sauvegardée avec succès.', 'Fermer', { duration: 2500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineSaveFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreSaveTimelineFailure),
+        tap(({ error }) =>
+          this.snackBar.open(error || 'Échec de sauvegarde de la timeline.', 'Fermer', { duration: 3500 }),
+        ),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineImportSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreImportTimelineSuccess),
+        tap(() => this.snackBar.open('Timeline importée avec succès.', 'Fermer', { duration: 2500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineImportFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreImportTimelineFailure),
+        tap(({ error }) =>
+          this.snackBar.open(error || 'Échec de validation de la timeline importée.', 'Fermer', { duration: 3500 }),
+        ),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineExportSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreExportTimelineSuccess),
+        tap(() => this.snackBar.open('Export timeline généré.', 'Fermer', { duration: 2200 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineExportFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreExportTimelineFailure),
+        tap(({ error }) =>
+          this.snackBar.open(error || 'Échec de l’export timeline.', 'Fermer', { duration: 3500 }),
+        ),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineLoadSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreLoadRemoteTimelineSuccess),
+        tap(() => this.snackBar.open('Timeline distante chargée.', 'Fermer', { duration: 2500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineLoadFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreLoadRemoteTimelineFailure),
+        tap(({ error }) =>
+          this.snackBar.open(error || 'Impossible de charger la timeline distante.', 'Fermer', { duration: 3500 }),
+        ),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyTimelineListFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreLoadTimelineListFailure),
+        tap(({ error }) =>
+          this.snackBar.open(error || 'Impossible de charger la liste des timelines.', 'Fermer', { duration: 3500 }),
+        ),
+      ),
+    { dispatch: false },
   );
 }

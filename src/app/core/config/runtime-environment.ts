@@ -22,6 +22,23 @@ function parseCsv(value: string | undefined, fallback: string[]): string[] {
   return parsed.length > 0 ? parsed : fallback;
 }
 
+function parseBoolean(value: string | undefined, fallback: boolean): boolean {
+  if (value == null) {
+    return fallback;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on') {
+    return true;
+  }
+
+  if (normalized === 'false' || normalized === '0' || normalized === 'no' || normalized === 'off') {
+    return false;
+  }
+
+  return fallback;
+}
+
 function readBrowserRuntimeConfig(): RuntimeConfigShape {
   if (typeof window === 'undefined') {
     return {};
@@ -39,6 +56,10 @@ function readServerRuntimeConfig(): RuntimeConfigShape {
   const analysisStorePrefix = process.env['ANALYSIS_STORE_API_PREFIX']?.trim() || '';
 
   return {
+    analysisStoreDevHeadersEnabled: parseBoolean(
+      process.env['ANALYSIS_STORE_DEV_HEADERS_ENABLED'],
+      environment.analysisStoreDevHeadersEnabled,
+    ),
     apiAllowedPrefixes: parseCsv(process.env['API_ALLOWED_PREFIXES'], environment.apiAllowedPrefixes),
     authEndpoints: {
       login: process.env['AUTH_LOGIN_ENDPOINT'] || `${authPrefix}/auth/login`,
@@ -63,6 +84,8 @@ function readServerRuntimeConfig(): RuntimeConfigShape {
 function mergeWithDefaults(runtimeConfig: RuntimeConfigShape): AppEnvironment {
   return {
     production: environment.production,
+    analysisStoreDevHeadersEnabled:
+      runtimeConfig.analysisStoreDevHeadersEnabled ?? environment.analysisStoreDevHeadersEnabled,
     apiAllowedPrefixes: runtimeConfig.apiAllowedPrefixes ?? environment.apiAllowedPrefixes,
     authEndpoints: {
       login: runtimeConfig.authEndpoints?.login ?? environment.authEndpoints.login,

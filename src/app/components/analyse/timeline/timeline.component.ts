@@ -295,7 +295,6 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
   saveTimeline() {
     this.store.dispatch(analysisStoreSaveTimeline({}));
-    this.snackBar.open('Sauvegarde de la timeline en cours…', 'Fermer', { duration: 1800 });
   }
 
   triggerImportTimeline() {
@@ -328,7 +327,6 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
       }
 
       this.store.dispatch(analysisStoreImportTimeline({ payload: parsedPayload }));
-      this.snackBar.open('Validation de la timeline importée en cours…', 'Fermer', { duration: 2200 });
     } catch {
       this.snackBar.open('Le fichier sélectionné n’est pas un JSON valide.', 'Fermer', { duration: 3500 });
     }
@@ -336,7 +334,6 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
   exportTimeline() {
     this.store.dispatch(analysisStoreExportTimeline());
-    this.snackBar.open('Export JSON généré.', 'Fermer', { duration: 2000 });
   }
 
   async openTimelineFinderDialog() {
@@ -358,6 +355,7 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
     const dialogRef = this.dialog.open(TimelineFinderDialogComponent, {
       width: '860px',
       maxWidth: '96vw',
+      panelClass: 'analysis-panel-finder-dialog',
       data: {
         timelines: resources,
       },
@@ -381,7 +379,6 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
       }
 
       this.store.dispatch(analysisStoreLoadRemoteTimeline({ resource }));
-      this.snackBar.open('Chargement de la timeline distante…', 'Fermer', { duration: 1800 });
     });
   }
 

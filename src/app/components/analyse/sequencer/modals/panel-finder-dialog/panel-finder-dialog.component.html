@@ -1,7 +1,7 @@
 <h2 mat-dialog-title class="bg-layer-3 text-default m-0 text-center">Trouver un panel</h2>
 
-<mat-dialog-content class="bg-layer-3 text-default flex max-h-[70vh] flex-col gap-3 pt-3">
-  <div class="flex flex-wrap items-center gap-2">
+<mat-dialog-content class="bg-layer-3 text-default flex max-h-[70vh] flex-col gap-4 pt-4">
+  <div class="flex flex-wrap items-center gap-3">
     <mat-button-toggle-group
       [ngModel]="visibilityFilter()"
       (ngModelChange)="visibilityFilter.set($event)"
@@ -19,7 +19,7 @@
   </div>
 
   <input
-    class="bg-layer-2 border-subtle text-default w-full rounded border px-2 py-1 text-sm"
+    class="bg-layer-2 border-subtle text-default w-full rounded border px-3 py-2 text-sm"
     type="text"
     placeholder="Rechercher un panel"
     [ngModel]="searchTerm()"
@@ -67,8 +67,8 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="find-panels-header-row"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="find-panels-data-row"></tr>
     </table>
 
     @if (filteredPanels().length === 0) {

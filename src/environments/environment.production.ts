@@ -6,6 +6,7 @@ import { AppEnvironment } from './environment.model';
  */
 export const environment: AppEnvironment = {
   production: true,
+  analysisStoreDevHeadersEnabled: false,
   apiAllowedPrefixes: ['/auth', '/api', '/me', '/users'],
   authEndpoints: {
     login: '/auth/login',

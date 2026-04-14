@@ -86,6 +86,7 @@ export class PanelFinderDialogComponent {
     const names = this.extractNames(panel, 'event');
     this.dialog.open(PanelButtonsPreviewDialogComponent, {
       width: '420px',
+      panelClass: 'analysis-panel-finder-preview-dialog',
       data: {
         title: 'Events du panel',
         names,
@@ -97,6 +98,7 @@ export class PanelFinderDialogComponent {
     const names = this.extractNames(panel, 'label');
     this.dialog.open(PanelButtonsPreviewDialogComponent, {
       width: '420px',
+      panelClass: 'analysis-panel-finder-preview-dialog',
       data: {
         title: 'Labels du panel',
         names,

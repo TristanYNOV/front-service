@@ -116,3 +116,116 @@
     width: 100%;
   }
 }
+
+// Scoped overrides: panel finder dialogs only
+.analysis-panel-finder-dialog,
+.analysis-panel-finder-preview-dialog {
+  --mdc-dialog-container-color: var(--bg-layer-3);
+  --mdc-dialog-container-text-color: var(--text-default);
+  --mdc-dialog-subhead-color: var(--text-default);
+  --mdc-dialog-supporting-text-color: var(--text-default);
+}
+
+.analysis-panel-finder-dialog {
+  --mdc-filled-text-field-container-color: var(--bg-layer-2);
+  --mdc-filled-text-field-input-text-color: var(--text-default);
+  --mdc-filled-text-field-label-text-color: var(--text-muted);
+
+  --mat-table-background-color: var(--bg-layer-2);
+  --mat-table-header-headline-color: var(--text-strong);
+  --mat-table-row-item-label-text-color: var(--text-default);
+
+  --mdc-text-button-label-text-color: var(--text-default);
+  --mdc-text-button-hover-state-layer-color: var(--bg-layer-2);
+  --mdc-outlined-button-label-text-color: var(--text-default);
+  --mdc-outlined-button-outline-color: var(--border-subtle);
+  --mdc-outlined-button-hover-state-layer-color: var(--bg-layer-2);
+  --mdc-icon-button-icon-color: var(--text-default);
+
+  --mdc-switch-unselected-handle-color: var(--text-muted);
+  --mdc-switch-unselected-track-color: var(--bg-layer-2);
+  --mdc-switch-selected-handle-color: var(--accent);
+  --mdc-switch-selected-track-color: var(--interactive-active-border);
+  --mdc-switch-unselected-focus-track-color: var(--bg-layer-2);
+  --mdc-switch-unselected-hover-track-color: var(--bg-layer-2);
+  --mdc-switch-selected-focus-track-color: var(--interactive-active-border);
+  --mdc-switch-selected-hover-track-color: var(--interactive-active-border);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-dialog-surface,
+.analysis-panel-finder-preview-dialog .mat-mdc-dialog-surface {
+  background-color: var(--bg-layer-3);
+  color: var(--text-default);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-dialog-title,
+.analysis-panel-finder-preview-dialog .mat-mdc-dialog-title {
+  color: var(--text-strong);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-dialog-content,
+.analysis-panel-finder-preview-dialog .mat-mdc-dialog-content,
+.analysis-panel-finder-dialog .mat-mdc-dialog-actions,
+.analysis-panel-finder-preview-dialog .mat-mdc-dialog-actions {
+  color: var(--text-default);
+}
+
+.analysis-panel-finder-dialog .mat-button-toggle-group {
+  border-color: var(--border-subtle);
+}
+
+.analysis-panel-finder-dialog .mat-button-toggle-appearance-standard {
+  background-color: var(--bg-layer-2);
+  color: var(--text-default);
+}
+
+.analysis-panel-finder-dialog .mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+  background-color: var(--interactive-active);
+  color: var(--text-strong);
+}
+
+.analysis-panel-finder-dialog .mat-button-toggle-appearance-standard.mat-button-toggle-disabled {
+  color: var(--light-text-disabled);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-slide-toggle .mdc-label {
+  color: var(--text-default);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-table {
+  background-color: var(--bg-layer-2);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-header-row {
+  background-color: var(--bg-layer-1);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-header-cell {
+  color: var(--text-strong);
+  border-bottom-color: var(--border-subtle);
+  padding-block: 0.8rem;
+  line-height: 1.2;
+}
+
+.analysis-panel-finder-dialog .mat-mdc-row.find-panels-data-row:nth-of-type(odd) {
+  background-color: var(--bg-layer-2);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-row.find-panels-data-row:nth-of-type(even) {
+  background-color: var(--bg-layer-3);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-row.find-panels-data-row:hover {
+  background-color: var(--bg-layer-1);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-cell {
+  color: var(--text-default);
+  border-bottom-color: var(--border-subtle);
+  padding-block: 0.72rem;
+  line-height: 1.3;
+}
+
+.analysis-panel-finder-dialog .mat-mdc-icon-button[disabled] {
+  color: var(--light-text-disabled);
+}

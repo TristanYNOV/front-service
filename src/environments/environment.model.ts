@@ -1,5 +1,6 @@
 export interface AppEnvironment {
   production: boolean;
+  analysisStoreDevHeadersEnabled: boolean;
   apiAllowedPrefixes: string[];
   authEndpoints: {
     login: string;

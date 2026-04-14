@@ -269,6 +269,7 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
       const dialogRef = this.dialog.open(PanelFinderDialogComponent, {
         width: '980px',
         maxWidth: '96vw',
+        panelClass: 'analysis-panel-finder-dialog',
         data: {
           panels,
           currentUserId: this.authSession.user()?.id ?? null,

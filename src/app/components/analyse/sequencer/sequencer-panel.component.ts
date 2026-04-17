@@ -294,6 +294,8 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   openEditDescriptionDialog() {
     const dialogRef = this.dialog.open(PanelDescriptionDialogComponent, {
       width: '460px',
+      maxWidth: '94vw',
+      panelClass: 'analysis-panel-description-dialog',
       data: { description: this.panelState().description },
     });
 

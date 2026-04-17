@@ -8,6 +8,10 @@
       <div class="text-muted text-[11px]">Agrandir pour éditer le Sequencer Canvas.</div>
     </div>
     <mat-menu #menu="matMenu">
+      <button mat-menu-item type="button" (click)="createNewPanel()">
+        <mat-icon aria-hidden="true">add_box</mat-icon>
+        <span>New Panel</span>
+      </button>
       <button mat-menu-item type="button" (click)="openEditDescriptionDialog()">
         <mat-icon aria-hidden="true">description</mat-icon>
         <span>Description</span>
@@ -39,6 +43,10 @@
         <mat-icon aria-hidden="true">menu</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
+        <button mat-menu-item type="button" (click)="createNewPanel()">
+          <mat-icon aria-hidden="true">add_box</mat-icon>
+          <span>New Panel</span>
+        </button>
         <button mat-menu-item type="button" (click)="toggleRename()">
           <mat-icon aria-hidden="true">edit</mat-icon>
           <span>Renommer</span>

@@ -14,6 +14,7 @@ import {
   removeLabelFromSelection,
   removeOccurrence,
   removeOccurrences,
+  resetTimeline,
   setAutoFollow,
   setSelection,
   setUiScroll,
@@ -46,33 +47,39 @@ export interface TimelineState {
   } | null;
 }
 
-export const initialTimelineState: TimelineState = {
-  schemaVersion: TIMELINE_SCHEMA_VERSION,
-  meta: {
-    timelineName: 'Timeline',
-    analysisName: 'Analyse locale',
-    createdAtIso: new Date().toISOString(),
-    updatedAtIso: new Date().toISOString(),
-    userId: 'local-user',
-  },
-  definitions: {
-    eventDefs: [],
-    labelDefs: [],
-  },
-  occurrences: [],
-  ui: {
-    scrollX: 0,
-    scrollY: 0,
-    selectedOccurrenceIds: [],
-    autoFollow: true,
-  },
-  lastShiftDeltaMs: null,
-  openOccurrenceByEventBtnId: {},
-  lastRemoved: null,
-};
+function buildInitialTimelineState(): TimelineState {
+  const nowIso = new Date().toISOString();
+  return {
+    schemaVersion: TIMELINE_SCHEMA_VERSION,
+    meta: {
+      timelineName: 'Timeline',
+      analysisName: 'Analyse locale',
+      createdAtIso: nowIso,
+      updatedAtIso: nowIso,
+      userId: 'local-user',
+    },
+    definitions: {
+      eventDefs: [],
+      labelDefs: [],
+    },
+    occurrences: [],
+    ui: {
+      scrollX: 0,
+      scrollY: 0,
+      selectedOccurrenceIds: [],
+      autoFollow: true,
+    },
+    lastShiftDeltaMs: null,
+    openOccurrenceByEventBtnId: {},
+    lastRemoved: null,
+  };
+}
+
+export const initialTimelineState: TimelineState = buildInitialTimelineState();
 
 export const timelineReducer = createReducer(
   initialTimelineState,
+  on(resetTimeline, () => buildInitialTimelineState()),
   on(initTimeline, (state, payload) => ({
     ...state,
     ...payload,

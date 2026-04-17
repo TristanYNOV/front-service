@@ -49,6 +49,13 @@ export class SequencerPanelService {
     this.btnListSignal.set(panel.btnList.map(btn => ({ ...btn, layout: this.ensureLayout(btn) })));
   }
 
+  resetPanel() {
+    this.panelNameSignal.set('My Panel');
+    this.btnListSignal.set([]);
+    this.editModeSignal.set(false);
+    this.zCounter = 0;
+  }
+
   getPanel(): SequencerPanel {
     return {
       panelName: this.panelNameSignal(),

@@ -39,6 +39,9 @@ export const analysisStoreSetCurrentPanel = createAction(
   props<{ panel: SequencerPanel }>(),
 );
 
+export const analysisStoreResetPanelState = createAction('[Analysis Store] Reset Panel State');
+export const analysisStoreResetWorkspaceState = createAction('[Analysis Store] Reset Workspace State');
+
 export const analysisStoreLoadPanelFromValidatedPayload = createAction(
   '[Analysis Store] Load Panel From Validated Payload',
   props<{ payload: SequencerPanelV1; context?: AnalysisStoreLoadResourceContext }>(),
@@ -69,6 +72,53 @@ export const analysisStoreSavePanelSuccess = createAction(
 );
 export const analysisStoreSavePanelFailure = createAction(
   '[Analysis Store] Save Panel Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreImportPanel = createAction(
+  '[Analysis Store] Import Panel',
+  props<{ payload: AnalysisStoreImportValidationPayload; context?: AnalysisStoreLoadResourceContext }>(),
+);
+export const analysisStoreImportPanelSuccess = createAction('[Analysis Store] Import Panel Success');
+export const analysisStoreImportPanelFailure = createAction(
+  '[Analysis Store] Import Panel Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreExportPanel = createAction('[Analysis Store] Export Panel');
+export const analysisStoreExportPanelSuccess = createAction('[Analysis Store] Export Panel Success');
+export const analysisStoreExportPanelFailure = createAction(
+  '[Analysis Store] Export Panel Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreLoadPanelList = createAction('[Analysis Store] Load Panel List');
+export const analysisStoreLoadPanelListSuccess = createAction(
+  '[Analysis Store] Load Panel List Success',
+  props<{ resources: PanelResourceResponse[] }>(),
+);
+export const analysisStoreLoadPanelListFailure = createAction(
+  '[Analysis Store] Load Panel List Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreLoadRemotePanel = createAction(
+  '[Analysis Store] Load Remote Panel',
+  props<{ resource: PanelResourceResponse }>(),
+);
+export const analysisStoreLoadRemotePanelSuccess = createAction('[Analysis Store] Load Remote Panel Success');
+export const analysisStoreLoadRemotePanelFailure = createAction(
+  '[Analysis Store] Load Remote Panel Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreCopyRemotePanel = createAction(
+  '[Analysis Store] Copy Remote Panel',
+  props<{ sourceResource: PanelResourceResponse }>(),
+);
+export const analysisStoreCopyRemotePanelSuccess = createAction('[Analysis Store] Copy Remote Panel Success');
+export const analysisStoreCopyRemotePanelFailure = createAction(
+  '[Analysis Store] Copy Remote Panel Failure',
   props<{ error: string }>(),
 );
 

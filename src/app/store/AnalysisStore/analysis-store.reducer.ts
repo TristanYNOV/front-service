@@ -37,6 +37,8 @@ import {
   analysisStoreSaveTimeline,
   analysisStoreSaveTimelineFailure,
   analysisStoreSaveTimelineSuccess,
+  analysisStoreResetPanelState,
+  analysisStoreResetWorkspaceState,
   analysisStoreSetCurrentPanel,
 } from './analysis-store.actions';
 
@@ -112,6 +114,14 @@ export const initialAnalysisStoreState: AnalysisStoreState = {
 
 export const analysisStoreReducer = createReducer(
   initialAnalysisStoreState,
+  on(analysisStoreResetWorkspaceState, () => initialAnalysisStoreState),
+  on(analysisStoreResetPanelState, state => ({
+    ...state,
+    panel: {
+      ...initialAnalysisStoreState.panel,
+      resources: state.panel.resources,
+    },
+  })),
   on(analysisStoreSetCurrentPanel, (state, { panel }) => ({
     ...state,
     panel: {

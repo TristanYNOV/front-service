@@ -91,6 +91,20 @@ export class SequencerRuntimeService {
     return this.hasActiveId(btnId);
   }
 
+  resetRuntimeState() {
+    if (this.lastTriggerTimeout) {
+      clearTimeout(this.lastTriggerTimeout);
+      this.lastTriggerTimeout = undefined;
+    }
+
+    this.triggerCountByBtnIdSignal.set({});
+    this.lastTriggeredBtnIdSignal.set(null);
+    this.activeIndefiniteIdsSignal.set([]);
+    this.recentRuntimeEventsSignal.set([]);
+    this.appliedLabelsByEventId.clear();
+    this.runtimeSeq = 0;
+  }
+
 
   getActiveIndefiniteLabelIds() {
     const ids = new Set(this.activeIndefiniteIdsSignal());

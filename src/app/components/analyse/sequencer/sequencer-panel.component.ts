@@ -31,6 +31,7 @@ import {
   analysisStoreImportPanel,
   analysisStoreLoadPanelList,
   analysisStoreLoadRemotePanel,
+  analysisStoreResetPanelState,
   analysisStoreSavePanel,
   analysisStoreSetCurrentPanel,
 } from '../../../store/AnalysisStore/analysis-store.actions';
@@ -245,6 +246,25 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
         },
       }),
     );
+  }
+
+  async createNewPanel() {
+    if (this.panelService.getPanel().btnList.length > 0) {
+      const shouldContinue = await this.confirmDialogService.confirm({
+        title: 'Create a new panel?',
+        message: 'The current panel contains buttons. Continuing will discard the current panel.',
+        confirmLabel: 'Create new panel',
+        cancelLabel: 'Cancel',
+      });
+
+      if (!shouldContinue) {
+        return;
+      }
+    }
+
+    this.panelService.resetPanel();
+    this.runtimeService.resetRuntimeState();
+    this.store.dispatch(analysisStoreResetPanelState());
   }
 
   async openPanelFinderDialog() {

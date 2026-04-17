@@ -39,6 +39,9 @@ export const analysisStoreSetCurrentPanel = createAction(
   props<{ panel: SequencerPanel }>(),
 );
 
+export const analysisStoreResetPanelState = createAction('[Analysis Store] Reset Panel State');
+export const analysisStoreResetWorkspaceState = createAction('[Analysis Store] Reset Workspace State');
+
 export const analysisStoreLoadPanelFromValidatedPayload = createAction(
   '[Analysis Store] Load Panel From Validated Payload',
   props<{ payload: SequencerPanelV1; context?: AnalysisStoreLoadResourceContext }>(),

@@ -368,9 +368,9 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
       if (this.shouldConfirmReplaceCurrentTimeline()) {
         const shouldContinue = await this.confirmDialogService.confirm({
-          title: 'Remplacer la timeline courante ?',
-          message: 'La timeline locale sera remplacée par la timeline distante sélectionnée.',
-          confirmLabel: 'Remplacer',
+          title: 'Écraser la timeline courante ?',
+          message: 'La timeline courante sera remplacée par la timeline distante sélectionnée.',
+          confirmLabel: 'Écraser',
           cancelLabel: 'Annuler',
         });
         if (!shouldContinue) {

@@ -2,11 +2,26 @@ import { createReducer, on } from '@ngrx/store';
 import { AnalysisStoreVisibility, PanelResourceResponse, TimelineResourceResponse } from '../../interfaces/analysis-store';
 import { SequencerPanel } from '../../interfaces/sequencer-panel.interface';
 import {
+  analysisStoreCopyRemotePanel,
+  analysisStoreCopyRemotePanelFailure,
+  analysisStoreCopyRemotePanelSuccess,
+  analysisStoreExportPanel,
+  analysisStoreExportPanelFailure,
+  analysisStoreExportPanelSuccess,
   analysisStoreExportTimeline,
   analysisStoreExportTimelineFailure,
   analysisStoreExportTimelineSuccess,
   analysisStoreHydratePanelFromValidatedPayload,
+  analysisStoreImportPanel,
+  analysisStoreImportPanelFailure,
+  analysisStoreImportPanelSuccess,
   analysisStoreHydrateTimelineResourceMeta,
+  analysisStoreLoadPanelList,
+  analysisStoreLoadPanelListFailure,
+  analysisStoreLoadPanelListSuccess,
+  analysisStoreLoadRemotePanel,
+  analysisStoreLoadRemotePanelFailure,
+  analysisStoreLoadRemotePanelSuccess,
   analysisStoreImportTimeline,
   analysisStoreImportTimelineFailure,
   analysisStoreImportTimelineSuccess,
@@ -37,6 +52,12 @@ export interface AnalysisStoreResourceMetaState {
 
 export interface AnalysisStoreState {
   panel: AnalysisStoreResourceMetaState & {
+    resources: PanelResourceResponse[];
+    isLoadingList: boolean;
+    isLoadingRemote: boolean;
+    isImporting: boolean;
+    isExporting: boolean;
+    isCopying: boolean;
     currentContent: SequencerPanel | null;
     isSaving: boolean;
     error: string | null;
@@ -66,6 +87,12 @@ export const initialAnalysisStoreState: AnalysisStoreState = {
   panel: {
     ...initialResourceMetaState,
     title: 'My Panel',
+    resources: [],
+    isLoadingList: false,
+    isLoadingRemote: false,
+    isImporting: false,
+    isExporting: false,
+    isCopying: false,
     currentContent: null,
     isSaving: false,
     error: null,
@@ -143,6 +170,127 @@ export const analysisStoreReducer = createReducer(
     panel: {
       ...state.panel,
       isSaving: false,
+      error,
+    },
+  })),
+  on(analysisStoreImportPanel, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isImporting: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreImportPanelSuccess, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isImporting: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreImportPanelFailure, (state, { error }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isImporting: false,
+      error,
+    },
+  })),
+  on(analysisStoreExportPanel, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isExporting: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreExportPanelSuccess, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isExporting: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreExportPanelFailure, (state, { error }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isExporting: false,
+      error,
+    },
+  })),
+  on(analysisStoreLoadPanelList, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isLoadingList: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreLoadPanelListSuccess, (state, { resources }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      resources,
+      isLoadingList: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreLoadPanelListFailure, (state, { error }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isLoadingList: false,
+      error,
+    },
+  })),
+  on(analysisStoreLoadRemotePanel, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isLoadingRemote: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreLoadRemotePanelSuccess, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isLoadingRemote: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreLoadRemotePanelFailure, (state, { error }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isLoadingRemote: false,
+      error,
+    },
+  })),
+  on(analysisStoreCopyRemotePanel, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isCopying: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreCopyRemotePanelSuccess, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isCopying: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreCopyRemotePanelFailure, (state, { error }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isCopying: false,
       error,
     },
   })),

@@ -18,14 +18,29 @@ import {
 import { initTimeline } from '../Timeline/timeline.actions';
 import { selectTimelineState } from '../Timeline/timeline.selectors';
 import {
+  analysisStoreCopyRemotePanel,
+  analysisStoreCopyRemotePanelFailure,
+  analysisStoreCopyRemotePanelSuccess,
+  analysisStoreExportPanel,
+  analysisStoreExportPanelFailure,
+  analysisStoreExportPanelSuccess,
   analysisStoreExportTimeline,
   analysisStoreExportTimelineFailure,
   analysisStoreExportTimelineSuccess,
   analysisStoreHydratePanelFromValidatedPayload,
   analysisStoreHydrateTimelineResourceMeta,
+  analysisStoreImportPanel,
+  analysisStoreImportPanelFailure,
+  analysisStoreImportPanelSuccess,
   analysisStoreImportTimeline,
   analysisStoreImportTimelineFailure,
   analysisStoreImportTimelineSuccess,
+  analysisStoreLoadPanelList,
+  analysisStoreLoadPanelListFailure,
+  analysisStoreLoadPanelListSuccess,
+  analysisStoreLoadRemotePanel,
+  analysisStoreLoadRemotePanelFailure,
+  analysisStoreLoadRemotePanelSuccess,
   analysisStoreLoadPanelFromValidatedPayload,
   analysisStoreLoadRemoteTimeline,
   analysisStoreLoadRemoteTimelineFailure,
@@ -78,6 +93,108 @@ export class AnalysisStoreEffects {
           catchError(error => of(analysisStoreSavePanelFailure({ error: error?.message ?? 'Panel save failed' }))),
         );
       }),
+    ),
+  );
+
+  readonly importPanel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreImportPanel),
+      switchMap(({ payload, context }) =>
+        this.analysisStoreApi.validatePanelImport(payload).pipe(
+          switchMap(response => {
+            if (!response.valid || !response.normalizedPayload) {
+              return of(analysisStoreImportPanelFailure({ error: 'Import panel invalide.' }));
+            }
+
+            return of(
+              analysisStoreLoadPanelFromValidatedPayload({ payload: response.normalizedPayload, context }),
+              analysisStoreImportPanelSuccess(),
+            );
+          }),
+          catchError(error =>
+            of(analysisStoreImportPanelFailure({ error: error?.message ?? 'Panel import validation failed' })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  readonly exportPanel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreExportPanel),
+      withLatestFrom(this.store.select(selectAnalysisStorePanelState)),
+      tap(([, panelState]) => {
+        if (!panelState.currentContent) {
+          throw new Error('No panel content to export.');
+        }
+
+        const mappedPanel = mapPanelStateToSequencerPanelV1(panelState.currentContent);
+        const fileName = `${mappedPanel.panelName || 'panel'}.json`;
+        const blob = new Blob([JSON.stringify(mappedPanel, null, 2)], { type: 'application/json' });
+        const link = this.document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }),
+      map(() => analysisStoreExportPanelSuccess()),
+      catchError(error => of(analysisStoreExportPanelFailure({ error: error?.message ?? 'Panel export failed' }))),
+    ),
+  );
+
+  readonly loadPanelList$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreLoadPanelList),
+      switchMap(() =>
+        this.analysisStoreApi.listPanels().pipe(
+          map(resources => analysisStoreLoadPanelListSuccess({ resources })),
+          catchError(error => of(analysisStoreLoadPanelListFailure({ error: error?.message ?? 'Panel list loading failed' }))),
+        ),
+      ),
+    ),
+  );
+
+  readonly loadRemotePanel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreLoadRemotePanel),
+      switchMap(({ resource }) =>
+        this.analysisStoreApi.exportPanel(resource.id).pipe(
+          switchMap(payload =>
+            of(
+              analysisStoreLoadPanelFromValidatedPayload({
+                payload,
+                context: {
+                  resourceId: resource.id,
+                  title: resource.title,
+                  description: resource.description,
+                  visibility: resource.visibility,
+                  clubId: resource.clubId,
+                  hasAnonymizedContent: resource.hasAnonymizedContent,
+                },
+              }),
+              analysisStoreLoadRemotePanelSuccess(),
+            ),
+          ),
+          catchError(error => of(analysisStoreLoadRemotePanelFailure({ error: error?.message ?? 'Panel loading failed' }))),
+        ),
+      ),
+    ),
+  );
+
+  readonly copyRemotePanel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreCopyRemotePanel),
+      switchMap(({ sourceResource }) =>
+        this.analysisStoreApi.copyPanel(sourceResource.id).pipe(
+          switchMap(copiedResource =>
+            of(
+              analysisStoreLoadRemotePanel({ resource: copiedResource }),
+              analysisStoreCopyRemotePanelSuccess(),
+            ),
+          ),
+          catchError(error => of(analysisStoreCopyRemotePanelFailure({ error: error?.message ?? 'Panel copy failed' }))),
+        ),
+      ),
     ),
   );
 
@@ -243,6 +360,78 @@ export class AnalysisStoreEffects {
       this.actions$.pipe(
         ofType(analysisStoreSavePanelFailure),
         tap(({ error }) => this.snackBar.open(error || 'Échec de sauvegarde du panel.', 'Fermer', { duration: 3500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelImportSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreImportPanelSuccess),
+        tap(() => this.snackBar.open('Panel importé avec succès.', 'Fermer', { duration: 2500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelImportFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreImportPanelFailure),
+        tap(({ error }) => this.snackBar.open(error || 'Échec de validation du panel importé.', 'Fermer', { duration: 3500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelExportSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreExportPanelSuccess),
+        tap(() => this.snackBar.open('Export panel généré.', 'Fermer', { duration: 2200 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelExportFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreExportPanelFailure),
+        tap(({ error }) => this.snackBar.open(error || 'Échec de l’export panel.', 'Fermer', { duration: 3500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelLoadSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreLoadRemotePanelSuccess),
+        tap(() => this.snackBar.open('Panel chargé.', 'Fermer', { duration: 2200 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelLoadFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreLoadRemotePanelFailure),
+        tap(({ error }) => this.snackBar.open(error || 'Impossible de charger ce panel.', 'Fermer', { duration: 3500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelListFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreLoadPanelListFailure),
+        tap(({ error }) => this.snackBar.open(error || 'Impossible de charger la liste des panels.', 'Fermer', { duration: 3500 })),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelCopyFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreCopyRemotePanelFailure),
+        tap(({ error }) => this.snackBar.open(error || 'Impossible de copier ce panel.', 'Fermer', { duration: 3500 })),
       ),
     { dispatch: false },
   );

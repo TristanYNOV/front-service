@@ -22,6 +22,18 @@ export const selectAnalysisStoreTimelineResources = createSelector(
   timelineState => timelineState.resources,
 );
 
+export const selectAnalysisStorePanelResources = createSelector(selectAnalysisStorePanelState, panelState => panelState.resources);
+
+export const selectAnalysisStorePanelOps = createSelector(selectAnalysisStorePanelState, panelState => ({
+  isLoadingList: panelState.isLoadingList,
+  isLoadingRemote: panelState.isLoadingRemote,
+  isImporting: panelState.isImporting,
+  isExporting: panelState.isExporting,
+  isCopying: panelState.isCopying,
+  isSaving: panelState.isSaving,
+  error: panelState.error,
+}));
+
 export const selectAnalysisStoreTimelineOps = createSelector(selectAnalysisStoreTimelineState, timelineState => ({
   isLoadingList: timelineState.isLoadingList,
   isLoadingRemote: timelineState.isLoadingRemote,

@@ -6,11 +6,12 @@ import { MiniComponent } from './components/data-item-container/Minified/mini.co
 import { selectIdleItems, selectSavedItems } from './store/Data/dataState.selectors';
 import { filter } from 'rxjs';
 import { LayoutEditModeService } from './core/services/layout-edit-mode.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [HeaderComponent, RouterOutlet, MiniComponent],
+  imports: [HeaderComponent, RouterOutlet, MiniComponent, MatIconModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

@@ -11,6 +11,8 @@ export const initTimeline = createAction(
   props<{ schemaVersion: string; meta: TimelineMetadata; definitions: TimelineDefinitions; occurrences: TimelineOccurrence[] }>(),
 );
 
+export const resetTimeline = createAction('[Timeline] Reset Timeline');
+
 export const upsertDefinitions = createAction(
   '[Timeline] Upsert Definitions',
   props<{ definitions: TimelineDefinitions }>(),

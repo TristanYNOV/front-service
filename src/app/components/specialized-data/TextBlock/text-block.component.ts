@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataItemBase } from '../../../interfaces/dataItem.interface';
+import { TextData } from '../../../interfaces/dataItem.interface';
+import { getTextContent, TextBlockContent } from '../data-item-content.registry';
 
 @Component({
   selector: 'app-text-block',
@@ -9,6 +10,9 @@ import { DataItemBase } from '../../../interfaces/dataItem.interface';
   templateUrl: './text-block.component.html',
 })
 export class TextBlockComponent {
-  @Input() data!: DataItemBase;
-}
+  @Input({ required: true }) data!: TextData;
 
+  get content(): TextBlockContent {
+    return getTextContent(this.data.id);
+  }
+}

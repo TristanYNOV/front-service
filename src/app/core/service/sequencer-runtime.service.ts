@@ -44,7 +44,7 @@ export class SequencerRuntimeService {
   trigger(btnId: string, source: 'hotkey' | 'click') {
     void source;
     const btn = this.panelService.getBtnById(btnId);
-    if (!btn || this.panelService.editMode()) {
+    if (!btn || this.panelService.editMode() || btn.type === 'stat') {
       return;
     }
 
@@ -89,6 +89,20 @@ export class SequencerRuntimeService {
 
   isBtnActive(btnId: string) {
     return this.hasActiveId(btnId);
+  }
+
+  resetRuntimeState() {
+    if (this.lastTriggerTimeout) {
+      clearTimeout(this.lastTriggerTimeout);
+      this.lastTriggerTimeout = undefined;
+    }
+
+    this.triggerCountByBtnIdSignal.set({});
+    this.lastTriggeredBtnIdSignal.set(null);
+    this.activeIndefiniteIdsSignal.set([]);
+    this.recentRuntimeEventsSignal.set([]);
+    this.appliedLabelsByEventId.clear();
+    this.runtimeSeq = 0;
   }
 
 

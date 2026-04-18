@@ -1,51 +1,59 @@
-<header class="bg-layer-2 flex justify-between items-center h-16 px-4">
+<header class="bg-layer-2 flex justify-between items-center h-16 px-2">
   <div class="flex gap-24">
-    <button routerLink="/discover" id="imgContainer">
-      <img src="" alt="logo">
+    <button routerLink="/discover" id="imgContainer" class="icon p-2 flex items-center light-text" aria-label="Accueil"
+            title="Accueil">
+      <mat-icon aria-hidden="true">home</mat-icon>
     </button>
   </div>
-  <nav class="flex justify-around min-w-1 mr-6 light-text">
-    <div class="flex gap-4 light-text items-center">
-      @if (!authSession.isAuthenticated()) {
-        <button class="icon p-2" (click)="openAuthModal('login')">
-          login
-        </button>
-      } @else {
-        <button mat-button [matMenuTriggerFor]="clubMenu">Accéder à l'espace club</button>
-        <mat-menu class="light-text mat-menu-custom" #clubMenu="matMenu">
-          <button mat-menu-item routerLink="/club">Club</button>
-          <button mat-menu-item routerLink="/teams">Teams</button>
-          <button mat-menu-item routerLink="/players">Players</button>
-          <button mat-menu-item routerLink="/tournaments">Tournaments</button>
-          <button mat-menu-item routerLink="/matchs">Matchs</button>
-        </mat-menu>
-        <button mat-button routerLink="/analyse">Commencer une Analyse</button>
-      }
-
-      <button
-        type="button"
-        class="icon p-2 flex items-center gap-2"
-        (click)="layoutEditMode.toggle()"
-        [attr.aria-pressed]="layoutEditMode.isEditMode()"
-        [title]="layoutEditMode.isEditMode() ? 'Verrouiller le layout' : 'Éditer le layout'"
-      >
-        @if (layoutEditMode.isEditMode()) {
-          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M1.5 12s3.5-7.5 10.5-7.5S22.5 12 22.5 12 19 19.5 12 19.5 1.5 12 1.5 12z" />
-            <circle cx="12" cy="12" r="3.25" />
-          </svg>
-          <span class="text-sm">Édition</span>
-        } @else {
-          <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="5" y="11" width="14" height="10" rx="2" />
-            <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-          </svg>
-          <span class="text-sm">Verrouillé</span>
+  <nav class="flex justify-around min-w-1 mr-2 light-text">
+    <div class="flex gap-8 light-text items-center">
+      <div class="flex items-center gap-2">
+        @if (authSession.isAuthenticated()) {
+          <button type="button" [matMenuTriggerFor]="clubMenu" class="icon flex items-center p-2">
+            <mat-icon aria-hidden="true">groups</mat-icon>
+          </button>
+          <mat-menu class="light-text mat-menu-custom" #clubMenu="matMenu">
+            <button mat-menu-item routerLink="/club">Club</button>
+            <button mat-menu-item routerLink="/teams">Teams</button>
+            <button mat-menu-item routerLink="/players">Players</button>
+            <button mat-menu-item routerLink="/tournaments">Tournaments</button>
+            <button mat-menu-item routerLink="/matchs">Matchs</button>
+          </mat-menu>
+          <button type="button" routerLink="/analyse" class="icon flex items-center p-2">
+            <mat-icon aria-hidden="true">video_library</mat-icon>
+          </button>
         }
-      </button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="icon p-2 flex items-center"
+          (click)="layoutEditMode.toggle()"
+          [attr.aria-pressed]="layoutEditMode.isEditMode()"
+          [attr.aria-label]="layoutEditMode.isEditMode() ? 'Verrouiller le layout' : 'Déverrouiller le layout'"
+          [title]="layoutEditMode.isEditMode() ? 'Verrouiller le layout' : 'Éditer le layout'"
+        >
+          @if (layoutEditMode.isEditMode()) {
+            <mat-icon aria-hidden="true">lock_open</mat-icon>
+          } @else {
+            <mat-icon aria-hidden="true">lock</mat-icon>
+          }
+        </button>
+
+        <button type="button" class="icon p-2 flex items-center" aria-label="Thème" title="Thème">
+          <mat-icon aria-hidden="true">palette</mat-icon>
+        </button>
+      </div>
 
       @if (authSession.isAuthenticated()) {
-        <button class="icon p-2" (click)="logout()">Déconnexion</button>
+        <button class="icon p-2 flex items-center gap-1" (click)="logout()">
+          <mat-icon aria-hidden="true">logout</mat-icon>
+        </button>
+      } @else {
+        <button class="icon p-2 flex items-center gap-1" (click)="openAuthModal('login')">
+          <mat-icon aria-hidden="true">login</mat-icon>
+        </button>
       }
     </div>
   </nav>

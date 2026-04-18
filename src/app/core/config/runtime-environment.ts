@@ -22,6 +22,23 @@ function parseCsv(value: string | undefined, fallback: string[]): string[] {
   return parsed.length > 0 ? parsed : fallback;
 }
 
+function parseBoolean(value: string | undefined, fallback: boolean): boolean {
+  if (value == null) {
+    return fallback;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on') {
+    return true;
+  }
+
+  if (normalized === 'false' || normalized === '0' || normalized === 'no' || normalized === 'off') {
+    return false;
+  }
+
+  return fallback;
+}
+
 function readBrowserRuntimeConfig(): RuntimeConfigShape {
   if (typeof window === 'undefined') {
     return {};
@@ -36,8 +53,13 @@ function readServerRuntimeConfig(): RuntimeConfigShape {
   }
 
   const authPrefix = process.env['AUTH_API_PREFIX']?.trim() || '';
+  const analysisStorePrefix = process.env['ANALYSIS_STORE_API_PREFIX']?.trim() || '';
 
   return {
+    analysisStoreDevHeadersEnabled: parseBoolean(
+      process.env['ANALYSIS_STORE_DEV_HEADERS_ENABLED'],
+      environment.analysisStoreDevHeadersEnabled,
+    ),
     apiAllowedPrefixes: parseCsv(process.env['API_ALLOWED_PREFIXES'], environment.apiAllowedPrefixes),
     authEndpoints: {
       login: process.env['AUTH_LOGIN_ENDPOINT'] || `${authPrefix}/auth/login`,
@@ -46,12 +68,24 @@ function readServerRuntimeConfig(): RuntimeConfigShape {
       logout: process.env['AUTH_LOGOUT_ENDPOINT'] || `${authPrefix}/auth/logout`,
       me: process.env['AUTH_ME_ENDPOINT'] || `${authPrefix}/me`,
     },
+    analysisStoreEndpoints: {
+      importsTimelinesValidate:
+        process.env['ANALYSIS_STORE_IMPORTS_TIMELINES_VALIDATE_ENDPOINT'] ||
+        `${analysisStorePrefix}/api/imports/timelines/validate`,
+      importsPanelsValidate:
+        process.env['ANALYSIS_STORE_IMPORTS_PANELS_VALIDATE_ENDPOINT'] ||
+        `${analysisStorePrefix}/api/imports/panels/validate`,
+      timelines: process.env['ANALYSIS_STORE_TIMELINES_ENDPOINT'] || `${analysisStorePrefix}/api/timelines`,
+      panels: process.env['ANALYSIS_STORE_PANELS_ENDPOINT'] || `${analysisStorePrefix}/api/panels`,
+    },
   };
 }
 
 function mergeWithDefaults(runtimeConfig: RuntimeConfigShape): AppEnvironment {
   return {
     production: environment.production,
+    analysisStoreDevHeadersEnabled:
+      runtimeConfig.analysisStoreDevHeadersEnabled ?? environment.analysisStoreDevHeadersEnabled,
     apiAllowedPrefixes: runtimeConfig.apiAllowedPrefixes ?? environment.apiAllowedPrefixes,
     authEndpoints: {
       login: runtimeConfig.authEndpoints?.login ?? environment.authEndpoints.login,
@@ -59,6 +93,16 @@ function mergeWithDefaults(runtimeConfig: RuntimeConfigShape): AppEnvironment {
       refresh: runtimeConfig.authEndpoints?.refresh ?? environment.authEndpoints.refresh,
       logout: runtimeConfig.authEndpoints?.logout ?? environment.authEndpoints.logout,
       me: runtimeConfig.authEndpoints?.me ?? environment.authEndpoints.me,
+    },
+    analysisStoreEndpoints: {
+      importsTimelinesValidate:
+        runtimeConfig.analysisStoreEndpoints?.importsTimelinesValidate ??
+        environment.analysisStoreEndpoints.importsTimelinesValidate,
+      importsPanelsValidate:
+        runtimeConfig.analysisStoreEndpoints?.importsPanelsValidate ??
+        environment.analysisStoreEndpoints.importsPanelsValidate,
+      timelines: runtimeConfig.analysisStoreEndpoints?.timelines ?? environment.analysisStoreEndpoints.timelines,
+      panels: runtimeConfig.analysisStoreEndpoints?.panels ?? environment.analysisStoreEndpoints.panels,
     },
   };
 }

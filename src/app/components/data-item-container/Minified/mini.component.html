@@ -1,15 +1,22 @@
-<div class="flex flex-col border rounded-md p-2 max-h-16 overflow-y-auto">
-  <div class="flex gap-2">
-    <span class="font-bold truncate">{{ item.id }}</span>
-    <button (click)="displayData()" class="btn-accent w-fit px-2 ml-auto" [disabled]="isDisplayed()">Afficher</button>
-  </div>
+<div class="border border-layer rounded-md p-2 discover-card">
+  <div class="flex items-start gap-2">
+    <div class="min-w-0 flex-1">
+      <div class="flex flex-wrap gap-1 mb-1">
+        @for (tag of metadata.tags; track tag) {
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full border discover-tag">{{ tag }}</span>
+        }
+      </div>
+      <h3 class="font-semibold text-sm leading-5 truncate">{{ metadata.title }}</h3>
+    </div>
 
-  @switch (item.type) {
-    @case (DataItemType.Price) {
-      <app-price-table-mini [item]="item"/>
-    }
-    @case (DataItemType.Text) {
-      <app-text-block-mini [item]="item"/>
-    }
-  }
+    <button
+      (click)="displayData()"
+      class="btn-accent w-fit px-2 flex items-center shrink-0"
+      [disabled]="isDisplayed()"
+      aria-label="Afficher"
+      title="Afficher"
+    >
+      <mat-icon aria-hidden="true">display_settings</mat-icon>
+    </button>
+  </div>
 </div>

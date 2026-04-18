@@ -77,6 +77,11 @@ export class AuthModalComponent {
     this.hidePassword = true;
   }
 
+
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
+  }
+
   closeModal(): void {
     this.resetSensitiveFields();
     this.dialogRef.close();

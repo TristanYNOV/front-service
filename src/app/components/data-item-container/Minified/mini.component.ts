@@ -1,32 +1,32 @@
-import {Component, inject, Input} from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AnyDataItems } from '../../../interfaces/dataItem.interface';
-import { DataItemState, DataItemType } from '../../../enum/state.enum';
-import {PriceTableMiniComponent} from '../../specialized-data/PriceTable/Minified/price-table-mini.component';
-import {TextBlockMiniComponent} from '../../specialized-data/TextBlock/Minified/text-block-mini.component';
+import { DataItemState } from '../../../enum/state.enum';
 import { displayFromIdle, displayFromSaved } from '../../../store/Data/dataState.actions';
 import { selectDisplayedItems } from '../../../store/Data/dataState.selectors';
+import { MatIconModule } from '@angular/material/icon';
+import { DataItemMeta, getDataItemMeta } from '../../specialized-data/data-item-content.registry';
 
 @Component({
   selector: 'app-mini',
   standalone: true,
-  imports: [
-    PriceTableMiniComponent,
-    TextBlockMiniComponent
-  ],
+  imports: [MatIconModule],
   templateUrl: './mini.component.html',
 })
 export class MiniComponent {
-  @Input({required: true}) item!: AnyDataItems;
-  protected readonly DataItemType = DataItemType;
+  @Input({ required: true }) item!: AnyDataItems;
   private readonly store = inject(Store);
   private readonly displayedItems = this.store.selectSignal(selectDisplayedItems);
+
+  get metadata(): DataItemMeta {
+    return getDataItemMeta(this.item);
+  }
 
   isDisplayed(): boolean {
     return this.displayedItems().some(item => item.id === this.item.id);
   }
 
-  displayData() {
+  displayData(): void {
     if (this.isDisplayed()) {
       return;
     }

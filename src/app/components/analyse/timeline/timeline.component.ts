@@ -13,6 +13,10 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngrx/store';
+import { filter, firstValueFrom, skip, take } from 'rxjs';
 import {
   TIMELINE_AUTO_FOLLOW_COMFORT_ZONE,
   TIMELINE_AUTO_FOLLOW_TARGET_RATIO,
@@ -22,28 +26,50 @@ import {
 import { TimelineFacadeService } from '../../../core/services/timeline-facade.service';
 import { TimebaseService } from '../../../core/services/timebase.service';
 import { TimelineOccurrence } from '../../../interfaces/timeline/timeline.interface';
+import { TimelineResourceResponse } from '../../../interfaces/analysis-store';
 import { TimelineLabelsDialogComponent } from './timeline-labels-dialog.component';
 import { getReadableTextColor } from '../../../utils/color/color-contrast.utils';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { TimelineZoomService } from '../../../core/services/timeline-zoom.service';
 import { ZoomControlsComponent } from '../../shared/zoom-controls/zoom-controls.component';
+import {
+  analysisStoreExportTimeline,
+  analysisStoreImportTimeline,
+  analysisStoreLoadRemoteTimeline,
+  analysisStoreLoadTimelineList,
+  analysisStoreSaveTimeline,
+} from '../../../store/AnalysisStore/analysis-store.actions';
+import {
+  selectAnalysisStoreTimelineOps,
+  selectAnalysisStoreTimelineResources,
+} from '../../../store/AnalysisStore/analysis-store.selectors';
+import { selectTimelineState } from '../../../store/Timeline/timeline.selectors';
+import { hasTimelineImportDataLossFromRawPayload } from '../../../utils/timeline/timeline-import.util';
+import { TimelineFinderDialogComponent } from './modals/timeline-finder-dialog.component';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, MatIconModule, ZoomControlsComponent],
+  imports: [CommonModule, MatIconModule, MatMenuModule, ZoomControlsComponent],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })
 export class TimelineComponent implements OnDestroy, AfterViewInit {
   @ViewChild('timeScrollEl', { static: false }) timeScrollElRef?: ElementRef<HTMLDivElement>;
   @ViewChild('timelineRoot', { static: false }) timelineRootRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('timelineFileInput', { static: true }) timelineFileInput?: ElementRef<HTMLInputElement>;
 
   readonly facade = inject(TimelineFacadeService);
   readonly timebase = inject(TimebaseService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialogService = inject(ConfirmDialogService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly store = inject(Store);
   readonly timelineZoom = inject(TimelineZoomService);
+
+  private readonly timelineOps = this.store.selectSignal(selectAnalysisStoreTimelineOps);
+  private readonly timelineResources = this.store.selectSignal(selectAnalysisStoreTimelineResources);
+  private readonly timelineState = this.store.selectSignal(selectTimelineState);
 
   readonly rowHeightPx = TIMELINE_ROW_HEIGHT_PX;
   readonly rulerHeightPx = 36;
@@ -133,6 +159,7 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
   readonly selectedCount = computed(() => this.facade.selectionIds().length);
   readonly selectionContainsOpen = computed(() => this.selectedOccurrences().some(occurrence => occurrence.isOpen));
   readonly canDeleteSelection = computed(() => this.selectedCount() > 0 && !this.selectionContainsOpen());
+  readonly isTimelineSaving = computed(() => this.timelineOps().isSaving);
 
   private readonly labelNameById = computed(() =>
     this.facade.labelDefs().reduce<Record<string, string>>((accumulator, definition) => {
@@ -264,6 +291,95 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
     if (!this.isProgrammaticScrollSignal() && this.timebase.isPlaying() && this.facade.autoFollow()) {
       this.facade.setAutoFollow(false);
     }
+  }
+
+  saveTimeline() {
+    this.store.dispatch(analysisStoreSaveTimeline({}));
+  }
+
+  triggerImportTimeline() {
+    this.timelineFileInput?.nativeElement.click();
+  }
+
+  async onImportTimelineFileSelected(event: Event) {
+    const target = event.target as HTMLInputElement | null;
+    const file = target?.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    target.value = '';
+
+    try {
+      const rawContent = await file.text();
+      const parsedPayload = JSON.parse(rawContent) as Record<string, unknown>;
+
+      if (hasTimelineImportDataLossFromRawPayload(this.timelineState(), parsedPayload)) {
+        const shouldContinue = await this.confirmDialogService.confirm({
+          title: 'Écraser la timeline courante ?',
+          message: 'Des événements/occurrences seront perdus. Voulez-vous continuer ?',
+          confirmLabel: 'Écraser',
+          cancelLabel: 'Annuler',
+        });
+        if (!shouldContinue) {
+          return;
+        }
+      }
+
+      this.store.dispatch(analysisStoreImportTimeline({ payload: parsedPayload }));
+    } catch {
+      this.snackBar.open('Le fichier sélectionné n’est pas un JSON valide.', 'Fermer', { duration: 3500 });
+    }
+  }
+
+  exportTimeline() {
+    this.store.dispatch(analysisStoreExportTimeline());
+  }
+
+  async openTimelineFinderDialog() {
+    this.store.dispatch(analysisStoreLoadTimelineList());
+    await firstValueFrom(
+      this.store.select(selectAnalysisStoreTimelineOps).pipe(
+        skip(1),
+        filter(ops => !ops.isLoadingList),
+        take(1),
+      ),
+    );
+
+    const resources = this.timelineResources();
+    if (!resources.length) {
+      this.snackBar.open('Aucune timeline distante disponible.', 'Fermer', { duration: 2800 });
+      return;
+    }
+
+    const dialogRef = this.dialog.open(TimelineFinderDialogComponent, {
+      width: '860px',
+      maxWidth: '96vw',
+      panelClass: 'analysis-panel-finder-dialog',
+      data: {
+        timelines: resources,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(async (resource: TimelineResourceResponse | null) => {
+      if (!resource) {
+        return;
+      }
+
+      if (this.shouldConfirmReplaceCurrentTimeline()) {
+        const shouldContinue = await this.confirmDialogService.confirm({
+          title: 'Écraser la timeline courante ?',
+          message: 'La timeline courante sera remplacée par la timeline distante sélectionnée.',
+          confirmLabel: 'Écraser',
+          cancelLabel: 'Annuler',
+        });
+        if (!shouldContinue) {
+          return;
+        }
+      }
+
+      this.store.dispatch(analysisStoreLoadRemoteTimeline({ resource }));
+    });
   }
 
   async deleteSelection() {
@@ -525,5 +641,14 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
       this.isProgrammaticScrollSignal.set(false);
       this.programmaticScrollTimeoutId = undefined;
     }, 120);
+  }
+
+  private shouldConfirmReplaceCurrentTimeline() {
+    const timeline = this.timelineState();
+    return (
+      timeline.definitions.eventDefs.length > 0 ||
+      timeline.definitions.labelDefs.length > 0 ||
+      timeline.occurrences.length > 0
+    );
   }
 }

@@ -1,5 +1,6 @@
 export interface AppEnvironment {
   production: boolean;
+  analysisStoreDevHeadersEnabled: boolean;
   apiAllowedPrefixes: string[];
   authEndpoints: {
     login: string;
@@ -7,5 +8,11 @@ export interface AppEnvironment {
     refresh: string;
     logout: string;
     me: string;
+  };
+  analysisStoreEndpoints: {
+    importsTimelinesValidate: string;
+    importsPanelsValidate: string;
+    timelines: string;
+    panels: string;
   };
 }

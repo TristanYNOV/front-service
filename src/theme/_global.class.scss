@@ -54,15 +54,33 @@
 }
 
 .seq-btn-event {
+  border-radius: 2rem;
   background-color: var(--sequencer-event-bg) !important;
   border-color: var(--sequencer-event-border) !important;
   color: var(--sequencer-event-text);
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
 .seq-btn-label {
+  border-radius: 2rem;
   background-color: var(--sequencer-label-bg) !important;
   border-color: var(--sequencer-label-border) !important;
   color: var(--sequencer-label-text);
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.seq-btn-stat {
+  border-radius: 2rem;
+  background-color: var(--sequencer-stat-bg) !important;
+  border-color: var(--sequencer-stat-border) !important;
+  color: var(--sequencer-stat-text);
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
 .seq-btn-event-card {
@@ -134,4 +152,29 @@
 .is-pressed,
 .is-active {
   border-color: var(--interactive-active-border);
+}
+
+.discover-card {
+  background-color: var(--discover-card-bg);
+  border-color: var(--discover-card-border);
+  color: var(--discover-card-text);
+}
+
+.discover-muted {
+  color: var(--discover-card-muted);
+}
+
+.discover-tag {
+  background-color: var(--discover-tag-bg);
+  border-color: var(--discover-tag-border);
+  color: var(--discover-tag-text);
+}
+
+.discover-panel {
+  background-color: var(--bg-layer-2);
+  border: 1px solid var(--border-layer);
+}
+
+.discover-canvas-item {
+  border: 1px solid var(--border-layer);
 }

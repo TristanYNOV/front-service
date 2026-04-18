@@ -2,6 +2,7 @@ import { AppEnvironment } from './environment.model';
 
 export const environment: AppEnvironment = {
   production: false,
+  analysisStoreDevHeadersEnabled: true,
   apiAllowedPrefixes: ['/auth', '/api', '/me', '/users'],
   authEndpoints: {
     login: '/auth/login',
@@ -9,5 +10,11 @@ export const environment: AppEnvironment = {
     refresh: '/auth/refresh',
     logout: '/auth/logout',
     me: '/me',
+  },
+  analysisStoreEndpoints: {
+    importsTimelinesValidate: '/api/imports/timelines/validate',
+    importsPanelsValidate: '/api/imports/panels/validate',
+    timelines: '/api/timelines',
+    panels: '/api/panels',
   },
 };

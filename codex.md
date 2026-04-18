@@ -243,3 +243,53 @@ Checklist
 - UI Timeline (`src/app/components/analyse/timeline/*`) : layout 2 colonnes (liste events fixe + zone temps), ruler sticky, viewport scrollable X/Y, sélection simple/multi, handles resize, selection tools en footer, auto-follow contextuel + recenter.
 - Mode sans vidéo : empty state + CTA chrono ; work duration tamponnée (`bufferWorkDurationMs`) pour conserver un espace de travail en faux live.
 - Schéma/version : utilitaires dédiés (`src/app/utils/timeline/timeline-version.utils.ts`) avec regex stricte `^\d+\.\d+\.\d+$` et helpers validate/format/compare.
+
+## 19) Sequencer Stats Buttons (V1)
+- Nouveau type de bouton natif `stat` dans `SequencerBtn` avec payload `stat` sérialisable :
+  - mode `simple` avec `query: { eventIds[], labelIds[], metric:'count', labelMatch:'all' }`
+  - mode `complex` évalué sur AST (`constant`, `query`, `group` + opérateurs `+ - * /`).
+  - UX d’édition complexe orientée expression mathématique visuelle : termes nommables librement (nom métier) + tokens (`terme`, opérateur, parenthèses), sans champ “priorité”.
+- Topbar sequencer (`/analyse`) : bouton **Stats** (`query_stats`) pour créer un bouton `stat`.
+- Canvas :
+  - un bouton `stat` est rendu comme un vrai bouton (layout drag/resize inchangé),
+  - en mode run il affiche `name + valeur live`, informatif uniquement (aucune action timeline au clic/hotkey),
+  - l’icône `gesture_select` ouvre la configuration de stats en mode édition,
+  - la modale est scrollable verticalement (header/actions stables) pour gérer de longues expressions.
+- Service dédié `SequencerStatsService` (signals/computed) :
+  - centralise le calcul de stats à partir des occurrences d’analyse,
+  - évalue les requêtes simples (`count`) et expressions complexes,
+  - renvoie les valeurs live + une sortie structurée (`exportRows`) pour futur export Excel.
+- Règles métier V1 :
+  - matching simple = `eventDefId ∈ eventIds` AND tous les labels demandés sont présents,
+  - `labelMatch` implémenté uniquement en `all`,
+  - division par zéro / calcul invalide => `null` (affichage `—`).
+- Affichage des valeurs :
+  - arrondi d’affichage uniquement,
+  - entier sans décimales,
+  - décimal avec maximum 2 décimales.
+- Validation UX modale stats :
+  - couleur prévisualisée via swatch simple,
+  - mode simple valide uniquement si au moins un event est sélectionné,
+  - couleurs de labels configurables côté stats (`labelColorById`) pour simple et termes requête en complexe,
+  - mode complexe valide avec expression complète (tokens), parenthèses équilibrées, termes valides,
+  - division statique par zéro bloquée à la configuration (division dynamique laissée au runtime, affichée `—`).
+- Import/export JSON sequencer :
+  - `SequencerPanelService.exportAsJson()` / `importFromJson()` prennent en charge `event`, `label`, `stat`,
+  - la définition de stats reste stockée dans chaque bouton `stat` (source de vérité unique).
+- Limites connues V1 :
+  - pas de `%`, pas de parser texte libre,
+  - pas de référence inter-boutons stats,
+  - pas de métriques de durée (count seulement),
+  - `labelMatch: 'any'` non implémenté (prévu plus tard).
+
+## 20) Discover Home Content (UX orientée utilisateur)
+- Les contenus Discover reposent sur un registre centralisé dans `src/app/components/specialized-data/data-item-content.registry.ts` (titre, tags/badges, résumé minifié, contenu textuel).
+- Les cartes affichées par défaut sur `/discover` sont maintenant :
+  - `project-goal`
+  - `ux-ui-workflow`
+  - `analysis-page-overview`
+- Les cartes prêtes à afficher depuis la sidebar : `video-shortcuts`, `sequencer-overview`, `timeline-overview`, `ffmpeg-installation`, `price-table-default`.
+- `DataItemContainerComponent` et `MiniComponent` utilisent les mêmes métadonnées (titre + tags) pour garantir la cohérence entre vue étendue/minifiée.
+- Le composant prix reste disponible et a été simplifié en version minifiée (aperçu léger + prix d’entrée).
+- Les classes visuelles Discover passent par le thème (`discover-card`, `discover-tag`, `discover-muted`, `discover-panel`, `discover-canvas-item`) défini dans `src/theme/_global.class.scss` ; éviter les couleurs Tailwind dans ces composants.
+

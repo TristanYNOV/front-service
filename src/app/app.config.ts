@@ -10,9 +10,12 @@ import { provideEffects } from '@ngrx/effects';
 import { dataStateReducer } from './store/Data/dataState.reducers';
 import { DataEffects } from './store/Data/dataState.effects';
 import { timelineReducer } from './store/Timeline/timeline.reducer';
+import { analysisStoreReducer } from './store/AnalysisStore/analysis-store.reducer';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { refreshInterceptor } from './core/interceptors/refresh.interceptor';
+import { analysisStoreDevAuthInterceptor } from './core/interceptors/analysis-store-dev-auth.interceptor';
 import { provideAuthBootstrap } from './core/auth/auth.bootstrap';
+import { AnalysisStoreEffects } from './store/AnalysisStore/analysis-store.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,9 +26,10 @@ export const appConfig: ApplicationConfig = {
     provideStore({
       dataState: dataStateReducer,
       timelineState: timelineReducer,
+      analysisStoreState: analysisStoreReducer,
     }),
-    provideEffects(DataEffects),
-    provideHttpClient(withInterceptors([jwtInterceptor, refreshInterceptor])),
+    provideEffects(DataEffects, AnalysisStoreEffects),
+    provideHttpClient(withInterceptors([jwtInterceptor, analysisStoreDevAuthInterceptor, refreshInterceptor])),
     provideAuthBootstrap(),
   ],
 };

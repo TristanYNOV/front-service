@@ -60,6 +60,47 @@
     ></app-zoom-controls>
 
     <button
+      class="icon flex items-center p-2"
+      type="button"
+      [disabled]="isTimelineSaving()"
+      (click)="saveTimeline()"
+      aria-label="Sauvegarder la timeline"
+      title="Sauvegarder la timeline"
+    >
+      <mat-icon aria-hidden="true">save</mat-icon>
+    </button>
+
+    <button
+      class="icon flex items-center p-2"
+      type="button"
+      (click)="openTimelineFinderDialog()"
+      aria-label="Trouver une timeline distante"
+      title="Trouver une timeline distante"
+    >
+      <mat-icon aria-hidden="true">search</mat-icon>
+    </button>
+
+    <button
+      class="icon flex items-center p-2"
+      type="button"
+      [matMenuTriggerFor]="timelineMenu"
+      aria-label="Menu timeline"
+      title="Importer / Exporter"
+    >
+      <mat-icon aria-hidden="true">more_vert</mat-icon>
+    </button>
+    <mat-menu #timelineMenu="matMenu">
+      <button mat-menu-item type="button" (click)="triggerImportTimeline()">
+        <mat-icon aria-hidden="true">upload_file</mat-icon>
+        <span>Importer</span>
+      </button>
+      <button mat-menu-item type="button" (click)="exportTimeline()">
+        <mat-icon aria-hidden="true">download</mat-icon>
+        <span>Exporter</span>
+      </button>
+    </mat-menu>
+
+    <button
       class="btn-secondary ml-auto flex items-center justify-center"
       type="button"
       aria-label="Supprimer la sélection"
@@ -174,3 +215,10 @@
     </div>
   }
 </div>
+<input
+  #timelineFileInput
+  type="file"
+  accept="application/json,.json"
+  class="hidden"
+  (change)="onImportTimelineFileSelected($event)"
+/>

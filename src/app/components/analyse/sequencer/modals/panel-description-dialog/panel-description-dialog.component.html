@@ -1,0 +1,19 @@
+<h2 mat-dialog-title class="bg-layer-3 text-default m-0 text-center">Éditer la description</h2>
+
+<mat-dialog-content class="bg-layer-3 text-default pt-4">
+  <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
+    <mat-label>Description</mat-label>
+    <textarea
+      matInput
+      rows="5"
+      [ngModel]="description()"
+      (ngModelChange)="description.set($event)"
+      placeholder="Ajouter une description"
+    ></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="bg-layer-3 pb-3 pr-3">
+  <button mat-stroked-button type="button" (click)="close()">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">Enregistrer</button>
+</mat-dialog-actions>

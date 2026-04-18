@@ -35,6 +35,12 @@
       <label for="event-color" class="text-xs font-semibold">Couleur</label>
       <input id="event-color" type="color" formControlName="colorHex" class="timeline-color-input" />
     </div>
+    <div class="border-layer rounded-md border p-3">
+      <mat-checkbox formControlName="isAnonymized">Anonymiser ce bouton</mat-checkbox>
+      <p class="text-muted mt-1 text-xs italic">
+        Active l’obfuscation du nom du bouton dans les vues concernées.
+      </p>
+    </div>
 
     @if (isEdit) {
       <div class="border-layer rounded-md border p-3">

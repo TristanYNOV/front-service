@@ -1,8 +1,14 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { catchError, finalize, map, Observable, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { AuthApiService } from './auth-api.service';
 import { AuthState, UserPublicDto } from './auth.models';
+import { SequencerPanelService } from '../service/sequencer-panel.service';
+import { SequencerRuntimeService } from '../service/sequencer-runtime.service';
+import { VideoService } from '../services/video.service';
+import { resetTimeline } from '../../store/Timeline/timeline.actions';
+import { analysisStoreResetWorkspaceState } from '../../store/AnalysisStore/analysis-store.actions';
 
 const initialState: AuthState = {
   status: 'anonymous',
@@ -17,6 +23,10 @@ const initialState: AuthState = {
 export class AuthSessionService {
   private readonly authApi = inject(AuthApiService);
   private readonly router = inject(Router);
+  private readonly store = inject(Store);
+  private readonly sequencerPanelService = inject(SequencerPanelService);
+  private readonly sequencerRuntimeService = inject(SequencerRuntimeService);
+  private readonly videoService = inject(VideoService);
 
   private readonly stateSignal = signal<AuthState>(initialState);
   private refreshInFlight$: Observable<string> | null = null;
@@ -113,6 +123,7 @@ export class AuthSessionService {
   }
 
   clearAuthState(): void {
+    this.resetWorkingState();
     this.stateSignal.set({
       ...initialState,
       bootstrapped: true,
@@ -138,5 +149,13 @@ export class AuthSessionService {
 
   private patchState(patch: Partial<AuthState>): void {
     this.stateSignal.update(state => ({ ...state, ...patch }));
+  }
+
+  private resetWorkingState(): void {
+    this.sequencerPanelService.resetPanel();
+    this.sequencerRuntimeService.resetRuntimeState();
+    this.videoService.clearVideo();
+    this.store.dispatch(resetTimeline());
+    this.store.dispatch(analysisStoreResetWorkspaceState());
   }
 }

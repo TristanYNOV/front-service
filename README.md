@@ -20,6 +20,9 @@ npm start
   - `/auth`, `/users`, `/me` vers `http://localhost:3000` (auth-service)
   - `/analysis/api/...` vers `http://localhost:3001/api/...` (analysis-store-service, via strip du préfixe `/analysis`)
 - En production, le proxy Angular n'est pas utilisé : Traefik doit router publiquement `/analysis/...` vers analysis-store-service.
+- En SSR/prod, `/runtime-config.js` est généré dynamiquement par `src/server.ts` à partir des variables d'environnement + des valeurs `environment` Angular.
+- Le navigateur lit `window.__RUNTIME_CONFIG__` pour résoudre les endpoints publics relatifs (dont analysis-store en `/analysis/api/...`).
+- Le proxy Angular (`proxy.conf.mjs`) reste réservé au développement local.
 
 ## Build local
 ```bash

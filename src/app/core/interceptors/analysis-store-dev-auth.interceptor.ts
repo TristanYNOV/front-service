@@ -3,7 +3,19 @@ import { inject } from '@angular/core';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { runtimeEnvironment } from '../config/runtime-environment';
 
-const ANALYSIS_STORE_PROTECTED_PREFIXES = ['/api/imports', '/api/panels', '/api/timelines'];
+function normalizePrefix(prefix: string): string {
+  const trimmed = prefix.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  return trimmed.replace(/\/+$/, '');
+}
+
+function getAnalysisStoreProtectedPrefixes(): string[] {
+  const analysisStoreApiBase = `${normalizePrefix(runtimeEnvironment.analysisStoreApiPrefix)}/api`;
+  return [`${analysisStoreApiBase}/imports`, `${analysisStoreApiBase}/panels`, `${analysisStoreApiBase}/timelines`];
+}
 
 export const analysisStoreDevAuthInterceptor: HttpInterceptorFn = (req, next) => {
   if (!runtimeEnvironment.analysisStoreDevHeadersEnabled || !isAnalysisStoreProtectedUrl(req.url)) {
@@ -29,15 +41,17 @@ function isAnalysisStoreProtectedUrl(url: string): boolean {
     return false;
   }
 
+  const protectedPrefixes = getAnalysisStoreProtectedPrefixes();
+
   if (!/^https?:\/\//i.test(url)) {
-    return ANALYSIS_STORE_PROTECTED_PREFIXES.some(prefix => url.startsWith(prefix));
+    return protectedPrefixes.some(prefix => url.startsWith(prefix));
   }
 
   try {
     const parsed = new URL(url);
     const isSameOrigin = typeof window !== 'undefined' ? parsed.origin === window.location.origin : false;
 
-    return isSameOrigin && ANALYSIS_STORE_PROTECTED_PREFIXES.some(prefix => parsed.pathname.startsWith(prefix));
+    return isSameOrigin && protectedPrefixes.some(prefix => parsed.pathname.startsWith(prefix));
   } catch {
     return false;
   }

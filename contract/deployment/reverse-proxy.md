@@ -10,6 +10,7 @@
 - Toutes les routes frontend (`/`, `/discover`, `/analyse`, etc.) doivent pointer vers le front.
 - Les routes API backend peuvent être routées séparément par Traefik.
 - Si le front consomme des endpoints relatifs (`/auth`, `/users`, `/me`), Traefik doit les router vers le backend approprié.
+- Analysis-store: le front consomme publiquement `/analysis/api/...`; Traefik doit router ce préfixe vers `analysis-store-service` (avec strip-prefix `/analysis` si le service expose `/api/...` en interne).
 
 ## Deep-link / refresh
 - En SSR, un refresh sur une route profonde fonctionne si Traefik transfère la requête telle quelle au serveur front.

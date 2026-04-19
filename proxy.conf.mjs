@@ -6,8 +6,8 @@
  *   le cookie refresh `Path=/auth`.
  *
  * Analysis-store-service (localhost:3001)
- * - Router uniquement les routes réellement utilisées par le front,
- *   sans capturer globalement tout `/api` (évite les collisions inter-services).
+ * - Le front appelle le préfixe public `/analysis/api/...` (même contrat qu'en prod derrière Traefik).
+ * - En dev, le proxy retire `/analysis` pour cibler le service local qui expose ses routes internes en `/api/...`.
  */
 export default {
   // auth-service
@@ -28,19 +28,22 @@ export default {
   },
 
   // analysis-store-service
-  '/api/imports': {
+  '/analysis/api/imports': {
     target: 'http://localhost:3001',
     secure: false,
     changeOrigin: true,
+    pathRewrite: { '^/analysis': '' },
   },
-  '/api/timelines': {
+  '/analysis/api/timelines': {
     target: 'http://localhost:3001',
     secure: false,
     changeOrigin: true,
+    pathRewrite: { '^/analysis': '' },
   },
-  '/api/panels': {
+  '/analysis/api/panels': {
     target: 'http://localhost:3001',
     secure: false,
     changeOrigin: true,
+    pathRewrite: { '^/analysis': '' },
   },
 };

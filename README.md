@@ -16,7 +16,10 @@ npm ci
 npm start
 ```
 - Frontend: `http://localhost:4200`
-- Le mode dev utilise `proxy.conf.mjs` pour proxifier `/auth`, `/users`, `/me` vers `http://localhost:3000`.
+- Le mode dev utilise `proxy.conf.mjs` pour proxifier :
+  - `/auth`, `/users`, `/me` vers `http://localhost:3000` (auth-service)
+  - `/analysis/api/...` vers `http://localhost:3001/api/...` (analysis-store-service, via strip du préfixe `/analysis`)
+- En production, le proxy Angular n'est pas utilisé : Traefik doit router publiquement `/analysis/...` vers analysis-store-service.
 
 ## Build local
 ```bash

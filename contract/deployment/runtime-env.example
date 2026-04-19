@@ -13,5 +13,9 @@ AUTH_REFRESH_ENDPOINT=/auth/refresh
 AUTH_LOGOUT_ENDPOINT=/auth/logout
 AUTH_ME_ENDPOINT=/me
 
+# Préfixe public analysis-store utilisé par le front (Traefik),
+# le service backend conserve ses routes internes en /api.
+ANALYSIS_STORE_API_PREFIX=/analysis
+
 # Préfixes autorisés pour l'injection automatique du bearer token (CSV)
-API_ALLOWED_PREFIXES=/auth,/api,/me,/users
+API_ALLOWED_PREFIXES=/auth,/analysis/api,/api,/me,/users

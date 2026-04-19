@@ -53,13 +53,14 @@ function readServerRuntimeConfig(): RuntimeConfigShape {
   }
 
   const authPrefix = process.env['AUTH_API_PREFIX']?.trim() || '';
-  const analysisStorePrefix = process.env['ANALYSIS_STORE_API_PREFIX']?.trim() || '';
+  const analysisStorePrefix = process.env['ANALYSIS_STORE_API_PREFIX']?.trim() || environment.analysisStoreApiPrefix;
 
   return {
     analysisStoreDevHeadersEnabled: parseBoolean(
       process.env['ANALYSIS_STORE_DEV_HEADERS_ENABLED'],
       environment.analysisStoreDevHeadersEnabled,
     ),
+    analysisStoreApiPrefix: analysisStorePrefix,
     apiAllowedPrefixes: parseCsv(process.env['API_ALLOWED_PREFIXES'], environment.apiAllowedPrefixes),
     authEndpoints: {
       login: process.env['AUTH_LOGIN_ENDPOINT'] || `${authPrefix}/auth/login`,
@@ -86,6 +87,7 @@ function mergeWithDefaults(runtimeConfig: RuntimeConfigShape): AppEnvironment {
     production: environment.production,
     analysisStoreDevHeadersEnabled:
       runtimeConfig.analysisStoreDevHeadersEnabled ?? environment.analysisStoreDevHeadersEnabled,
+    analysisStoreApiPrefix: runtimeConfig.analysisStoreApiPrefix ?? environment.analysisStoreApiPrefix,
     apiAllowedPrefixes: runtimeConfig.apiAllowedPrefixes ?? environment.apiAllowedPrefixes,
     authEndpoints: {
       login: runtimeConfig.authEndpoints?.login ?? environment.authEndpoints.login,

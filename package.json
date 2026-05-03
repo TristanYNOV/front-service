@@ -8,7 +8,10 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:front-service": "node dist/front-service/server/server.mjs",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "test:watch": "ng test --watch",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --no-progress",
+    "test:cov": "ng test --watch=false --browsers=ChromeHeadless --code-coverage"
   },
   "private": true,
   "dependencies": {

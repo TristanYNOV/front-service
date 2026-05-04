@@ -27,6 +27,15 @@ npm run build
 ```
 Le build produit un artefact SSR Angular (`dist/front-service/browser` + `dist/front-service/server`).
 
+## Observability
+
+Le serveur Node/SSR expose `GET /metrics` pour Prometheus:
+- métriques runtime Node.js via `prom-client`,
+- métriques HTTP agrégées par méthode, route normalisée et code statut,
+- métriques SSR de durée de rendu et d'erreurs.
+
+Les métriques restent côté serveur et n'incluent pas de données utilisateur, payload applicatif ou identifiant métier.
+
 ## Docker local
 ```bash
 docker build -t front-service:local .

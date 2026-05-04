@@ -4,6 +4,8 @@ import express from 'express';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import bootstrap from './main.server';
+import { buildRuntimeConfigFromEnv } from './app/core/config/runtime-config-builder';
+import { environment } from './environments/environment';
 import { httpMetricsMiddleware } from './observability/http-metrics.middleware';
 import {
   getMetricsPayload,
@@ -35,8 +37,11 @@ app.get('/metrics', async (_req, res) => {
 });
 
 app.get('/runtime-config.js', (_req, res) => {
+  const runtimeConfig = buildRuntimeConfigFromEnv(process.env, environment);
+
   res.setHeader('Cache-Control', 'no-store, max-age=0');
-  res.sendFile(join(browserDistFolder, 'runtime-config.js'));
+  res.type('application/javascript');
+  res.send(`window.__RUNTIME_CONFIG__ = ${JSON.stringify(runtimeConfig)};`);
 });
 
 /**

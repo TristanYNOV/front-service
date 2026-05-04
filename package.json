@@ -8,7 +8,10 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:front-service": "node dist/front-service/server/server.mjs",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "test:watch": "ng test --watch",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --no-progress --exclude=src/app/core/services/sequencer-timeline-bridge.service.spec.ts --exclude=src/app/core/services/timebase.service.spec.ts --exclude=src/app/header/header.component.spec.ts --exclude=src/app/core/auth/auth-session.service.spec.ts --exclude=src/app/core/services/timeline-facade.service.spec.ts --exclude=src/app/pages/discover/discover.component.spec.ts --exclude=src/app/pages/landing/landing.component.spec.ts --exclude=src/app/core/services/hotkeys.service.spec.ts --exclude=src/app/core/service/sequencer-runtime.service.spec.ts",
+    "test:cov": "ng test --watch=false --browsers=ChromeHeadless --code-coverage --no-progress --exclude=src/app/core/services/sequencer-timeline-bridge.service.spec.ts --exclude=src/app/core/services/timebase.service.spec.ts --exclude=src/app/header/header.component.spec.ts --exclude=src/app/core/auth/auth-session.service.spec.ts --exclude=src/app/core/services/timeline-facade.service.spec.ts --exclude=src/app/pages/discover/discover.component.spec.ts --exclude=src/app/pages/landing/landing.component.spec.ts --exclude=src/app/core/services/hotkeys.service.spec.ts --exclude=src/app/core/service/sequencer-runtime.service.spec.ts"
   },
   "private": true,
   "dependencies": {

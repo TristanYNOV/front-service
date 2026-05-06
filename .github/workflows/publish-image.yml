@@ -28,10 +28,12 @@ jobs:
             echo "Tag invalide: ${GITHUB_REF_NAME}. Seuls les tags stables SemVer (vX.Y.Z) sont autorisés."
             exit 1
           fi
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
 
       - name: Ensure tagged commit is on origin/prod
         run: |
-          git fetch --no-tags origin prod
+          git fetch origin prod
           if ! git merge-base --is-ancestor "${GITHUB_SHA}" "origin/prod"; then
             echo "Le commit taggé (${GITHUB_SHA}) n'appartient pas à l'historique de origin/prod."
             exit 1
@@ -61,8 +63,9 @@ jobs:
         with:
           images: ${{ steps.image.outputs.name }}
           tags: |
-            type=raw,value=${{ github.ref_name }}
-            type=raw,value=sha-${{ github.sha }}
+            type=raw,value=latest
+            type=raw,value=prod
+            type=raw,value=${{ env.VERSION }}
           labels: |
             org.opencontainers.image.title=front-service
             org.opencontainers.image.description=Frontend Angular SSR runtime image
@@ -83,8 +86,9 @@ jobs:
             echo "## GHCR publication"
             echo
             echo "- Image: \`${{ steps.image.outputs.name }}\`"
-            echo "- Tag SemVer: \`${{ steps.image.outputs.name }}:${{ github.ref_name }}\`"
-            echo "- Tag sha: \`${{ steps.image.outputs.name }}:sha-${{ github.sha }}\`"
+            echo "- Tag latest: \`${{ steps.image.outputs.name }}:latest\`"
+            echo "- Tag prod: \`${{ steps.image.outputs.name }}:prod\`"
+            echo "- Tag version: \`${{ steps.image.outputs.name }}:${{ env.VERSION }}\`"
             echo "- Digest final: \`${{ steps.build.outputs.digest }}\`"
             echo
             echo "> Infra: privilégier un déploiement verrouillé sur le digest GHCR."

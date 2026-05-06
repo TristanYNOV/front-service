@@ -6,8 +6,9 @@ Ce dossier est la source de vérité à copier/consommer depuis le futur repo `i
 L'image `front` embarque le runtime **Angular SSR (Node/Express)**. Elle sert le HTML rendu côté serveur (SEO), les assets statiques Angular et une route de healthcheck.
 
 ## Image GHCR attendue
+- `ghcr.io/<owner_lower>/front-service:latest`
 - `ghcr.io/<owner_lower>/front-service:prod`
-- `ghcr.io/<owner_lower>/front-service:sha-<full_sha>`
+- `ghcr.io/<owner_lower>/front-service:X.Y.Z`
 - Image GHCR privée (consommée par le repo `infra` via droits de lecture GHCR).
 
 Voir aussi `ghcr-tags.md`.

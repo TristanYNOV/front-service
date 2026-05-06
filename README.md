@@ -48,12 +48,15 @@ docker run --rm -p 4000:4000 -e AUTH_API_PREFIX=http://localhost:3000 front-serv
 ## CI/CD GitHub Actions
 - `lint.yml` : lint sur `push` (toutes branches) + `pull_request`.
 - `build.yml` : build sur `push` (toutes branches) + `pull_request`.
-- `publish-image.yml` : publication image GHCR **uniquement** sur `push` vers `master`.
+- `publish-image.yml` : publication image GHCR **uniquement** sur push d'un tag Git stable `vX.Y.Z`, si le commit taggé appartient à l'historique de `prod`.
 
 ## Publication image
 Image publiée sur GHCR sous la forme:
-- `ghcr.io/<owner>/<repo>:master`
-- `ghcr.io/<owner>/<repo>:sha-<shortsha>`
+- `ghcr.io/<owner_lower>/front-service:latest`
+- `ghcr.io/<owner_lower>/front-service:prod`
+- `ghcr.io/<owner_lower>/front-service:X.Y.Z`
+
+Aucun tag Docker de branche, `sha-*`, `dev`, `main`, `master` ou préfixé `v` n'est publié.
 
 ## Contrat de déploiement (pour le futur repo infra)
 Voir `contract/deployment/`:

@@ -29,6 +29,7 @@
       } @else if (!hasVideo()) {
         <div class="text-muted absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
           <p>Importez une vidéo locale pour démarrer.</p>
+          <button type="button" class="btn-primary px-3 py-2" (click)="onChangeVideoClick()">Choisir une vidéo</button>
         </div>
       }
     </div>

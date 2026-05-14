@@ -1,0 +1,53 @@
+@use './variables/sequencer.variables';
+
+.seq-btn-event {
+  border-radius: 2rem;
+  background-color: var(--sequencer-event-bg) !important;
+  border-color: var(--sequencer-event-border) !important;
+  color: var(--sequencer-event-text);
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.seq-btn-label {
+  border-radius: 2rem;
+  background-color: var(--sequencer-label-bg) !important;
+  border-color: var(--sequencer-label-border) !important;
+  color: var(--sequencer-label-text);
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.seq-btn-stat {
+  border-radius: 2rem;
+  background-color: var(--sequencer-stat-bg) !important;
+  border-color: var(--sequencer-stat-border) !important;
+  color: var(--sequencer-stat-text);
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.seq-btn-event-card {
+  border-color: var(--sequencer-event-border) !important;
+}
+
+.seq-btn-event-active {
+  position: relative;
+  outline: 2px solid var(--sequencer-active-outline);
+  outline-offset: 0;
+  box-shadow: 0 0 0 1px var(--sequencer-active-outline), 0 0 12px var(--sequencer-active-glow);
+}
+
+.seq-btn-event-active::before,
+.is-active::before {
+  content: "";
+  position: absolute;
+  inset-block: 5px;
+  left: 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--sequencer-active-accent);
+}

@@ -17,6 +17,7 @@ import { HotkeyChord } from '../../../../../interfaces/hotkey-chord.interface';
 import { HotkeyPickerComponent } from '../../hotkeyPicker/hotkey-picker.component';
 import { parseNormalizedHotkey } from '../../../../../utils/sequencer/sequencer-hotkey-options.util';
 import { createSequencerDialogState } from '../../../../../utils/sequencer/sequencer-dialog-state.util';
+import { THEME_COLOR_HEX } from '../../../../../../theme/theme-colors';
 
 export interface EventBtnDialogData {
   mode: 'create' | 'edit';
@@ -72,7 +73,7 @@ export class CreateEventBtnDialogComponent {
       [Validators.required],
     ),
     name: new FormControl(this.data.btn?.name ?? '', [Validators.required]),
-    colorHex: new FormControl(this.data.btn?.colorHex ?? '#1F3D28', { nonNullable: true }),
+    colorHex: new FormControl(this.data.btn?.colorHex ?? THEME_COLOR_HEX.sequencerEventBg, { nonNullable: true }),
     kind: new FormControl<'limited' | 'indefinite'>(this.data.btn?.eventProps.kind ?? 'limited', {
       nonNullable: true,
     }),

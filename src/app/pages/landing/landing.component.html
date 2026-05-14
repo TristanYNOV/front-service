@@ -1,15 +1,81 @@
-<div class="h-full flex flex-col gap-16 justify-center items-center light-text">
-  <span class="text-center text-4xl m-8">
-    Bienvenue sur l'application web !
-  </span>
+<article class="public-page public-home light-text">
+  <header class="public-page__hero">
+    <p class="public-page__eyebrow">Plateforme d’analyse vidéo sportive</p>
+    <h1>Action Board, plateforme d’analyse vidéo sportive</h1>
+    <p>
+      Action Board aide les coachs, clubs, analystes vidéo et étudiants à structurer leurs observations avec des
+      panneaux d’analyse, une timeline claire, des statistiques et des ressources sauvegardées en ligne.
+    </p>
+    <div class="public-actions">
+      <a routerLink="/fonctionnalites" class="btn-accent public-link-button">Découvrir les fonctionnalités</a>
+      <a routerLink="/tarifs" class="public-secondary-link">Voir les tarifs</a>
+    </div>
+  </header>
 
-  <p class="max-w-xl text-center">
-    Cette plateforme a pour objectif de proposer une analyse vidéo abordable et un
-    outil de gestion de club simple à utiliser. Elle évoluera avec de nombreuses
-    fonctionnalités pour vous accompagner au quotidien.
-  </p>
+  <section class="public-section">
+    <h2>Rendre l’analyse vidéo sportive plus accessible</h2>
+    <p>
+      L’analyse vidéo ne devrait pas être réservée aux structures professionnelles. Action Board propose une
+      approche pédagogique et progressive pour observer une vidéo, qualifier les actions importantes et préparer
+      des retours plus utiles aux sportifs.
+    </p>
+  </section>
 
-    <section routerLink="/discover" class="flex flex-col justify-center items-center gap-2 bg-layer-2 rounded-3xl accent-text p-8">
-      <h3>Découvrez ici l'application</h3>
-    </section>
-  </div>
+  <section class="public-section">
+    <h2>Créez vos panneaux d’analyse personnalisés</h2>
+    <p>
+      Un panneau d’analyse regroupe des boutons événement, label et stats. Vous pouvez l’adapter à votre sport,
+      à votre méthode de travail ou à un objectif précis d’entraînement.
+    </p>
+  </section>
+
+  <section class="public-section">
+    <h2>Analysez vos vidéos avec une timeline structurée</h2>
+    <p>
+      La timeline permet de retrouver les moments importants, de visualiser les occurrences et de relier les
+      observations à la vidéo. Les timelines sont privées et visibles uniquement par leur propriétaire.
+    </p>
+  </section>
+
+  <section class="public-section">
+    <h2>Sauvegardez vos analyses et vos panneaux en ligne</h2>
+    <p>
+      Les panneaux et timelines peuvent être sauvegardés pour retrouver votre travail. Les panneaux peuvent être
+      privés ou publics, tandis qu’aucune timeline publique n’est possible. L’import/export facilite aussi la
+      reprise ou le partage d’une structure d’analyse.
+    </p>
+  </section>
+
+  <section class="public-section">
+    <h2>Utilisez des statistiques pendant vos analyses</h2>
+    <p>
+      Les boutons de type stats permettent de suivre des indicateurs pendant l’analyse vidéo, à partir des
+      événements et labels configurés dans le panneau.
+    </p>
+  </section>
+
+  <section class="public-section">
+    <h2>Protégez et anonymisez les données partagées</h2>
+    <p>
+      Lors de la suppression d’un compte, les ressources privées sont supprimées selon la logique existante. Les
+      panneaux publics peuvent être conservés sous forme anonymisée afin de préserver les ressources partagées avec
+      la communauté.
+    </p>
+  </section>
+
+  <section class="public-section">
+    <h2>Une plateforme gratuite avec un compte</h2>
+    <p>
+      Action Board est actuellement gratuit pour les utilisateurs disposant d’un compte. La plateforme continue
+      d’évoluer et pourra proposer plus tard des offres dédiées aux clubs, équipes ou organisations.
+    </p>
+    <nav class="public-inline-nav" aria-label="Pages publiques utiles">
+      <a routerLink="/fonctionnalites">Fonctionnalités</a>
+      <a routerLink="/tarifs">Tarifs</a>
+      <a routerLink="/faq">FAQ</a>
+      <a routerLink="/contact">Contact</a>
+      <a routerLink="/cgu">CGU</a>
+      <a routerLink="/confidentialite">Confidentialité</a>
+    </nav>
+  </section>
+</article>

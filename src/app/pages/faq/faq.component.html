@@ -1,0 +1,19 @@
+<article class="public-page light-text">
+  <header class="public-page__hero">
+    <p class="public-page__eyebrow">FAQ</p>
+    <h1>Questions fréquentes sur Action Board</h1>
+    <p>
+      Retrouvez les réponses essentielles sur la plateforme d’analyse vidéo sportive, les panneaux, les
+      timelines, les statistiques, la gratuité actuelle et la gestion des données.
+    </p>
+  </header>
+
+  <section class="public-section faq-list" aria-label="Questions fréquentes">
+    @for (item of items; track item.question) {
+      <article class="faq-item">
+        <h2>{{ item.question }}</h2>
+        <p>{{ item.answer }}</p>
+      </article>
+    }
+  </section>
+</article>

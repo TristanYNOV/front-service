@@ -4,7 +4,8 @@ describe('App routes auth policy', () => {
   it('keeps only explicit public allowlist', () => {
     const publicRoutes = routes.filter(route => !route.canActivate || route.canActivate.length === 0).map(route => route.path);
 
-    expect(publicRoutes).toEqual(['', 'discover', '**']);
+    expect(publicRoutes).toEqual(['', 'fonctionnalites', 'tarifs', 'faq', 'contact', 'cgu', 'confidentialite', '**']);
+    expect(publicRoutes).not.toContain('discover');
   });
 
   it('protects all business routes with authGuard by default', () => {

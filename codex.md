@@ -2,7 +2,7 @@
 
 ## 1) TL;DR
 - Front Angular 19 standalone + SSR, NgRx (store sous `src/app/store`), RxJS 7.8, TailwindCSS + quelques overrides Material. 
-- Navigation principale déclarée dans [`src/app/app.routes.ts`](src/app/app.routes.ts) (landing, discover, welcome, analyse + placeholders club/teams/etc.).
+- Navigation principale déclarée dans [`src/app/app.routes.ts`](src/app/app.routes.ts) (landing SEO, fonctionnalités, tarifs, FAQ, contact, CGU, confidentialité, welcome, analyse + placeholders club/teams/etc.).
 - Store : slices `dataState` et `userState` enregistrés dans [`app.config.ts`](src/app/app.config.ts) ; effets dans `src/app/store/Data` et `src/app/store/User`.
 - Auth mockée via [`AuthApi`](src/app/core/api/auth.api.ts) + stockage localStorage dans [`TokenService`](src/app/core/services/token.service.ts) ; guard licence en placeholder HTTP `/api/license/validate`.
 - UI analyse : drag+resize via [`appCdkDragResize`](src/app/directives/cdk-drag-resize.directive.ts) et [`AnalysisPaneDirective`](src/app/pages/analyse/analysis-pane.directive.ts) ; mode édition/lock géré par [`LayoutEditModeService`](src/app/core/services/layout-edit-mode.service.ts).
@@ -15,7 +15,7 @@
 ## 2) Produit & workflows
 - Plateforme d’analyse vidéo sportive + gestion de club. Flux visibles :
   - **Landing** (`/`) : intro + lien vers Discover.
-  - **Discover** (`/discover`) : canvas draggable de blocs de données (prix, texte) venant du store `dataState`.
+  - **Fonctionnalités** (`/fonctionnalites`) : canvas draggable de blocs pédagogiques venant du store `dataState`.
   - **Auth + Welcome** (`/welcome`) : modal d’auth (login/register) déclenchée depuis le header, puis CTA vers club/analyse.
   - **Analyse** (`/analyse`) : layout de panneaux vidéo / séquenceur / timeline déplaçables et redimensionnables.
   - **Club/Teams/Players/Tournaments/Matchs** : placeholders “service unavailable” protégés par authGuard.
@@ -26,7 +26,7 @@
   - `core/` (API mock, guards, services, validators).
   - `components/` (analyse, discover canvas, data items, loading, service unavailable).
   - `directives/` (drag/resize utilitaires).
-  - `pages/` (landing, discover, welcome, analyse, 404).
+  - `pages/` (landing SEO, fonctionnalités, tarifs, FAQ, contact, CGU, confidentialité, welcome, analyse, 404).
   - `store/` (NgRx). 
 - Routing : `app.routes.ts` (voir section TL;DR). authGuard vérifie `selectIsLoggedIn`; licenseGuard placeholder HTTP.
 - SSR : `main.server.ts` + `server.ts` Express (non customisé dans ce codex).
@@ -282,14 +282,14 @@ Checklist
   - pas de métriques de durée (count seulement),
   - `labelMatch: 'any'` non implémenté (prévu plus tard).
 
-## 20) Discover Home Content (UX orientée utilisateur)
-- Les contenus Discover reposent sur un registre centralisé dans `src/app/components/specialized-data/data-item-content.registry.ts` (titre, tags/badges, résumé minifié, contenu textuel).
-- Les cartes affichées par défaut sur `/discover` sont maintenant :
-  - `project-goal`
-  - `ux-ui-workflow`
-  - `analysis-page-overview`
-- Les cartes prêtes à afficher depuis la sidebar : `video-shortcuts`, `sequencer-overview`, `timeline-overview`, `ffmpeg-installation`, `price-table-default`.
-- `DataItemContainerComponent` et `MiniComponent` utilisent les mêmes métadonnées (titre + tags) pour garantir la cohérence entre vue étendue/minifiée.
-- Le composant prix reste disponible et a été simplifié en version minifiée (aperçu léger + prix d’entrée).
-- Les classes visuelles Discover passent par le thème (`discover-card`, `discover-tag`, `discover-muted`, `discover-panel`, `discover-canvas-item`) défini dans `src/theme/_global.class.scss` ; éviter les couleurs Tailwind dans ces composants.
+## 20) Public SEO Pages & Fonctionnalités
+- La page `/` est une landing page SEO publique pour Action Board.
+- Les routes publiques indexables sont `/`, `/fonctionnalites`, `/tarifs`, `/faq`, `/contact`, `/cgu`, `/confidentialite`.
+- La route `/discover` n'est plus déclarée dans le router.
+- `/fonctionnalites` réutilise le canvas de composants affichables/minifiables (`DiscoverCanvasComponent`, `DataItemContainerComponent`, `MiniComponent`).
+- Les cartes affichées par défaut sur `/fonctionnalites` sont `features-guide` et `video-shortcuts`.
+- Les cartes prêtes à afficher depuis la sidebar sont `video-analysis-how-it-works`, `analysis-panel-how-it-works`, `save-and-share-how-it-works`.
+- Les contenus reposent sur le registre centralisé `src/app/components/specialized-data/data-item-content.registry.ts`.
+- Les classes visuelles historiques `discover-*` restent utilisées pour conserver le thème sombre et la logique existante.
+- Les fichiers SEO/IA publics sont servis depuis `public/`: `robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `favicon.svg`.
 

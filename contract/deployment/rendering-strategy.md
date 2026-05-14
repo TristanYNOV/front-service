@@ -8,7 +8,7 @@
 
 ### Routes publiques SEO-prioritaires
 - `/` (landing): SSR recommandé et indexable.
-- `/discover`: SSR possible, indexabilité à confirmer selon contenu métier.
+- `/fonctionnalites`: SSR public attendu, contenu pédagogique et liens internes indexables.
 
 ### Routes applicatives/authentifiées
 - `/welcome`: route d'accueil applicative, indexabilité faible priorité.

@@ -21,6 +21,7 @@ import {
   SequencerStatOperator,
   StatBtn,
 } from '../../../../../interfaces/sequencer-btn.interface';
+import { THEME_COLOR_HEX } from '../../../../../../theme/theme-colors';
 
 interface EditableStatTerm {
   id: string;
@@ -62,6 +63,7 @@ export class CreateStatBtnDialogComponent {
 
   readonly isEdit = this.data.mode === 'edit';
   readonly submitted = signal(false);
+  readonly defaultStatColor = THEME_COLOR_HEX.sequencerStatBg;
 
   readonly modeControl = new FormControl<'simple' | 'complex'>(this.data.btn?.stat.mode ?? 'simple', { nonNullable: true });
 
@@ -623,9 +625,9 @@ function trimmedRequiredValidator(): ValidatorFn {
 
 function normalizeColor(value: string | null | undefined): string {
   if (value && /^#[0-9a-fA-F]{6}$/.test(value)) {
-    return value;
+    return value.toUpperCase();
   }
-  return '#1f4b73';
+  return THEME_COLOR_HEX.sequencerStatBg;
 }
 
 function cryptoRandom(): string {

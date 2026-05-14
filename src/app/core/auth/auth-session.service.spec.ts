@@ -1,8 +1,12 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { of, Subject, throwError } from 'rxjs';
 import { AuthApiService } from './auth-api.service';
 import { AuthSessionService } from './auth-session.service';
+import { SequencerPanelService } from '../service/sequencer-panel.service';
+import { SequencerRuntimeService } from '../service/sequencer-runtime.service';
+import { VideoService } from '../services/video.service';
 
 function createAuthApiMock() {
   return {
@@ -11,6 +15,7 @@ function createAuthApiMock() {
     refresh: jasmine.createSpy('refresh'),
     logout: jasmine.createSpy('logout'),
     me: jasmine.createSpy('me'),
+    deleteMe: jasmine.createSpy('deleteMe'),
   };
 }
 
@@ -18,17 +23,23 @@ describe('AuthSessionService', () => {
   let service: AuthSessionService;
   let authApiMock: ReturnType<typeof createAuthApiMock>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let storeSpy: jasmine.SpyObj<Store>;
 
   beforeEach(() => {
     authApiMock = createAuthApiMock();
     routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
     routerSpy.navigate.and.resolveTo(true);
+    storeSpy = jasmine.createSpyObj<Store>('Store', ['dispatch']);
 
     TestBed.configureTestingModule({
       providers: [
         AuthSessionService,
         { provide: AuthApiService, useValue: authApiMock },
         { provide: Router, useValue: routerSpy },
+        { provide: Store, useValue: storeSpy },
+        { provide: SequencerPanelService, useValue: { resetPanel: jasmine.createSpy('resetPanel') } },
+        { provide: SequencerRuntimeService, useValue: { resetRuntimeState: jasmine.createSpy('resetRuntimeState') } },
+        { provide: VideoService, useValue: { clearVideo: jasmine.createSpy('clearVideo') } },
       ],
     });
 
@@ -132,6 +143,22 @@ describe('AuthSessionService', () => {
     service.logout().subscribe();
     tick();
 
+    expect(service.state().status).toBe('anonymous');
+    expect(service.accessToken()).toBeNull();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
+  }));
+
+  it('deletes account and clears frontend state', fakeAsync(() => {
+    authApiMock.login.and.returnValue(of('jwt-1'));
+    authApiMock.me.and.returnValue(of({ id: '2', pseudo: 'user', email: 'user@ab.fr' }));
+    authApiMock.deleteMe.and.returnValue(of({ message: 'suppression demandée' }));
+
+    service.login('user@ab.fr', 'Password1!').subscribe();
+    tick();
+    service.deleteAccount().subscribe();
+    tick();
+
+    expect(authApiMock.deleteMe).toHaveBeenCalled();
     expect(service.state().status).toBe('anonymous');
     expect(service.accessToken()).toBeNull();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);

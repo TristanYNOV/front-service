@@ -1,0 +1,37 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /me
+Disallow: /users
+Disallow: /analysis/api
+Disallow: /analyse
+Disallow: /welcome
+
+User-agent: GPTBot
+Allow: /
+Disallow: /auth
+Disallow: /me
+Disallow: /users
+Disallow: /analysis/api
+Disallow: /analyse
+Disallow: /welcome
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /auth
+Disallow: /me
+Disallow: /users
+Disallow: /analysis/api
+Disallow: /analyse
+Disallow: /welcome
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /auth
+Disallow: /me
+Disallow: /users
+Disallow: /analysis/api
+Disallow: /analyse
+Disallow: /welcome
+
+Sitemap: https://app.actionboard.fr/sitemap.xml

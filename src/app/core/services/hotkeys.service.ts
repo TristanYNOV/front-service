@@ -47,6 +47,16 @@ const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta']);
 const NON_CHARACTER_CODES = new Set(['Space', 'ArrowLeft', 'ArrowRight']);
 const CODE_PREFIXES = ['Digit', 'Numpad'];
 
+export const RESERVED_VIDEO_HOTKEY_CHEATSHEET = [
+  { shortcut: 'Espace', normalized: 'Space', label: 'Lecture / pause' },
+  { shortcut: 'Flèche gauche', normalized: 'ArrowLeft', label: 'Reculer de 1 seconde' },
+  { shortcut: 'Flèche droite', normalized: 'ArrowRight', label: 'Avancer de 1 seconde' },
+  { shortcut: ',', normalized: ',', label: 'Reculer d’une image' },
+  { shortcut: '.', normalized: '.', label: 'Avancer d’une image' },
+  { shortcut: '/', normalized: '/', label: 'Augmenter la vitesse de lecture de 0,25' },
+  { shortcut: '-', normalized: '-', label: 'Réduire la vitesse de lecture de 0,25' },
+] as const;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -173,14 +183,6 @@ export class HotkeysService {
     options?: { label?: string; allowRepeat?: boolean },
   ): RegisterHotkeyResult {
     const normalization = this.normalizeChord(chord);
-    if (!normalization.isValid || !this.isSequencerChordAllowed(normalization.baseKey)) {
-      return {
-        ok: false,
-        errorCode: 'INVALID_CHORD',
-        normalized: normalization.normalized,
-      };
-    }
-
     if (this.reservedBindings.has(normalization.normalized)) {
       const binding = this.reservedBindings.get(normalization.normalized);
       return {
@@ -188,6 +190,14 @@ export class HotkeysService {
         errorCode: 'RESERVED_HOTKEY',
         normalized: normalization.normalized,
         usedBy: { kind: 'reserved', label: binding?.label },
+      };
+    }
+
+    if (!normalization.isValid || !this.isSequencerChordAllowed(normalization.baseKey)) {
+      return {
+        ok: false,
+        errorCode: 'INVALID_CHORD',
+        normalized: normalization.normalized,
       };
     }
 

@@ -1,0 +1,45 @@
+# Action Board - Plateforme d’analyse vidéo sportive
+
+Action Board est une plateforme web d’analyse vidéo sportive pensée pour rendre l’analyse plus accessible aux coachs amateurs, clubs amateurs, analystes vidéo indépendants ou rattachés à un club, ainsi qu’aux étudiants.
+
+## Objectif
+La plateforme aide à observer une vidéo, déclencher des événements d’analyse, qualifier les actions avec des labels, produire des statistiques et retrouver les moments importants dans une timeline.
+
+## Public cible
+Action Board vise toutes les pratiques sportives. Aucun sport unique n’est privilégié dans la structure publique actuelle.
+
+## Analyse vidéo
+L’analyse repose sur trois éléments: la vidéo, le panneau d’analyse et la timeline. L’utilisateur contrôle la vidéo, déclenche des boutons et produit des informations structurées dans la timeline.
+
+## Panneaux d’analyse
+Un panneau d’analyse est composé de boutons personnalisés:
+- Événement: génère des occurrences dans la timeline.
+- Label: définit ou qualifie une occurrence.
+- Stats: permet de produire des statistiques pendant l’analyse.
+
+Les panneaux peuvent utiliser des hotkeys et des liens d’activation pour accélérer le travail d’observation.
+
+## Sauvegarde et import/export
+Les panneaux et timelines peuvent être sauvegardés en ligne. Les panneaux peuvent être importés ou exportés. Les timelines peuvent être importées ou exportées.
+
+## Visibilité et confidentialité
+Les timelines sont toujours privées et visibles uniquement par leur utilisateur propriétaire. Les panneaux peuvent être privés ou publics. Les panneaux publics peuvent être visibles par des utilisateurs connectés.
+
+## Suppression et anonymisation
+Lors de la suppression d’un compte, les analyses et panneaux privés sont supprimés selon la logique existante. Les panneaux publics peuvent être conservés sous forme anonymisée afin de préserver les ressources partagées avec la communauté.
+
+## FAQ condensée
+- Action Board est actuellement gratuit avec un compte.
+- Les timelines ne peuvent pas être publiques.
+- Les panneaux publics peuvent être réutilisés par des utilisateurs connectés.
+- La page contact est temporaire.
+- Les CGU et la politique de confidentialité sont temporaires et pourront être complétées.
+
+## Liens
+- https://app.actionboard.fr/
+- https://app.actionboard.fr/fonctionnalites
+- https://app.actionboard.fr/tarifs
+- https://app.actionboard.fr/faq
+- https://app.actionboard.fr/contact
+- https://app.actionboard.fr/cgu
+- https://app.actionboard.fr/confidentialite

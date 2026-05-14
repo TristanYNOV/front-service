@@ -1,60 +1,74 @@
-<header class="bg-layer-2 flex justify-between items-center h-16 px-2">
-  <div class="flex gap-24">
-    <button routerLink="/discover" id="imgContainer" class="icon p-2 flex items-center light-text" aria-label="Accueil"
-            title="Accueil">
-      <mat-icon aria-hidden="true">home</mat-icon>
+<header class="bg-layer-2 flex justify-between items-center h-16 px-3 gap-4">
+  <a routerLink="/" id="imgContainer" class="icon p-2 flex items-center light-text" aria-label="Accueil" title="Accueil">
+    <mat-icon aria-hidden="true">home</mat-icon>
+    <span class="ml-2 font-semibold">Action Board</span>
+  </a>
+
+  <nav class="public-topnav light-text" aria-label="Navigation principale">
+    <a routerLink="/" routerLinkActive="public-nav-link--active" [routerLinkActiveOptions]="{ exact: true }">Accueil</a>
+    <span class="separator public-topnav-separator" aria-hidden="true"></span>
+    <a routerLink="/fonctionnalites" routerLinkActive="public-nav-link--active" [routerLinkActiveOptions]="{ exact: true }">Fonctionnalités</a>
+    <span class="separator public-topnav-separator" aria-hidden="true"></span>
+    <a routerLink="/tarifs" routerLinkActive="public-nav-link--active" [routerLinkActiveOptions]="{ exact: true }">Tarifs</a>
+    <span class="separator public-topnav-separator" aria-hidden="true"></span>
+    <a routerLink="/faq" routerLinkActive="public-nav-link--active" [routerLinkActiveOptions]="{ exact: true }">FAQ</a>
+    <span class="separator public-topnav-separator" aria-hidden="true"></span>
+    <a routerLink="/contact" routerLinkActive="public-nav-link--active" [routerLinkActiveOptions]="{ exact: true }">Contact</a>
+  </nav>
+
+  <div class="flex items-center gap-2 light-text">
+    @if (authSession.isAuthenticated()) {
+      <button type="button" [matMenuTriggerFor]="clubMenu" class="icon flex items-center p-2" aria-label="Espace applicatif">
+        <mat-icon aria-hidden="true">groups</mat-icon>
+      </button>
+      <mat-menu class="light-text mat-menu-custom" #clubMenu="matMenu">
+        <button mat-menu-item routerLink="/club">Club</button>
+        <button mat-menu-item routerLink="/teams">Teams</button>
+        <button mat-menu-item routerLink="/players">Players</button>
+        <button mat-menu-item routerLink="/tournaments">Tournaments</button>
+        <button mat-menu-item routerLink="/matchs">Matchs</button>
+        <button mat-menu-item routerLink="/analyse">Analyse</button>
+      </mat-menu>
+    }
+
+    <button
+      type="button"
+      class="icon p-2 flex items-center"
+      (click)="layoutEditMode.toggle()"
+      [attr.aria-pressed]="layoutEditMode.isEditMode()"
+      [attr.aria-label]="layoutEditMode.isEditMode() ? 'Verrouiller le layout' : 'Déverrouiller le layout'"
+      [title]="layoutEditMode.isEditMode() ? 'Verrouiller le layout' : 'Éditer le layout'"
+    >
+      @if (layoutEditMode.isEditMode()) {
+        <mat-icon aria-hidden="true">lock_open</mat-icon>
+      } @else {
+        <mat-icon aria-hidden="true">lock</mat-icon>
+      }
     </button>
-  </div>
-  <nav class="flex justify-around min-w-1 mr-2 light-text">
-    <div class="flex gap-8 light-text items-center">
-      <div class="flex items-center gap-2">
-        @if (authSession.isAuthenticated()) {
-          <button type="button" [matMenuTriggerFor]="clubMenu" class="icon flex items-center p-2">
-            <mat-icon aria-hidden="true">groups</mat-icon>
-          </button>
-          <mat-menu class="light-text mat-menu-custom" #clubMenu="matMenu">
-            <button mat-menu-item routerLink="/club">Club</button>
-            <button mat-menu-item routerLink="/teams">Teams</button>
-            <button mat-menu-item routerLink="/players">Players</button>
-            <button mat-menu-item routerLink="/tournaments">Tournaments</button>
-            <button mat-menu-item routerLink="/matchs">Matchs</button>
-          </mat-menu>
-          <button type="button" routerLink="/analyse" class="icon flex items-center p-2">
-            <mat-icon aria-hidden="true">video_library</mat-icon>
-          </button>
-        }
-      </div>
 
-      <div class="flex items-center gap-2">
-        <button
-          type="button"
-          class="icon p-2 flex items-center"
-          (click)="layoutEditMode.toggle()"
-          [attr.aria-pressed]="layoutEditMode.isEditMode()"
-          [attr.aria-label]="layoutEditMode.isEditMode() ? 'Verrouiller le layout' : 'Déverrouiller le layout'"
-          [title]="layoutEditMode.isEditMode() ? 'Verrouiller le layout' : 'Éditer le layout'"
-        >
-          @if (layoutEditMode.isEditMode()) {
-            <mat-icon aria-hidden="true">lock_open</mat-icon>
-          } @else {
-            <mat-icon aria-hidden="true">lock</mat-icon>
-          }
-        </button>
-
-        <button type="button" class="icon p-2 flex items-center" aria-label="Thème" title="Thème">
-          <mat-icon aria-hidden="true">palette</mat-icon>
-        </button>
-      </div>
-
+    <button type="button" class="icon p-2 flex items-center" [matMenuTriggerFor]="mainMenu" aria-label="Menu">
+      <mat-icon aria-hidden="true">menu</mat-icon>
+    </button>
+    <mat-menu class="light-text mat-menu-custom" #mainMenu="matMenu">
       @if (authSession.isAuthenticated()) {
-        <button class="icon p-2 flex items-center gap-1" (click)="logout()">
+        <button mat-menu-item type="button" (click)="logout()">
           <mat-icon aria-hidden="true">logout</mat-icon>
+          <span>Se déconnecter</span>
+        </button>
+        <button mat-menu-item type="button" (click)="confirmDeleteAccount()">
+          <mat-icon aria-hidden="true">delete_forever</mat-icon>
+          <span>Supprimer son compte</span>
         </button>
       } @else {
-        <button class="icon p-2 flex items-center gap-1" (click)="openAuthModal('login')">
+        <button mat-menu-item type="button" (click)="openAuthModal('login')">
           <mat-icon aria-hidden="true">login</mat-icon>
+          <span>Se connecter</span>
         </button>
       }
-    </div>
-  </nav>
+      <button mat-menu-item type="button" (click)="openThemeModal()">
+        <mat-icon aria-hidden="true">palette</mat-icon>
+        <span>Thème</span>
+      </button>
+    </mat-menu>
+  </div>
 </header>

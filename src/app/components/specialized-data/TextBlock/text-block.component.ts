@@ -2,11 +2,12 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TextData } from '../../../interfaces/dataItem.interface';
 import { getTextContent, TextBlockContent } from '../data-item-content.registry';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-text-block',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './text-block.component.html',
 })
 export class TextBlockComponent {

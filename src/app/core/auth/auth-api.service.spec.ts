@@ -58,4 +58,15 @@ describe('AuthApiService', () => {
     expect(req.request.withCredentials).toBeTrue();
     req.flush({ accessToken: 'new-token' });
   });
+
+  it('calls DELETE /me with credentials for account deletion', () => {
+    service.deleteMe().subscribe(response => {
+      expect(response.message).toBe('suppression demandée');
+    });
+
+    const req = httpMock.expectOne(environment.authEndpoints.me);
+    expect(req.request.method).toBe('DELETE');
+    expect(req.request.withCredentials).toBeTrue();
+    req.flush({ message: 'suppression demandée' });
+  });
 });

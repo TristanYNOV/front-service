@@ -15,7 +15,7 @@ export class DataEffects {
       switchMap(({ urlAfterRedirects }) => {
         const actions: Action[] = [clearIdleData()];
         switch (urlAfterRedirects) {
-          case '/discover':
+          case '/fonctionnalites':
             actions.push(loadDiscoverData());
             break;
         }

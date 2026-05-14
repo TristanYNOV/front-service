@@ -25,6 +25,20 @@
               }
             </ul>
           }
+
+          @if (section.iconTips?.length) {
+            <div class="grid gap-2 sm:grid-cols-2">
+              @for (tip of section.iconTips; track tip.label) {
+                <div class="flex gap-2 rounded-md border border-layer p-2">
+                  <mat-icon aria-hidden="true">{{ tip.icon }}</mat-icon>
+                  <div>
+                    <h5 class="text-sm font-semibold">{{ tip.label }}</h5>
+                    <p class="text-xs leading-5 discover-muted">{{ tip.description }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
         </article>
       }
     </div>

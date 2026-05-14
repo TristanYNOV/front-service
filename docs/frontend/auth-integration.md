@@ -47,7 +47,7 @@ Mettre en place une base d'authentification robuste côté Angular en respectant
 ## Routes publiques / privées
 Allowlist publique:
 - `/`
-- `/discover`
+- `/fonctionnalites`
 - `**`
 
 Toutes les autres routes métier sont privées par défaut via `authGuard`.

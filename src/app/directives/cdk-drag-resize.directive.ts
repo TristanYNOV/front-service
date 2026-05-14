@@ -8,9 +8,11 @@ import {
   OnChanges,
   OnDestroy,
   Output,
+  PLATFORM_ID,
   Renderer2,
   SimpleChanges,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface DragResizeRect {
   x: number;
@@ -30,6 +32,7 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
   private readonly renderer = inject(Renderer2);
   private readonly elementRef = inject(ElementRef) as ElementRef<HTMLElement>;
   private readonly zone = inject(NgZone);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   @Input() cdkDragBoundary?: string | HTMLElement;
   @Input() cdkDragFreeDragPosition: { x: number; y: number } = { x: 0, y: 0 };
@@ -63,6 +66,10 @@ export class CdkDragResizeDirective implements AfterViewInit, OnDestroy, OnChang
   private initialLayoutRect?: DOMRect;
 
   ngAfterViewInit(): void {
+    if (!this.isBrowser) {
+      return;
+    }
+
     this.host = this.elementRef.nativeElement;
     this.initialLayoutRect = this.host.getBoundingClientRect();
     this.host.classList.add('rzr-wrap');

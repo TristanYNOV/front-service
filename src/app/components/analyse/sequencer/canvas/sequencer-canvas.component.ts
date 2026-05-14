@@ -31,6 +31,7 @@ import {
 import { formatNormalizedHotkey } from '../../../../utils/sequencer/sequencer-hotkey-options.util';
 import { getReadableTextColor } from '../../../../utils/color/color-contrast.utils';
 import { ZoomControlsComponent } from '../../../shared/zoom-controls/zoom-controls.component';
+import { THEME_COLOR_HEX } from '../../../../../theme/theme-colors';
 
 @Component({
   selector: 'app-sequencer-canvas',
@@ -44,8 +45,8 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvasContainer', { static: false }) canvasContainerRef?: ElementRef<HTMLDivElement>;
 
   private readonly minZoomContainerPx = 250;
-  private readonly defaultEventColor = '#1F3D28';
-  private readonly defaultStatColor = '#1f4b73';
+  private readonly defaultEventColor = THEME_COLOR_HEX.sequencerEventBg;
+  private readonly defaultStatColor = THEME_COLOR_HEX.sequencerStatBg;
   private readonly panelService = inject(SequencerPanelService);
   readonly sequencerZoom = inject(SequencerZoomService);
   readonly statsService = inject(SequencerStatsService);

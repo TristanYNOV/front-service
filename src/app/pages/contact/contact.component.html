@@ -1,0 +1,46 @@
+<article class="public-page light-text">
+  <header class="public-page__hero">
+    <p class="public-page__eyebrow">Contact</p>
+    <h1>Contacter Action Board</h1>
+    <p>
+      Une question sur la plateforme d’analyse vidéo sportive, les panneaux, les timelines ou un usage club ?
+      Vous pouvez utiliser ce formulaire temporaire.
+    </p>
+  </header>
+
+  <section class="public-section public-grid">
+    <div>
+      <h2>Adresse temporaire</h2>
+      <p><a href="mailto:app.contact@actionboard.fr">app.contact&#64;actionboard.fr</a></p>
+      <p>
+        Cette page de contact est temporaire. L’adresse indiquée pourra être remplacée ultérieurement par une
+        adresse officielle.
+      </p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="public-form" aria-label="Formulaire de contact">
+      <mat-form-field>
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="name" autocomplete="name" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" autocomplete="email" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Sujet</mat-label>
+        <input matInput formControlName="subject" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Message</mat-label>
+        <textarea matInput formControlName="message" rows="6"></textarea>
+      </mat-form-field>
+      <button mat-flat-button type="submit" class="btn-accent">Envoyer</button>
+      @if (sent()) {
+        <p class="primary-text" role="status">
+          Message préparé côté interface. Aucun email réel n’est envoyé pour le moment.
+        </p>
+      }
+    </form>
+  </section>
+</article>

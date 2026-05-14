@@ -46,6 +46,7 @@ import {
 import { selectTimelineState } from '../../../store/Timeline/timeline.selectors';
 import { hasTimelineImportDataLossFromRawPayload } from '../../../utils/timeline/timeline-import.util';
 import { TimelineFinderDialogComponent } from './modals/timeline-finder-dialog.component';
+import { THEME_COLOR_HEX } from '../../../../theme/theme-colors';
 
 @Component({
   selector: 'app-timeline',
@@ -85,7 +86,7 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
   private readonly isProgrammaticScrollSignal = signal(false);
   private programmaticScrollTimeoutId?: number;
   private timelineResizeObserver?: ResizeObserver;
-  private readonly defaultEventColor = '#1F3D28';
+  private readonly defaultEventColor = THEME_COLOR_HEX.sequencerEventBg;
 
   readonly displayDurationMs = computed(() => this.facade.workDurationMs());
 

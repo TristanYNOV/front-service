@@ -1,0 +1,19 @@
+:root {
+  --separator-neon: var(--success);
+  --separator-neon-shadow-soft: 0 0 5px var(--separator-neon);
+  --separator-neon-shadow-strong: 0 0 10px var(--separator-neon);
+
+  --rzr-padding: 22px;
+  --rzr-ring-bg: rgba(107, 114, 128, 0.28);
+  --rzr-handle-bg: rgba(255, 255, 255, 0.16);
+  --rzr-handle-contrast: var(--text-default);
+  --rzr-handle-border: rgba(0, 0, 0, 0.4);
+  --rzr-handle-outline: rgba(0, 0, 0, 0.15);
+  --rzr-control-bg: var(--bg-surface);
+  --rzr-control-border: rgba(255, 255, 255, 0.2);
+  --rzr-control-color: var(--text-default);
+  --rzr-control-shadow: rgba(0, 0, 0, 0.35);
+  --rzr-control-zIndex-size: 18px;
+  --rzr-control-zIndex-position-top: 0;
+  --rzr-control-zIndex-position-right: 0;
+}

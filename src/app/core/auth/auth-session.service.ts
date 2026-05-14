@@ -93,6 +93,16 @@ export class AuthSessionService {
     );
   }
 
+  deleteAccount(): Observable<void> {
+    return this.authApi.deleteMe().pipe(
+      map(() => void 0),
+      tap(() => {
+        this.clearAuthState();
+        void this.router.navigate(['/']);
+      })
+    );
+  }
+
   refreshAccessToken(): Observable<string> {
     if (this.refreshInFlight$) {
       return this.refreshInFlight$;

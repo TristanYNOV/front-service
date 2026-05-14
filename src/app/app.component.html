@@ -47,6 +47,23 @@
     <!-- Affichage principal -->
     <section class="p-2 w-full h-full overflow-y-auto" [class.flex-1]="showSidebar" [class.w-full]="!showSidebar">
       <router-outlet />
+      @if (showFooter) {
+        <footer class="public-footer light-text" aria-label="Navigation SEO">
+          <div>
+            <strong>Action Board</strong>
+            <p>Plateforme d’analyse vidéo sportive</p>
+          </div>
+          <nav>
+            <a routerLink="/">Accueil</a>
+            <a routerLink="/fonctionnalites">Fonctionnalités</a>
+            <a routerLink="/tarifs">Tarifs</a>
+            <a routerLink="/faq">FAQ</a>
+            <a routerLink="/contact">Contact</a>
+            <a routerLink="/cgu">CGU</a>
+            <a routerLink="/confidentialite">Confidentialité</a>
+          </nav>
+        </footer>
+      }
     </section>
   </div>
 </div>

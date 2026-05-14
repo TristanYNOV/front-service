@@ -41,6 +41,12 @@ export class AuthApiService {
     });
   }
 
+  deleteMe(): Observable<{ user?: UserPublicDto; message?: string }> {
+    return this.http.delete<{ user?: UserPublicDto; message?: string }>(runtimeEnvironment.authEndpoints.me, {
+      withCredentials: true,
+    });
+  }
+
   /**
    * Robustesse de parsing: selon le backend/proxy, le login peut répondre
    * soit `"<jwt>"`, soit `{ "accessToken": "<jwt>" }`.

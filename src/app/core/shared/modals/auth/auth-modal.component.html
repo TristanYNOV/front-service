@@ -1,7 +1,14 @@
 <div class="max-h-[85vh] w-[500px] h-fit bg-layer-2 rounded-lg light-text pt-8 p-4 overflow-hidden">
   <h4 class="text-center font-bold text-3xl">{{ this.modalType === 'login' ? 'Connexion' : "S'inscrire" }}</h4>
   <div class="text-center mt-4">
-    <button type="button" class="underline text-sm" (click)="toggleMode()">
+    <button
+      type="button"
+      class="text-sm"
+      [class.btn-accent]="modalType === 'login'"
+      [class.public-link-button]="modalType === 'login'"
+      [class.underline]="modalType === 'register'"
+      (click)="toggleMode()"
+    >
       {{ modalType === 'login' ? 'Créer un compte' : 'Se connecter' }}
     </button>
   </div>
@@ -63,6 +70,20 @@
         }
         @if (form.controls['password'].hasError('specialCharMissing')) {
           <mat-error><span class="alert-text">Le mot de passe doit contenir au moins un caractère spécial.</span></mat-error>
+        }
+      </div>
+    }
+
+    @if (modalType === 'register') {
+      <div class="text-sm">
+        <mat-checkbox formControlName="acceptedTerms">
+          J’ai lu et j’accepte les
+        </mat-checkbox>
+        <button type="button" class="ml-1 underline public-secondary-link" (click)="openTerms()">
+          Conditions Générales d’Utilisation
+        </button>
+        @if (termsError) {
+          <mat-error><span class="alert-text">{{ termsError }}</span></mat-error>
         }
       </div>
     }

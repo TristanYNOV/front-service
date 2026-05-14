@@ -1,0 +1,23 @@
+# Action Board
+
+Action Board est une plateforme d’analyse vidéo sportive destinée aux coachs, clubs amateurs, analystes vidéo et étudiants.
+
+## Fonctionnalités principales
+- Panneaux d’analyse personnalisés avec boutons événement, label et stats.
+- Analyse vidéo avec timeline structurée.
+- Sauvegarde en ligne des panneaux et timelines.
+- Import/export de panneaux et timelines.
+- Panneaux publics ou privés.
+- Timelines toujours privées.
+- Anonymisation possible des panneaux publics après suppression de compte.
+
+## Liens importants
+- Accueil: https://app.actionboard.fr/
+- Fonctionnalités: https://app.actionboard.fr/fonctionnalites
+- Tarifs: https://app.actionboard.fr/tarifs
+- FAQ: https://app.actionboard.fr/faq
+- Contact: https://app.actionboard.fr/contact
+- CGU: https://app.actionboard.fr/cgu
+- Confidentialité: https://app.actionboard.fr/confidentialite
+
+Contact temporaire: app.contact@actionboard.fr

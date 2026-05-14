@@ -1,0 +1,29 @@
+:root {
+  --sequencer-event-bg: #1f3d28;
+  --sequencer-event-border: #3d6e4f;
+  --sequencer-event-text: #f1f7f1;
+  --sequencer-label-bg: #4a2f22;
+  --sequencer-label-border: #7a543d;
+  --sequencer-label-text: #fff6ee;
+  --sequencer-stat-bg: #1f4b73;
+  --sequencer-stat-border: #3d77a7;
+  --sequencer-stat-text: #eff6ff;
+  --sequencer-active-outline: #38bdf8;
+  --sequencer-active-glow: rgba(56, 189, 248, 0.34);
+  --sequencer-active-accent: #38bdf8;
+}
+
+.dark-theme {
+  --sequencer-event-bg: #1f3d28;
+  --sequencer-event-border: #3d6e4f;
+  --sequencer-event-text: #f1f7f1;
+  --sequencer-label-bg: #4a2f22;
+  --sequencer-label-border: #7a543d;
+  --sequencer-label-text: #fff6ee;
+  --sequencer-stat-bg: #1f4b73;
+  --sequencer-stat-border: #3d77a7;
+  --sequencer-stat-text: #eff6ff;
+  --sequencer-active-outline: #38bdf8;
+  --sequencer-active-glow: rgba(56, 189, 248, 0.34);
+  --sequencer-active-accent: #38bdf8;
+}

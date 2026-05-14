@@ -68,7 +68,7 @@
                 <input
                   type="color"
                   class="timeline-color-input"
-                  [value]="simpleLabelColorById()[label!.id] || '#1f4b73'"
+                  [value]="simpleLabelColorById()[label!.id] || defaultStatColor"
                   (input)="updateSimpleLabelColor(label!.id, $any($event.target).value)"
                 />
               </div>
@@ -167,7 +167,7 @@
                     <input
                       type="color"
                       class="timeline-color-input"
-                      [value]="term.labelColorById[label!.id] || '#1f4b73'"
+                      [value]="term.labelColorById[label!.id] || defaultStatColor"
                       (input)="updateTermLabelColor(term.id, label!.id, $any($event.target).value)"
                     />
                   </div>

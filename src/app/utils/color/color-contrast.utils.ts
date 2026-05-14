@@ -1,3 +1,5 @@
+import { THEME_COLOR_HEX, ThemeReadableTextColor } from '../../../theme/theme-colors';
+
 const HEX_COLOR_REGEX = /^#?[0-9a-fA-F]{6}$/;
 
 function normalizeHex(hex: string): string | null {
@@ -37,6 +39,6 @@ export function isLightColor(hex: string): boolean {
   return luminance > 0.179;
 }
 
-export function getReadableTextColor(hex: string): '#FAFAFA' | '#0C0C0C' {
-  return isLightColor(hex) ? '#0C0C0C' : '#FAFAFA';
+export function getReadableTextColor(hex: string): ThemeReadableTextColor {
+  return isLightColor(hex) ? THEME_COLOR_HEX.dark : THEME_COLOR_HEX.light;
 }

@@ -47,6 +47,11 @@
   --mat-sys-on-surface: var(--light);
   --mat-sys-surface-container: var(--bg-layer-3);
   --mdc-dialog-supporting-text-color: var(--light);
+  --mat-menu-container-color: var(--bg-layer-2);
+  --mat-menu-item-label-text-color: var(--text-default);
+  --mat-menu-item-icon-color: var(--text-default);
+  --mat-menu-item-hover-state-layer-color: var(--bg-layer-3);
+  --mat-menu-item-focus-state-layer-color: var(--bg-layer-3);
 
   .mdc-button {
    background: none;
@@ -60,17 +65,19 @@
   }
 
   .mat-mdc-menu-panel.mat-menu-custom {
-    background-color: var(--btn-primary-bg) !important;
-    color: var(--dark) !important;
-    border-radius: 0.75rem; /* optionnel, arrondi */
+    background-color: var(--bg-layer-2) !important;
+    color: var(--text-default) !important;
+    border-radius: var(--border-radius);
 
     .mat-mdc-menu-item,
+    .mat-mdc-menu-item .mat-icon,
     .mdc-list-item__primary-text {
-      color: var(--dark) !important;
+      color: var(--text-default) !important;
     }
 
-    .mat-mdc-menu-item:hover {
-      background-color: var(--btn-primary-hover-bg) !important;
+    .mat-mdc-menu-item:hover,
+    .mat-mdc-menu-item:focus {
+      background-color: var(--bg-layer-3) !important;
     }
   }
   .mat-mdc-dialog-surface {

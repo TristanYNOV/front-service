@@ -1,52 +1,64 @@
 :root {
+  --mat-sys-surface: var(--bg-layer-2);
+  --mat-sys-on-surface: var(--text-default);
+  --mat-sys-primary: var(--primary);
+  --mat-sys-on-primary: var(--on-primary);
+  --mat-sys-secondary: var(--accent);
+  --mat-sys-on-secondary: var(--on-accent);
+  --mat-sys-error: var(--danger);
+  --mat-sys-outline: var(--border-subtle);
+
   --mdc-dialog-container-color: var(--bg-layer-3);
-  --mdc-dialog-container-text-color: var(--light);
+  --mdc-dialog-container-text-color: var(--text-default);
+  --mdc-dialog-subhead-color: var(--text-strong);
+  --mdc-dialog-supporting-text-color: var(--text-default);
 
   --mdc-filled-text-field-container-color: var(--bg-layer-3);
-  --mdc-filled-text-field-input-text-color: var(--light);
-  --mdc-filled-text-field-label-text-color: var(--light);
+  --mdc-filled-text-field-input-text-color: var(--text-default);
+  --mdc-filled-text-field-label-text-color: var(--text-muted);
   --mdc-filled-text-field-caret-color: var(--accent);
   --mdc-filled-text-field-focus-active-indicator-color: var(--accent);
   --mdc-filled-text-field-hover-active-indicator-color: var(--accent);
 
-  --mdc-outlined-text-field-input-text-color: var(--light);
-  --mdc-outlined-text-field-label-text-color: var(--light);
+  --mdc-outlined-text-field-input-text-color: var(--text-default);
+  --mdc-outlined-text-field-label-text-color: var(--text-muted);
   --mdc-outlined-text-field-caret-color: var(--accent);
   --mdc-outlined-text-field-focus-outline-color: var(--accent);
   --mdc-outlined-text-field-hover-outline-color: var(--accent);
 
-  --mdc-filled-button-label-text-color: var(--light);
-  --mdc-filled-button-container-color: var(--btn-primary-bg);
-  --mdc-filled-button-hover-state-layer-color: var(--btn-primary-hover-bg);
-  --mdc-filled-button-focus-state-layer-color: var(--btn-primary-hover-bg);
-  --mdc-filled-button-pressed-state-layer-color: var(--btn-primary-hover-bg);
+  --mdc-filled-button-label-text-color: var(--on-primary);
+  --mdc-filled-button-container-color: var(--primary);
+  --mdc-filled-button-hover-state-layer-color: var(--primary-soft);
+  --mdc-filled-button-focus-state-layer-color: var(--primary-soft);
+  --mdc-filled-button-pressed-state-layer-color: var(--primary-soft);
 
-  --mdc-outlined-button-label-text-color: var(--light);
+  --mdc-outlined-button-label-text-color: var(--text-default);
+  --mdc-outlined-button-outline-color: var(--border-subtle);
   --mdc-outlined-button-hover-state-layer-color: var(--bg-layer-2);
   --mdc-outlined-button-focus-state-layer-color: var(--bg-layer-2);
   --mdc-outlined-button-pressed-state-layer-color: var(--bg-layer-2);
 
-  --mdc-radio-unselected-icon-color: var(--light);
+  --mdc-radio-unselected-icon-color: var(--text-muted);
   --mdc-radio-selected-icon-color: var(--accent);
   --mdc-radio-selected-focus-icon-color: var(--accent);
   --mdc-radio-selected-hover-icon-color: var(--accent);
   --mdc-radio-selected-pressed-icon-color: var(--accent);
-  --mdc-radio-unselected-hover-icon-color: var(--light);
-  --mdc-radio-unselected-focus-icon-color: var(--light);
-  --mdc-radio-unselected-pressed-icon-color: var(--light);
+  --mdc-radio-unselected-hover-icon-color: var(--text-default);
+  --mdc-radio-unselected-focus-icon-color: var(--text-default);
+  --mdc-radio-unselected-pressed-icon-color: var(--text-default);
+  --mdc-radio-label-text-color: var(--text-default);
 
-  --mdc-checkbox-unselected-icon-color: var(--light);
+  --mdc-checkbox-unselected-icon-color: var(--text-muted);
   --mdc-checkbox-selected-icon-color: var(--accent);
   --mdc-checkbox-selected-focus-icon-color: var(--accent);
   --mdc-checkbox-selected-hover-icon-color: var(--accent);
   --mdc-checkbox-selected-pressed-icon-color: var(--accent);
-  --mdc-checkbox-unselected-hover-icon-color: var(--light);
-  --mdc-checkbox-unselected-focus-icon-color: var(--light);
-  --mdc-checkbox-unselected-pressed-icon-color: var(--light);
+  --mdc-checkbox-unselected-hover-icon-color: var(--text-default);
+  --mdc-checkbox-unselected-focus-icon-color: var(--text-default);
+  --mdc-checkbox-unselected-pressed-icon-color: var(--text-default);
 
-  --mat-sys-on-surface: var(--light);
   --mat-sys-surface-container: var(--bg-layer-3);
-  --mdc-dialog-supporting-text-color: var(--light);
+  --mdc-icon-button-icon-color: var(--text-default);
   --mat-menu-container-color: var(--bg-layer-2);
   --mat-menu-item-label-text-color: var(--text-default);
   --mat-menu-item-icon-color: var(--text-default);
@@ -82,7 +94,8 @@
   }
   .mat-mdc-dialog-surface {
     background-color: var(--bg-layer-3);
-    color: var(--light);
+    color: var(--text-default);
+    border: 1px solid var(--border-subtle);
   }
 
   .mat-mdc-dialog-content {
@@ -91,6 +104,15 @@
 
   .mat-mdc-dialog-title {
     @apply mt-2 mb-4;
+    color: var(--text-strong);
+  }
+
+  .mat-mdc-radio-button .mdc-label {
+    color: var(--text-default);
+  }
+
+  .mat-mdc-radio-button .theme-option-description {
+    color: var(--text-muted);
   }
 }
 

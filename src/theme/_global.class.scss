@@ -39,8 +39,8 @@
 
 .bg-canvas-grid {
   background-image:
-    linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -87,6 +87,29 @@
 
 .text-strong {
   color: var(--text-strong);
+}
+
+.text-disabled {
+  color: var(--text-disabled);
+}
+
+.text-inverse {
+  color: var(--text-inverse);
+}
+
+.surface-default {
+  background: var(--bg-layer-2);
+  color: var(--text-default);
+}
+
+.surface-raised {
+  background: var(--bg-layer-3);
+  color: var(--text-default);
+}
+
+.surface-contrast {
+  background: var(--surface-contrast);
+  color: var(--text-inverse);
 }
 
 .border-layer {

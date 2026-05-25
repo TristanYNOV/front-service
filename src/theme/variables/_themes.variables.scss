@@ -1,0 +1,250 @@
+:root,
+:root[data-theme='classic'] {
+  color-scheme: dark;
+
+  --bg-app: radial-gradient(circle at 70% 10%, rgba(208, 161, 30, 0.12), transparent 26%),
+    radial-gradient(circle at 20% 20%, rgba(75, 163, 255, 0.09), transparent 26%),
+    #070A10;
+
+  --bg-layer-0: #070A10;
+  --bg-layer-1: #0B1120;
+  --bg-layer-2: #111827;
+  --bg-layer-3: #1F2937;
+  --surface-muted: #172033;
+  --surface-contrast: #020617;
+
+  --text-strong: #F8FAFC;
+  --text-default: #E5E7EB;
+  --text-muted: #AAB3C2;
+  --text-disabled: #6B7280;
+  --text-inverse: #111827;
+
+  --primary: #D0A11E;
+  --on-primary: #191200;
+  --primary-soft: rgba(208, 161, 30, 0.15);
+
+  --accent: #3BA4FF;
+  --on-accent: #06111F;
+  --accent-soft: rgba(59, 164, 255, 0.16);
+
+  --success: #38A169;
+  --warning: #D0A11E;
+  --danger: #D64545;
+  --info: #4BA3FF;
+
+  --border-subtle: #313846;
+  --border-strong: #4B5563;
+  --focus-ring: #D0A11E;
+
+  --grid-color: rgba(248, 250, 252, 0.07);
+}
+
+:root[data-theme='nocturne'] {
+  color-scheme: dark;
+
+  --bg-app: radial-gradient(circle at 75% 12%, rgba(180, 154, 85, 0.11), transparent 24%),
+    radial-gradient(circle at 18% 18%, rgba(71, 166, 106, 0.11), transparent 30%),
+    #050706;
+
+  --bg-layer-0: #050706;
+  --bg-layer-1: #0A0D0B;
+  --bg-layer-2: #111713;
+  --bg-layer-3: #1A211C;
+  --surface-muted: #141A16;
+  --surface-contrast: #030403;
+
+  --text-strong: #DFE7D8;
+  --text-default: #C8D1C2;
+  --text-muted: #889583;
+  --text-disabled: #606B5D;
+  --text-inverse: #071008;
+
+  --primary: #B49A55;
+  --on-primary: #171103;
+  --primary-soft: rgba(180, 154, 85, 0.18);
+
+  --accent: #47A66A;
+  --on-accent: #06130A;
+  --accent-soft: rgba(71, 166, 106, 0.18);
+
+  --success: #47A66A;
+  --warning: #B49A55;
+  --danger: #BF5F5F;
+  --info: #6F9FAF;
+
+  --border-subtle: #2C342D;
+  --border-strong: #465146;
+  --focus-ring: #8B7847;
+
+  --grid-color: rgba(223, 231, 216, 0.055);
+}
+
+:root[data-theme='dynamic'] {
+  color-scheme: dark;
+
+  --bg-app: radial-gradient(circle at 80% 10%, rgba(255, 122, 26, 0.34), transparent 25%),
+    radial-gradient(circle at 14% 18%, rgba(34, 200, 255, 0.26), transparent 29%),
+    radial-gradient(circle at 58% 78%, rgba(255, 176, 0, 0.16), transparent 24%),
+    linear-gradient(135deg, #04111F 0%, #0A253A 46%, #140F0B 100%);
+
+  --bg-layer-0: #04111F;
+  --bg-layer-1: #071827;
+  --bg-layer-2: #102A3A;
+  --bg-layer-3: #1E3A4A;
+  --surface-muted: #172433;
+  --surface-contrast: #F7FBFF;
+
+  --text-strong: #F7FBFF;
+  --text-default: #ECF7FF;
+  --text-muted: #B9D4E4;
+  --text-disabled: #7E9CAF;
+  --text-inverse: #071827;
+
+  --primary: #FF7A1A;
+  --on-primary: #121212;
+  --primary-soft: rgba(255, 122, 26, 0.2);
+
+  --accent: #22C8FF;
+  --on-accent: #041018;
+  --accent-soft: rgba(34, 200, 255, 0.18);
+
+  --success: #46D98C;
+  --warning: #FFB000;
+  --danger: #FF4F5E;
+  --info: #22C8FF;
+
+  --border-subtle: rgba(255, 176, 0, 0.24);
+  --border-strong: rgba(34, 200, 255, 0.5);
+  --focus-ring: #FFB000;
+
+  --grid-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='verdant'] {
+  color-scheme: dark;
+
+  --bg-app: radial-gradient(circle at 72% 16%, rgba(215, 242, 74, 0.28), transparent 24%),
+    radial-gradient(circle at 15% 20%, rgba(142, 207, 24, 0.24), transparent 24%),
+    linear-gradient(135deg, #11140F 0%, #171A15 42%, #D7F24A 100%);
+
+  --bg-layer-0: #10130D;
+  --bg-layer-1: #151912;
+  --bg-layer-2: #1E241A;
+  --bg-layer-3: #283021;
+  --surface-muted: #323B29;
+  --surface-contrast: #D7F24A;
+
+  --text-strong: #F7FAF1;
+  --text-default: #EFF5E7;
+  --text-muted: #C2CCB4;
+  --text-disabled: #87917C;
+  --text-inverse: #10130D;
+
+  --primary: #D7F24A;
+  --on-primary: #10130D;
+  --primary-soft: rgba(215, 242, 74, 0.18);
+
+  --accent: #A8E62E;
+  --on-accent: #10130D;
+  --accent-soft: rgba(168, 230, 46, 0.22);
+
+  --success: #8ECF18;
+  --warning: #E6C84A;
+  --danger: #FF6B6B;
+  --info: #8AD8E8;
+
+  --border-subtle: rgba(215, 242, 74, 0.24);
+  --border-strong: #D7F24A;
+  --focus-ring: #D7F24A;
+
+  --grid-color: rgba(215, 242, 74, 0.09);
+}
+
+:root[data-theme='oriental'] {
+  color-scheme: light;
+
+  --bg-app: radial-gradient(circle at 82% 14%, rgba(179, 9, 0, 0.24), transparent 22%),
+    radial-gradient(circle at 8% 88%, rgba(179, 9, 0, 0.1), transparent 26%),
+    linear-gradient(90deg, rgba(179, 9, 0, 0.07) 1px, transparent 1px),
+    linear-gradient(180deg, #FFFFFF 0%, #FFF0EC 100%);
+
+  --bg-layer-0: #FFFFFF;
+  --bg-layer-1: #FFF4F1;
+  --bg-layer-2: #F5DED7;
+  --bg-layer-3: #EBC5BA;
+  --surface-muted: #F2D6CE;
+  --surface-contrast: #111111;
+
+  --text-strong: #111111;
+  --text-default: #1D1A18;
+  --text-muted: #5F5550;
+  --text-disabled: #918782;
+  --text-inverse: #FFFFFF;
+
+  --primary: #111111;
+  --on-primary: #FFFFFF;
+  --primary-soft: rgba(17, 17, 17, 0.1);
+
+  --accent: #B30900;
+  --on-accent: #FFFFFF;
+  --accent-soft: rgba(179, 9, 0, 0.16);
+
+  --success: #3F6B45;
+  --warning: #8C3B00;
+  --danger: #B30900;
+  --info: #1E4659;
+
+  --border-subtle: rgba(179, 9, 0, 0.34);
+  --border-strong: #B30900;
+  --focus-ring: #B30900;
+
+  --grid-color: rgba(17, 17, 17, 0.11);
+}
+
+:root,
+:root[data-theme] {
+  --bg-secondary-layer-1: var(--warning);
+  --bg-secondary-layer-2: var(--danger);
+  --bg-surface: var(--surface-muted);
+  --bg-elevated: var(--bg-layer-3);
+  --bg-overlay: color-mix(in srgb, var(--surface-contrast) 76%, transparent);
+
+  --border-layer: var(--border-strong);
+  --interactive-active: var(--accent-soft);
+  --interactive-active-border: var(--accent);
+
+  --alert: var(--danger);
+  --primary-text: var(--info);
+  --light: var(--text-default);
+  --light-text-disabled: var(--text-disabled);
+  --dark: var(--surface-contrast);
+
+  --btn-primary-bg: var(--primary);
+  --btn-primary-border: var(--primary);
+  --btn-primary-hover-bg: color-mix(in srgb, var(--primary) 84%, var(--text-default));
+  --btn-primary-color: var(--on-primary);
+  --btn-primary-bg-disabled: var(--surface-muted);
+  --btn-primary-bg-disabled-hover: var(--surface-muted);
+
+  --btn-accent-bg: var(--accent);
+  --btn-accent-border: var(--accent);
+  --btn-accent-hover-bg: color-mix(in srgb, var(--accent) 84%, var(--text-default));
+  --btn-accent-color: var(--on-accent);
+  --btn-accent-bg-disabled: var(--surface-muted);
+  --btn-accent-bg-disabled-hover: var(--surface-muted);
+
+  --btn-default-bg: var(--bg-layer-2);
+  --btn-default-border: var(--border-subtle);
+  --btn-default-hover-bg: var(--bg-layer-3);
+  --btn-default-color: var(--text-default);
+  --btn-default-bg-disabled: var(--surface-muted);
+  --btn-default-bg-disabled-hover: var(--surface-muted);
+
+  --discover-card-bg: var(--bg-layer-2);
+  --discover-card-border: var(--border-subtle);
+  --discover-card-text: var(--text-default);
+  --discover-card-muted: var(--text-muted);
+  --discover-tag-bg: var(--primary-soft);
+  --discover-tag-border: var(--border-subtle);
+  --discover-tag-text: var(--text-default);
+}

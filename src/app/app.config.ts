@@ -16,6 +16,7 @@ import { refreshInterceptor } from './core/interceptors/refresh.interceptor';
 import { analysisStoreDevAuthInterceptor } from './core/interceptors/analysis-store-dev-auth.interceptor';
 import { provideAuthBootstrap } from './core/auth/auth.bootstrap';
 import { AnalysisStoreEffects } from './store/AnalysisStore/analysis-store.effects';
+import { provideThemeBootstrap } from './core/theme/theme.bootstrap';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +31,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideEffects(DataEffects, AnalysisStoreEffects),
     provideHttpClient(withInterceptors([jwtInterceptor, analysisStoreDevAuthInterceptor, refreshInterceptor])),
+    provideThemeBootstrap(),
     provideAuthBootstrap(),
   ],
 };

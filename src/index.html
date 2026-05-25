@@ -10,6 +10,19 @@
   <link rel="alternate icon" type="image/x-icon" href="/favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        var match = document.cookie.match(/(?:^|; )ab_theme=([^;]+)/);
+        var theme = match ? decodeURIComponent(match[1]) : 'classic';
+        var allowed = ['classic', 'nocturne', 'dynamic', 'verdant', 'oriental'];
+        if (allowed.indexOf(theme) === -1) theme = 'classic';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (_) {
+        document.documentElement.setAttribute('data-theme', 'classic');
+      }
+    })();
+  </script>
   <script src="/runtime-config.js"></script>
 </head>
 <body class="mat-typography">

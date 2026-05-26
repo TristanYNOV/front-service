@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { TimelineResourceResponse } from '../../../../interfaces/analysis-store';
 
 export interface TimelineFinderDialogData {
@@ -20,7 +21,7 @@ interface TimelineFinderRow {
 @Component({
   selector: 'app-timeline-finder-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatIconModule, MatTableModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatIconModule, MatTableModule, TranslocoPipe],
   templateUrl: './timeline-finder-dialog.component.html',
 })
 export class TimelineFinderDialogComponent {

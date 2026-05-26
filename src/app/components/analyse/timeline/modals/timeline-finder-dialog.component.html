@@ -1,10 +1,10 @@
-<h2 mat-dialog-title class="bg-layer-3 text-default m-0 text-center">Charger une timeline distante</h2>
+<h2 mat-dialog-title class="bg-layer-3 text-default m-0 text-center">{{ 'timeline.loadRemote' | transloco }}</h2>
 
 <mat-dialog-content class="bg-layer-3 text-default flex max-h-[70vh] flex-col gap-4 pt-4">
   <input
     class="bg-layer-2 border-subtle text-default w-full rounded border px-3 py-2 text-sm"
     type="text"
-    placeholder="Rechercher une timeline"
+    [placeholder]="'timeline.searchTimeline' | transloco"
     [ngModel]="searchTerm()"
     (ngModelChange)="searchTerm.set($event)"
   />
@@ -12,20 +12,20 @@
   <div class="border-subtle bg-layer-2 overflow-auto rounded border">
     <table mat-table [dataSource]="filteredTimelines()" class="w-full">
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'timeline.name' | transloco }}</th>
         <td mat-cell *matCellDef="let timeline">{{ timeline.displayName }}</td>
       </ng-container>
 
       <ng-container matColumnDef="updatedAt">
-        <th mat-header-cell *matHeaderCellDef>Dernière mise à jour</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'timeline.updatedAt' | transloco }}</th>
         <td mat-cell *matCellDef="let timeline">{{ timeline.updatedAt | date: 'short' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <th mat-header-cell *matHeaderCellDef>{{ 'panel.action' | transloco }}</th>
         <td mat-cell *matCellDef="let timeline">
           <button mat-flat-button color="primary" type="button" (click)="select(timeline.resource)">
-            Charger
+            {{ 'actions.load' | transloco }}
           </button>
         </td>
       </ng-container>
@@ -35,11 +35,11 @@
     </table>
 
     @if (filteredTimelines().length === 0) {
-      <div class="text-muted p-3 text-xs">Aucune timeline ne correspond aux filtres.</div>
+      <div class="text-muted p-3 text-xs">{{ 'timeline.noMatch' | transloco }}</div>
     }
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="bg-layer-3 pb-3 pr-3">
-  <button mat-button type="button" (click)="close()">Fermer</button>
+  <button mat-button type="button" (click)="close()">{{ 'actions.close' | transloco }}</button>
 </mat-dialog-actions>

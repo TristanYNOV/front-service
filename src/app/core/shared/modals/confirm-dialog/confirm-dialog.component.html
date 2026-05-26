@@ -5,6 +5,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="bg-layer-3 pb-3 pr-3">
-  <button mat-button type="button" (click)="cancel()">{{ data.cancelLabel ?? 'Annuler' }}</button>
-  <button mat-flat-button color="warn" type="button" cdkFocusInitial (click)="confirm()">{{ data.confirmLabel ?? 'Supprimer' }}</button>
+  <button mat-button type="button" (click)="cancel()">{{ data.cancelLabel ?? ('actions.cancel' | transloco) }}</button>
+  <button mat-flat-button color="warn" type="button" cdkFocusInitial (click)="confirm()">
+    {{ data.confirmLabel ?? ('actions.delete' | transloco) }}
+  </button>
 </mat-dialog-actions>

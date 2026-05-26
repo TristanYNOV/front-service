@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { VideoDisplayComponent } from './video-display.component';
 import { VideoService } from '../../../core/services/video.service';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { getTranslocoTestingModule } from '../../../core/i18n/transloco-testing';
 
 describe('VideoDisplayComponent', () => {
   let fixture: ComponentFixture<VideoDisplayComponent>;
@@ -31,7 +32,7 @@ describe('VideoDisplayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VideoDisplayComponent],
+      imports: [VideoDisplayComponent, getTranslocoTestingModule()],
       providers: [
         { provide: VideoService, useValue: videoServiceMock },
         { provide: ConfirmDialogService, useValue: confirmDialogServiceMock },

@@ -1,5 +1,5 @@
 <div class="max-h-[85vh] w-[500px] h-fit bg-layer-2 rounded-lg light-text pt-8 p-4 overflow-hidden">
-  <h4 class="text-center font-bold text-3xl">{{ this.modalType === 'login' ? 'Connexion' : "S'inscrire" }}</h4>
+  <h4 class="text-center font-bold text-3xl">{{ (modalType === 'login' ? 'auth.loginTitle' : 'auth.registerTitle') | transloco }}</h4>
   <div class="text-center mt-4">
     <button
       type="button"
@@ -9,7 +9,7 @@
       [class.underline]="modalType === 'register'"
       (click)="toggleMode()"
     >
-      {{ modalType === 'login' ? 'Créer un compte' : 'Se connecter' }}
+      {{ (modalType === 'login' ? 'auth.createAccount' : 'actions.login') | transloco }}
     </button>
   </div>
 
@@ -20,34 +20,34 @@
   <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4 mt-4">
     @if (modalType === 'register') {
       <mat-form-field>
-        <mat-label>Pseudo (optionnel)</mat-label>
+        <mat-label>{{ 'auth.pseudo' | transloco }}</mat-label>
         <input formControlName="pseudo" matInput placeholder="coach42" />
-        <mat-hint>Si vide, l'email sera utilisé par défaut.</mat-hint>
+        <mat-hint>{{ 'auth.pseudoHint' | transloco }}</mat-hint>
       </mat-form-field>
     }
 
     <mat-form-field>
-      <mat-label>Email</mat-label>
+      <mat-label>{{ 'auth.email' | transloco }}</mat-label>
       <input formControlName="email" matInput placeholder="analyse@sport.fr" required />
       @if (form.controls.email.hasError('required') && (form.controls.email.dirty || form.controls.email.touched)) {
-        <mat-error>Email requis.</mat-error>
+        <mat-error>{{ 'auth.emailRequired' | transloco }}</mat-error>
       }
       @if (form.controls.email.hasError('email') && (form.controls.email.dirty || form.controls.email.touched)) {
-        <mat-error>Format email invalide.</mat-error>
+        <mat-error>{{ 'auth.emailInvalid' | transloco }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Mot de passe</mat-label>
+      <mat-label>{{ 'auth.password' | transloco }}</mat-label>
       <div class="flex">
         <input [type]="hidePassword ? 'password' : 'text'" formControlName="password" matInput required />
         <button
           class="icon p-2"
           type="button"
           (click)="togglePasswordVisibility()"
-          [attr.aria-label]="hidePassword ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+          [attr.aria-label]="hidePassword ? ('auth.showPassword' | transloco) : ('auth.hidePassword' | transloco)"
           [attr.aria-pressed]="!hidePassword"
-          [attr.title]="hidePassword ? 'Mot de passe masqué' : 'Mot de passe visible'"
+          [attr.title]="hidePassword ? ('auth.passwordHidden' | transloco) : ('auth.passwordVisible' | transloco)"
         >
           <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
         </button>
@@ -57,19 +57,19 @@
     @if (shouldShowPasswordErrors()) {
       <div class="flex flex-col">
         @if (form.controls['password'].hasError('minLength')) {
-          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins 8 caractères.</span></mat-error>
+          <mat-error><span class="alert-text">{{ 'auth.passwordMinLength' | transloco }}</span></mat-error>
         }
         @if (form.controls['password'].hasError('lowercaseMissing')) {
-          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins une lettre minuscule.</span></mat-error>
+          <mat-error><span class="alert-text">{{ 'auth.passwordLowercase' | transloco }}</span></mat-error>
         }
         @if (form.controls['password'].hasError('uppercaseMissing')) {
-          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins une lettre majuscule.</span></mat-error>
+          <mat-error><span class="alert-text">{{ 'auth.passwordUppercase' | transloco }}</span></mat-error>
         }
         @if (form.controls['password'].hasError('digitMissing')) {
-          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins un chiffre.</span></mat-error>
+          <mat-error><span class="alert-text">{{ 'auth.passwordDigit' | transloco }}</span></mat-error>
         }
         @if (form.controls['password'].hasError('specialCharMissing')) {
-          <mat-error><span class="alert-text">Le mot de passe doit contenir au moins un caractère spécial.</span></mat-error>
+          <mat-error><span class="alert-text">{{ 'auth.passwordSpecial' | transloco }}</span></mat-error>
         }
       </div>
     }
@@ -77,10 +77,10 @@
     @if (modalType === 'register') {
       <div class="text-sm">
         <mat-checkbox formControlName="acceptedTerms">
-          J’ai lu et j’accepte les
+          {{ 'auth.acceptTermsPrefix' | transloco }}
         </mat-checkbox>
         <button type="button" class="ml-1 underline public-secondary-link" (click)="openTerms()">
-          Conditions Générales d’Utilisation
+          {{ 'auth.terms' | transloco }}
         </button>
         @if (termsError) {
           <mat-error><span class="alert-text">{{ termsError }}</span></mat-error>
@@ -93,10 +93,10 @@
         <app-loading-dots />
       } @else {
         <button class="btn-accent p-2" type="submit" [disabled]="form.invalid || isSubmitting">
-          {{ this.modalType === 'login' ? 'Se connecter' : 'Inscription' }}
+          {{ (modalType === 'login' ? 'actions.login' : 'actions.register') | transloco }}
         </button>
       }
-      <button type="button" (click)="closeModal()" class="btn-accent p-2">Annuler</button>
+      <button type="button" (click)="closeModal()" class="btn-accent p-2">{{ 'actions.cancel' | transloco }}</button>
     </div>
   </form>
 </div>

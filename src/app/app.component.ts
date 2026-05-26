@@ -8,11 +8,12 @@ import { filter } from 'rxjs';
 import { LayoutEditModeService } from './core/services/layout-edit-mode.service';
 import { MatIconModule } from '@angular/material/icon';
 import { SeoService } from './core/seo/seo.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [HeaderComponent, RouterOutlet, RouterLink, MiniComponent, MatIconModule],
+  imports: [HeaderComponent, RouterOutlet, RouterLink, MiniComponent, MatIconModule, TranslocoPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

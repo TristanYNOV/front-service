@@ -16,6 +16,7 @@ import { HotkeyChord, HotkeysService } from '../../../../../core/services/hotkey
 import { SequencerRuntimeService } from '../../../../../core/service/sequencer-runtime.service';
 import { parseNormalizedHotkey } from '../../../../../utils/sequencer/sequencer-hotkey-options.util';
 import { createSequencerDialogState } from '../../../../../utils/sequencer/sequencer-dialog-state.util';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 export interface LabelBtnDialogData {
   mode: 'create' | 'edit';
@@ -36,6 +37,7 @@ export interface LabelBtnDialogData {
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
+    TranslocoPipe,
     HotkeyPickerComponent,
   ],
   templateUrl: './create-label-btn-dialog.component.html',
@@ -47,6 +49,7 @@ export class CreateLabelBtnDialogComponent {
   private readonly panelService = inject(SequencerPanelService);
   private readonly hotkeysService = inject(HotkeysService);
   private readonly runtimeService = inject(SequencerRuntimeService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly isEdit = this.data.mode === 'edit';
   readonly currentActionId = this.data.btn?.id ?? null;
@@ -128,7 +131,7 @@ export class CreateLabelBtnDialogComponent {
   save() {
     if (!this.canSave()) {
       if (!this.isEdit && !this.panelService.isIdAvailable(this.form.controls.id.value ?? '')) {
-        this.hotkeyError.set('ID déjà utilisé.');
+        this.hotkeyError.set(this.transloco.translate('sequencer.hotkeyInvalid'));
       }
       return;
     }
@@ -149,7 +152,7 @@ export class CreateLabelBtnDialogComponent {
         { label: name },
       );
       if (!result.ok) {
-        this.hotkeyError.set('Hotkey invalide ou déjà utilisée.');
+        this.hotkeyError.set(this.transloco.translate('sequencer.hotkeyInvalid'));
         return;
       }
       hotkeyNormalized = result.normalized;
@@ -183,7 +186,7 @@ export class CreateLabelBtnDialogComponent {
         if (hotkeyNormalized) {
           this.hotkeysService.unassignSequencerHotkeyByAction(id);
         }
-        this.hotkeyError.set('ID déjà utilisé.');
+        this.hotkeyError.set(this.transloco.translate('sequencer.hotkeyInvalid'));
         return;
       }
     }

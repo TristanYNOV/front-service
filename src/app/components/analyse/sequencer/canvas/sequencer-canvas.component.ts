@@ -32,6 +32,7 @@ import { formatNormalizedHotkey } from '../../../../utils/sequencer/sequencer-ho
 import { getReadableTextColor } from '../../../../utils/color/color-contrast.utils';
 import { ZoomControlsComponent } from '../../../shared/zoom-controls/zoom-controls.component';
 import { THEME_COLOR_HEX } from '../../../../../theme/theme-colors';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-sequencer-canvas',
@@ -39,7 +40,7 @@ import { THEME_COLOR_HEX } from '../../../../../theme/theme-colors';
   templateUrl: './sequencer-canvas.component.html',
   styleUrl: './sequencer-canvas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatButtonModule, MatIconModule, ZoomControlsComponent],
+  imports: [CommonModule, MatButtonModule, MatIconModule, TranslocoPipe, ZoomControlsComponent],
 })
 export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvasContainer', { static: false }) canvasContainerRef?: ElementRef<HTMLDivElement>;

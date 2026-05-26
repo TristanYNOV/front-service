@@ -77,6 +77,7 @@ describe('SequencerTimelineBridgeService', () => {
       { type: 'EVENT_INDEFINITE_START', btnId: 'evt-1', timestamp: 20, seq: 2 },
       { type: 'EVENT_ONCE_TRIGGERED', btnId: 'evt-2', timestamp: 10, seq: 1 },
     ]);
+    TestBed.flushEffects();
 
     const actions = (store.dispatch as jasmine.Spy).calls.allArgs().map(call => call[0]);
     expect(actions[0]).toEqual(timelineRuntimeOnceTriggered({ eventBtnId: 'evt-2', atMs: 4200, timestamp: 10, activeLabelBtnIds: [] }));
@@ -91,6 +92,7 @@ describe('SequencerTimelineBridgeService', () => {
       { type: 'EVENT_INDEFINITE_START', btnId: 'evt-1', timestamp: 20, seq: 2 },
       { type: 'EVENT_ONCE_TRIGGERED', btnId: 'evt-2', timestamp: 10, seq: 1 },
     ]);
+    TestBed.flushEffects();
 
     expect(store.dispatch).not.toHaveBeenCalled();
   });
@@ -104,6 +106,7 @@ describe('SequencerTimelineBridgeService', () => {
       { type: 'EVENT_INDEFINITE_START', btnId: 'evt-1', timestamp: 20, seq: 2 },
       { type: 'EVENT_INDEFINITE_END', btnId: 'evt-1', timestamp: 30, seq: 3 },
     ]);
+    TestBed.flushEffects();
 
     expect(store.dispatch).toHaveBeenCalledWith(
       timelineRuntimeOnceTriggered({ eventBtnId: 'evt-1', atMs: 4200, timestamp: 10, activeLabelBtnIds: ['lbl-indef'] }),
@@ -120,6 +123,7 @@ describe('SequencerTimelineBridgeService', () => {
     runtime.recentRuntimeEvents.set([
       { type: 'LABEL_TRIGGERED', btnId: 'lbl-once', timestamp: 10, seq: 1, applyToEventBtnIds: ['evt-1'] },
     ]);
+    TestBed.flushEffects();
 
     expect(store.dispatch).toHaveBeenCalledWith(
       timelineRuntimeLabelApply({ labelBtnId: 'lbl-once', targetEventBtnIds: ['evt-1'], atMs: 4200, timestamp: 10 }),
@@ -131,6 +135,7 @@ describe('SequencerTimelineBridgeService', () => {
     runtime.recentRuntimeEvents.set([
       { type: 'LABEL_TRIGGERED', btnId: 'lbl-indef', timestamp: 20, seq: 1, applyToEventBtnIds: ['evt-1'] },
     ]);
+    TestBed.flushEffects();
 
     expect(store.dispatch).toHaveBeenCalledWith(
       timelineRuntimeLabelApply({ labelBtnId: 'lbl-indef', targetEventBtnIds: ['evt-1'], atMs: 4200, timestamp: 20 }),
@@ -142,6 +147,7 @@ describe('SequencerTimelineBridgeService', () => {
     runtime.recentRuntimeEvents.set([
       { type: 'LABEL_TRIGGERED', btnId: 'lbl-indef', timestamp: 30, seq: 1, applyToEventBtnIds: ['evt-1'] },
     ]);
+    TestBed.flushEffects();
 
     expect(store.dispatch).toHaveBeenCalledWith(
       timelineRuntimeLabelRemove({ labelBtnId: 'lbl-indef', targetEventBtnIds: ['evt-1'], atMs: 4200, timestamp: 30 }),
@@ -152,6 +158,7 @@ describe('SequencerTimelineBridgeService', () => {
     runtime.recentRuntimeEvents.set([
       { type: 'LABEL_TRIGGERED', btnId: 'lbl-once', timestamp: 40, seq: 1, applyToEventBtnIds: [] },
     ]);
+    TestBed.flushEffects();
 
     expect(store.dispatch).not.toHaveBeenCalled();
   });

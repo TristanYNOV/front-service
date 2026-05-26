@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 
+import { getTranslocoTestingModule } from '../../core/i18n/transloco-testing';
+import { selectDisplayedItems } from '../../store/Data/dataState.selectors';
 import { DiscoverComponent } from './discover.component';
 
 describe('DiscoverComponent', () => {
@@ -8,7 +11,17 @@ describe('DiscoverComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DiscoverComponent]
+      imports: [DiscoverComponent, getTranslocoTestingModule()],
+      providers: [
+        provideMockStore({
+          selectors: [
+            {
+              selector: selectDisplayedItems,
+              value: [],
+            },
+          ],
+        }),
+      ],
     })
     .compileComponents();
 

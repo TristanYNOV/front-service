@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SequencerPanelService } from '../../../../../core/service/sequencer-panel.service';
 import { CreateStatBtnDialogComponent } from './create-stat-btn-dialog.component';
+import { getTranslocoTestingModule } from '../../../../../core/i18n/transloco-testing';
 
 class MockSequencerPanelService {
   readonly btnList = signal([
@@ -23,7 +24,7 @@ describe('CreateStatBtnDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateStatBtnDialogComponent],
+      imports: [CreateStatBtnDialogComponent, getTranslocoTestingModule()],
       providers: [
         { provide: SequencerPanelService, useClass: MockSequencerPanelService },
         { provide: MAT_DIALOG_DATA, useValue: { mode: 'create' } },
@@ -186,7 +187,7 @@ describe('CreateStatBtnDialogComponent', () => {
   it('loads renamed terms when reopening in edit mode', async () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
-      imports: [CreateStatBtnDialogComponent],
+      imports: [CreateStatBtnDialogComponent, getTranslocoTestingModule()],
       providers: [
         { provide: SequencerPanelService, useClass: MockSequencerPanelService },
         {

@@ -149,3 +149,19 @@
 .discover-canvas-item {
   border: 1px solid var(--border-layer);
 }
+
+.language-select {
+  background-color: var(--bg-layer-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius);
+  color: var(--text-default);
+  cursor: pointer;
+  font-size: 0.8rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.language-select:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

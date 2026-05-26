@@ -15,11 +15,12 @@ import { FormsModule } from '@angular/forms';
 import { VideoService } from '../../../core/services/video.service';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-video-display',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, TranslocoPipe],
   templateUrl: './video-display.component.html',
   styleUrl: './video-display.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +35,7 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
 
   protected readonly videoService = inject(VideoService);
   private readonly confirmDialogService = inject(ConfirmDialogService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly videoName = signal<string | null>(null);
   readonly errorMessage = signal<string | null>(null);
@@ -78,10 +80,10 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
     }
 
     const confirmed = await this.confirmDialogService.confirm({
-      title: 'Retirer la vidéo',
-      message: 'Voulez-vous retirer la vidéo chargée ?',
-      confirmLabel: 'Retirer',
-      cancelLabel: 'Annuler',
+      title: this.transloco.translate('video.removeTitle'),
+      message: this.transloco.translate('video.removeMessage'),
+      confirmLabel: this.transloco.translate('actions.remove'),
+      cancelLabel: this.transloco.translate('actions.cancel'),
     });
 
     if (!confirmed) {
@@ -99,7 +101,7 @@ export class VideoDisplayComponent implements AfterViewInit, OnDestroy {
   }
 
   onVideoError() {
-    this.errorMessage.set('La vidéo n’a pas pu être chargée.');
+    this.errorMessage.set('video.loadFailed');
   }
 
   onSeekInput(event: Event) {

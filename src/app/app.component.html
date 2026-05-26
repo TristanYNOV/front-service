@@ -3,13 +3,11 @@
   [class.layout-edit]="layoutEditMode.isEditMode()"
   [class.layout-locked]="!layoutEditMode.isEditMode()"
 >
-  <app-header [currentSpace]="'Accueil'" />
+  <app-header [currentSpace]="'nav.home' | transloco" />
 
   <div class="flex-1 overflow-hidden" [class.flex]="showSidebar">
     @if(showSidebar){
-      <!-- Sidebar gauche : Idle + Saved -->
       <section class="w-[20%] min-w-[220px] max-w-[320px] bg-layer-1 p-2 flex flex-col gap-4 overflow-hidden">
-        <!-- IDLE -->
         <div id="idle-section" class="discover-panel rounded-xl shadow p-2 light-text flex flex-col flex-1 min-h-0">
           <h2 class="text-sm font-semibold mb-2 flex items-center gap-1">
             <mat-icon aria-hidden="true">cloud</mat-icon>
@@ -21,11 +19,10 @@
               }
             </div>
           } @else {
-            <p class="text-xs text-muted">Aucune donnée en attente.</p>
+            <p class="text-xs text-muted">{{ 'analyse.idleEmpty' | transloco }}</p>
           }
         </div>
 
-        <!-- SAVED -->
         <div id="saved-section" class="discover-panel rounded-xl shadow p-2 light-text flex flex-col flex-1 min-h-0">
           <h2 class="text-sm font-semibold mb-2 flex items-center gap-1">
             <mat-icon aria-hidden="true">bookmark</mat-icon>
@@ -37,30 +34,29 @@
               }
             </div>
           } @else {
-            <p class="text-xs text-muted">Aucune donnée sauvegardée.</p>
+            <p class="text-xs text-muted">{{ 'analyse.savedEmpty' | transloco }}</p>
           }
         </div>
       </section>
       <div class="separator h-[80%] self-center mx-2"></div>
     }
 
-    <!-- Affichage principal -->
     <section class="p-2 w-full h-full overflow-y-auto" [class.flex-1]="showSidebar" [class.w-full]="!showSidebar">
       <router-outlet />
       @if (showFooter) {
-        <footer class="public-footer light-text" aria-label="Navigation SEO">
+        <footer class="public-footer light-text" [attr.aria-label]="'nav.seo' | transloco">
           <div>
-            <strong>Action Board</strong>
-            <p>Plateforme d’analyse vidéo sportive</p>
+            <strong>{{ 'common.appName' | transloco }}</strong>
+            <p>{{ 'common.sportVideoPlatform' | transloco }}</p>
           </div>
           <nav>
-            <a routerLink="/">Accueil</a>
-            <a routerLink="/fonctionnalites">Fonctionnalités</a>
-            <a routerLink="/tarifs">Tarifs</a>
-            <a routerLink="/faq">FAQ</a>
-            <a routerLink="/contact">Contact</a>
-            <a routerLink="/cgu">CGU</a>
-            <a routerLink="/confidentialite">Confidentialité</a>
+            <a routerLink="/">{{ 'nav.home' | transloco }}</a>
+            <a routerLink="/fonctionnalites">{{ 'nav.features' | transloco }}</a>
+            <a routerLink="/tarifs">{{ 'nav.pricing' | transloco }}</a>
+            <a routerLink="/faq">{{ 'nav.faq' | transloco }}</a>
+            <a routerLink="/contact">{{ 'nav.contact' | transloco }}</a>
+            <a routerLink="/cgu">{{ 'nav.terms' | transloco }}</a>
+            <a routerLink="/confidentialite">{{ 'nav.privacy' | transloco }}</a>
           </nav>
         </footer>
       }

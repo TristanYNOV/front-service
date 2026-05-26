@@ -1,2 +1,2 @@
-<p class="text-xs discover-muted">{{ item.plans.length }} offres disponibles</p>
-<p class="text-sm font-semibold primary-text">À partir de {{ minPrice }} € / mois</p>
+<p class="text-xs discover-muted">{{ 'dataItems.price.availableOffers' | transloco: { count: item.plans.length } }}</p>
+<p class="text-sm font-semibold primary-text">{{ 'dataItems.price.fromMonthlyPrice' | transloco: { price: minPrice } }}</p>

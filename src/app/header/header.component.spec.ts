@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HeaderComponent } from './header.component';
 import { AuthSessionService } from '../core/auth/auth-session.service';
 import { LayoutEditModeService } from '../core/services/layout-edit-mode.service';
+import { getTranslocoTestingModule } from '../core/i18n/transloco-testing';
 
 describe('HeaderComponent', () => {
   @Component({
@@ -35,6 +36,7 @@ describe('HeaderComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         HeaderComponent,
+        getTranslocoTestingModule(),
         MatDialogModule,
         DummyRouteComponent,
         RouterTestingModule.withRoutes([

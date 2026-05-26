@@ -1,7 +1,7 @@
 <h2 mat-dialog-title class="bg-layer-3 text-default m-0">{{ 'theme.title' | transloco }}</h2>
 <mat-dialog-content class="bg-layer-3 text-default">
   <p class="text-muted m-0 mb-4">
-    Choisissez une palette adapt&eacute;e &agrave; votre usage. Le choix est conserv&eacute; localement dans votre navigateur.
+   {{ 'theme.intro' | transloco }}
   </p>
 
   <mat-radio-group
@@ -13,8 +13,8 @@
     @for (theme of themes; track theme.value) {
       <mat-radio-button [value]="theme.value">
         <span class="flex flex-col leading-tight">
-          <span class="theme-option-label text-default font-medium">{{ theme.label }}</span>
-          <span class="theme-option-description text-muted text-sm">{{ theme.description }}</span>
+          <span class="theme-option-label text-default font-medium">{{ theme.labelKey | transloco }}</span>
+          <span class="theme-option-description text-muted text-sm">{{ theme.descriptionKey | transloco }}</span>
         </span>
       </mat-radio-button>
     }

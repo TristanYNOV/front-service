@@ -10,8 +10,8 @@ export type AppTheme = (typeof APP_THEMES)[number];
 
 export interface ThemeOption {
   value: AppTheme;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
 }
 
 @Injectable({
@@ -25,31 +25,30 @@ export class ThemeService {
   readonly themes: ThemeOption[] = [
     {
       value: 'classic',
-      label: 'Standard',
-      description: "Thème Action Board stable, proche de l'expérience d'origine.",
+      labelKey: 'theme.options.classic.label',
+      descriptionKey: 'theme.options.classic.description',
     },
     {
       value: 'nocturne',
-      label: 'Obsidienne',
-      description: 'Interface sombre et douce, adaptée aux sessions longues en environnement peu lumineux.',
+      labelKey: 'theme.options.nocturne.label',
+      descriptionKey: 'theme.options.nocturne.description',
     },
     {
       value: 'dynamic',
-      label: 'Momentum',
-      description: 'Palette sportive et contrastée, bleu profond, cyan et orange vif.',
+      labelKey: 'theme.options.dynamic.label',
+      descriptionKey: 'theme.options.dynamic.description',
     },
     {
       value: 'verdant',
-      label: 'Canopée',
-      description: 'Vert dominant, noir structurant et surfaces claires argentées.',
+      labelKey: 'theme.options.verdant.label',
+      descriptionKey: 'theme.options.verdant.description',
     },
     {
       value: 'oriental',
-      label: 'Sumi',
-      description: 'Canvas blanc, encre noire et rouge profond inspiré de la calligraphie.',
+      labelKey: 'theme.options.oriental.label',
+      descriptionKey: 'theme.options.oriental.description',
     },
   ];
-
   private currentTheme: AppTheme = 'classic';
 
   getTheme(): AppTheme {

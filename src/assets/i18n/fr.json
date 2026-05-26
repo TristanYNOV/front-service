@@ -59,20 +59,32 @@
   },
   "theme": {
     "title": "Thème",
-    "intro": "Choisissez une palette adaptée à votre usage. Le choix est conservé localement dans votre navigateur.",
-    "comingSoon": "La personnalisation du thème sera disponible ultérieurement.",
+    "intro": "Choisissez une palette adaptée à votre usage.",
+    "comingSoon": "La personnalisation des thèmes sera disponible plus tard.",
     "current": "Thème actuel",
     "choice": "Choix du thème",
-    "standard": "Standard",
-    "standardDescription": "Thème Action Board stable, proche de l’expérience d’origine.",
-    "obsidian": "Obsidienne",
-    "obsidianDescription": "Interface sombre et douce, adaptée aux sessions longues en environnement peu lumineux.",
-    "momentum": "Momentum",
-    "momentumDescription": "Palette sportive et contrastée, bleu profond, cyan et orange vif.",
-    "canopy": "Canopée",
-    "canopyDescription": "Vert dominant, noir structurant et surfaces claires argentées.",
-    "sumi": "Sumi",
-    "sumiDescription": "Canvas blanc, encre noire et rouge profond inspiré de la calligraphie."
+    "options": {
+      "classic": {
+        "label": "Standard",
+        "description": "Thème Action Board stable, proche de l'expérience d'origine."
+      },
+      "nocturne": {
+        "label": "Obsidienne",
+        "description": "Interface sombre et douce, adaptée aux sessions longues en environnement peu lumineux."
+      },
+      "dynamic": {
+        "label": "Momentum",
+        "description": "Palette sportive et contrastée, bleu profond, cyan et orange vif."
+      },
+      "verdant": {
+        "label": "Canopée",
+        "description": "Vert dominant, noir structurant et surfaces claires argentées."
+      },
+      "oriental": {
+        "label": "Sumi",
+        "description": "Canvas blanc, encre noire et rouge profond inspiré de la calligraphie."
+      }
+    }
   },
   "language": {
     "label": "Langue",

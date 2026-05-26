@@ -20,7 +20,6 @@ import { AnalysisStoreEffects } from './store/AnalysisStore/analysis-store.effec
 import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
 import { provideLanguageBootstrap } from './core/i18n/language.bootstrap';
 import { environment } from '../environments/environment';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { provideThemeBootstrap } from './core/theme/theme.bootstrap';
 
 

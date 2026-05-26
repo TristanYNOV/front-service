@@ -59,20 +59,32 @@
   },
   "theme": {
     "title": "Theme",
-    "intro": "Choose a palette suited to your workflow. Your choice is stored locally in your browser.",
+    "intro": "Choose a palette suited to your workflow.",
     "comingSoon": "Theme customization will be available later.",
     "current": "Current theme",
     "choice": "Theme choice",
-    "standard": "Standard",
-    "standardDescription": "Stable Action Board theme, close to the original experience.",
-    "obsidian": "Obsidian",
-    "obsidianDescription": "Soft dark interface for long sessions in low-light environments.",
-    "momentum": "Momentum",
-    "momentumDescription": "Sporty, high-contrast palette with deep blue, cyan and vivid orange.",
-    "canopy": "Canopy",
-    "canopyDescription": "Dominant green, structured black and light silver surfaces.",
-    "sumi": "Sumi",
-    "sumiDescription": "White canvas, black ink and deep red inspired by calligraphy."
+    "options": {
+      "classic": {
+        "label": "Standard",
+        "description": "Stable Action Board theme, close to the original experience."
+      },
+      "nocturne": {
+        "label": "Obsidian",
+        "description": "Soft dark interface for long sessions in low-light environments."
+      },
+      "dynamic": {
+        "label": "Momentum",
+        "description": "Sporty, high-contrast palette with deep blue, cyan and vivid orange."
+      },
+      "verdant": {
+        "label": "Canopy",
+        "description": "Dominant green, structured black and light silver surfaces."
+      },
+      "oriental": {
+        "label": "Sumi",
+        "description": "White canvas, black ink and deep red inspired by calligraphy."
+      }
+    }
   },
   "language": {
     "label": "Language",

@@ -1,5 +1,5 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, inject, DOCUMENT } from '@angular/core';
 
 const THEME_COOKIE_NAME = 'ab_theme';
 const THEME_COOKIE_MAX_AGE_SECONDS = 31536000;

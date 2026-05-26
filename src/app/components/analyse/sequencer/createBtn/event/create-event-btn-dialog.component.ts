@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { HotkeysService } from '../../../../../core/services/hotkeys.service';
 import { SequencerPanelService } from '../../../../../core/service/sequencer-panel.service';
 import { SequencerRuntimeService } from '../../../../../core/service/sequencer-runtime.service';
@@ -38,6 +39,7 @@ export interface EventBtnDialogData {
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
+    TranslocoPipe,
     HotkeyPickerComponent,
   ],
   templateUrl: './create-event-btn-dialog.component.html',

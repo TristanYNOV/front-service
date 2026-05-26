@@ -4,6 +4,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { HotkeysService } from '../../../../core/services/hotkeys.service';
 import { HotkeyChord } from '../../../../interfaces/hotkey-chord.interface';
 import {
@@ -17,7 +18,7 @@ import {
 @Component({
   selector: 'app-hotkey-picker',
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatCheckboxModule, MatButtonModule],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatCheckboxModule, MatButtonModule, TranslocoPipe],
   templateUrl: './hotkey-picker.component.html',
   styleUrl: './hotkey-picker.component.scss',
 })

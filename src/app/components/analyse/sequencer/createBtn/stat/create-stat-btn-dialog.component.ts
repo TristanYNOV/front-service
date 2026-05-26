@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { merge } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 import { SequencerPanelService } from '../../../../../core/service/sequencer-panel.service';
@@ -52,6 +53,7 @@ export interface StatBtnDialogData {
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
+    TranslocoPipe,
   ],
   templateUrl: './create-stat-btn-dialog.component.html',
   styleUrl: './create-stat-btn-dialog.component.scss',

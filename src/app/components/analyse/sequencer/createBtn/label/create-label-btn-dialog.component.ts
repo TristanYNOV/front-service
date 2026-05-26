@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { SequencerPanelService } from '../../../../../core/service/sequencer-panel.service';
 import { LabelBtn } from '../../../../../interfaces/sequencer-btn.interface';
 import { HotkeyPickerComponent } from '../../hotkeyPicker/hotkey-picker.component';
@@ -36,6 +37,7 @@ export interface LabelBtnDialogData {
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
+    TranslocoPipe,
     HotkeyPickerComponent,
   ],
   templateUrl: './create-label-btn-dialog.component.html',

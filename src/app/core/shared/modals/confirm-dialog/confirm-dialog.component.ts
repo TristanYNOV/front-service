@@ -30,7 +30,11 @@ export class ConfirmDialogComponent {
   }
 
   @HostListener('keydown.enter', ['$event'])
-  onEnter(event: KeyboardEvent) {
+  onEnter(event: Event): void {
+    if (!(event instanceof KeyboardEvent)) {
+      return;
+    }
+
     event.preventDefault();
     this.confirm();
   }

@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="bg-layer-3 light-text m-0 text-center">
-  {{ isEdit ? 'Éditer un Stat' : 'Créer un Stat' }}
+  {{ isEdit ? 'actions.edit' | transloco : 'panel.createStat' | transloco }}
 </h2>
 
 <mat-dialog-content class="bg-layer-3 light-text stats-dialog-content">
@@ -10,19 +10,19 @@
         <input matInput formControlName="id" />
       </mat-form-field>
       <mat-form-field appearance="fill">
-        <mat-label>Nom</mat-label>
+        <mat-label>{{ 'sequencer.name' | transloco }}</mat-label>
         <input matInput formControlName="name" />
       </mat-form-field>
     </div>
     <div class="border-layer rounded-md border p-3">
-      <mat-checkbox formControlName="isAnonymized">Anonymiser ce bouton</mat-checkbox>
+      <mat-checkbox formControlName="isAnonymized">{{ 'sequencer.anonymize' | transloco }}</mat-checkbox>
       <p class="text-muted mt-1 text-xs italic">
-        Active l’obfuscation du nom du bouton dans les vues concernées.
+        {{ 'sequencer.anonymize' | transloco }}
       </p>
     </div>
 
     <div class="border-layer rounded-md border p-3">
-      <div class="mb-2 text-[13px] font-semibold">Couleur du bouton</div>
+      <div class="mb-2 text-[13px] font-semibold">{{ 'sequencer.buttonColor' | transloco }}</div>
       <div class="flex items-center gap-3">
         <input id="stat-color" type="color" formControlName="colorHex" class="timeline-color-input" />
         <div class="h-8 w-8 rounded border border-layer" [style.background]="colorPreview()"></div>
@@ -34,16 +34,16 @@
     </div>
 
     <mat-radio-group class="flex justify-center gap-2" [formControl]="modeControl">
-      <mat-radio-button value="simple">Recherche simple</mat-radio-button>
-      <mat-radio-button value="complex">Recherche complexe</mat-radio-button>
+      <mat-radio-button value="simple">{{ 'sequencer.simpleSearch' | transloco }}</mat-radio-button>
+      <mat-radio-button value="complex">{{ 'sequencer.complexSearch' | transloco }}</mat-radio-button>
     </mat-radio-group>
 
     @if (modeControl.value === 'simple') {
       <div class="border-layer rounded-md border p-3">
-        <div class="text-[13px] font-semibold mb-2">Requête simple</div>
+        <div class="text-[13px] font-semibold mb-2">{{ 'sequencer.simpleQuery' | transloco }}</div>
         <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
           <mat-form-field appearance="fill">
-            <mat-label>Events ciblés *</mat-label>
+            <mat-label>{{ 'sequencer.targetEvents' | transloco }}</mat-label>
             <mat-select [value]="simpleEventIds()" (valueChange)="simpleEventIds.set($event)" multiple>
               @for (event of availableEvents(); track event.id) {
                 <mat-option [value]="event.id">{{ event.id }} · {{ event.name }}</mat-option>
@@ -51,7 +51,7 @@
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Labels filtres</mat-label>
+            <mat-label>{{ 'sequencer.filterLabels' | transloco }}</mat-label>
             <mat-select [value]="simpleLabelIds()" (valueChange)="simpleLabelIds.set($event)" multiple>
               @for (label of availableLabels(); track label.id) {
                 <mat-option [value]="label.id">{{ label.id }} · {{ label.name }}</mat-option>
@@ -82,12 +82,12 @@
       </div>
     } @else {
       <div class="border-layer rounded-md border p-3 flex flex-col gap-3">
-        <div class="text-[13px] font-semibold">Expression mathématique</div>
+        <div class="text-[13px] font-semibold">{{ 'sequencer.mathExpression' | transloco }}</div>
 
         <div class="flex flex-wrap gap-2">
           @for (term of complexTerms(); track term.id) {
             <button mat-stroked-button type="button" (click)="addToken({ kind: 'term', termId: term.id })">
-              {{ term.displayName || 'Sans nom' }}
+              {{ term.displayName || ('common.no' | transloco) }}
             </button>
           }
           <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '+' })">+</button>
@@ -96,12 +96,12 @@
           <button mat-stroked-button type="button" (click)="addToken({ kind: 'operator', op: '/' })">/</button>
           <button mat-stroked-button type="button" (click)="addToken({ kind: 'paren', value: '(' })">(</button>
           <button mat-stroked-button type="button" (click)="addToken({ kind: 'paren', value: ')' })">)</button>
-          <button mat-stroked-button type="button" (click)="removeLastToken()">Backspace</button>
-          <button mat-stroked-button type="button" (click)="clearExpression()">Effacer</button>
+          <button mat-stroked-button type="button" (click)="removeLastToken()">{{ 'actions.backspace' | transloco }}</button>
+          <button mat-stroked-button type="button" (click)="clearExpression()">{{ 'actions.clear' | transloco }}</button>
         </div>
 
         <div class="bg-layer-1 border-layer min-h-14 rounded-md border p-2">
-          <div class="text-[10px] text-muted mb-1">Aperçu</div>
+          <div class="text-[10px] text-muted mb-1">{{ 'sequencer.preview' | transloco }}</div>
           <div class="font-mono text-sm">{{ expressionText() || '—' }}</div>
         </div>
 
@@ -111,13 +111,13 @@
       </div>
 
       <div class="border-layer rounded-md border p-3 flex flex-col gap-3">
-        <div class="text-[13px] font-semibold">Termes disponibles</div>
+        <div class="text-[13px] font-semibold">{{ 'sequencer.availableTerms' | transloco }}</div>
 
         @for (term of complexTerms(); track term.id) {
           <div class="border-layer rounded-md border p-2 flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <mat-form-field appearance="fill" class="flex-1">
-                <mat-label>Nom du terme</mat-label>
+                <mat-label>{{ 'sequencer.termName' | transloco }}</mat-label>
                 <input matInput [value]="term.displayName" (input)="updateTermDisplayName(term.id, $any($event.target).value)" />
               </mat-form-field>
               <button mat-icon-button type="button" [disabled]="complexTerms().length <= 1" (click)="removeComplexTerm(term.id)">
@@ -127,21 +127,21 @@
 
             <div class="grid gap-2 md:grid-cols-3">
               <mat-form-field appearance="fill">
-                <mat-label>Type</mat-label>
+                <mat-label>{{ 'sequencer.type' | transloco }}</mat-label>
                 <mat-select [value]="term.kind" (valueChange)="updateTermKind(term.id, $event)">
-                  <mat-option value="query">Requête</mat-option>
-                  <mat-option value="constant">Constante</mat-option>
+                  <mat-option value="query">{{ 'sequencer.query' | transloco }}</mat-option>
+                  <mat-option value="constant">{{ 'sequencer.constant' | transloco }}</mat-option>
                 </mat-select>
               </mat-form-field>
 
               @if (term.kind === 'constant') {
                 <mat-form-field appearance="fill" class="md:col-span-2">
-                  <mat-label>Valeur</mat-label>
+                  <mat-label>{{ 'sequencer.value' | transloco }}</mat-label>
                   <input matInput type="number" [value]="term.constantValue" (input)="updateTermConstantValue(term.id, +$any($event.target).value)" />
                 </mat-form-field>
               } @else {
                 <mat-form-field appearance="fill">
-                  <mat-label>Events *</mat-label>
+                  <mat-label>{{ 'sequencer.targetEvents' | transloco }}</mat-label>
                   <mat-select [value]="term.eventIds" (valueChange)="updateTermEventIds(term.id, $event)" multiple>
                     @for (event of availableEvents(); track event.id) {
                       <mat-option [value]="event.id">{{ event.id }} · {{ event.name }}</mat-option>
@@ -149,7 +149,7 @@
                   </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="fill" class="md:col-span-2">
-                  <mat-label>Labels</mat-label>
+                  <mat-label>{{ 'timeline.labels' | transloco }}</mat-label>
                   <mat-select [value]="term.labelIds" (valueChange)="updateTermLabelIds(term.id, $event)" multiple>
                     @for (label of availableLabels(); track label.id) {
                       <mat-option [value]="label.id">{{ label.id }} · {{ label.name }}</mat-option>
@@ -197,8 +197,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="center" class="bg-layer-3 light-text stats-dialog-actions">
-  <button mat-stroked-button type="button" (click)="close()">Annuler</button>
+  <button mat-stroked-button type="button" (click)="close()">{{ 'actions.cancel' | transloco }}</button>
   <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="!canSave()">
-    {{ isEdit ? 'Mettre à jour' : 'Créer' }}
+    {{ isEdit ? 'actions.save' | transloco : 'actions.add' | transloco }}
   </button>
 </mat-dialog-actions>

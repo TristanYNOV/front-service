@@ -38,7 +38,7 @@
     </div>
 
     <button class="btn-default flex items-center p-2" (click)="facade.setAutoFollow(!facade.autoFollow())">
-      {{ 'timeline.autoFollow' | transloco }} {{ facade.autoFollow() ? 'ON' : 'OFF' }}
+      {{ 'timeline.autoFollow' | transloco }} {{ facade.autoFollow() ? ('common.yes' | transloco) : ('common.no' | transloco) }}
     </button>
     <button class="btn-default flex items-center p-2" (click)="recenter()" [attr.aria-label]="'timeline.recenter' | transloco" [title]="'timeline.recenter' | transloco">{{ 'timeline.recenter' | transloco }}</button>
 

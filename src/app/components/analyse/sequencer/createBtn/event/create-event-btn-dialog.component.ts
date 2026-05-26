@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,7 +29,6 @@ export interface EventBtnDialogData {
   selector: 'app-create-event-btn-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -40,8 +39,8 @@ export interface EventBtnDialogData {
     MatSelectModule,
     MatIconModule,
     TranslocoPipe,
-    HotkeyPickerComponent,
-  ],
+    HotkeyPickerComponent
+],
   templateUrl: './create-event-btn-dialog.component.html',
   styleUrl: './create-event-btn-dialog.component.scss',
 })

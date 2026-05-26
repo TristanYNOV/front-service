@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   Component,
@@ -56,15 +56,14 @@ import { PanelPublishDialogComponent } from './modals/panel-publish-dialog/panel
   templateUrl: './sequencer-panel.component.html',
   styleUrl: './sequencer-panel.component.scss',
   imports: [
-    CommonModule,
     MatButtonModule,
     MatMenuModule,
     MatIconModule,
     MatDialogModule,
     MatInputModule,
     TranslocoPipe,
-    SequencerCanvasComponent,
-  ],
+    SequencerCanvasComponent
+],
 })
 export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   @ViewChild('panelRoot', { static: true }) panelRoot?: ElementRef<HTMLElement>;

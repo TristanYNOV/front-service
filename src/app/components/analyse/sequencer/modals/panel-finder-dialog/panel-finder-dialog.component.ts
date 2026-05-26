@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,7 +26,6 @@ export interface PanelFinderDialogResult {
   selector: 'app-panel-finder-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatDialogModule,
     MatButtonModule,
@@ -34,8 +33,8 @@ export interface PanelFinderDialogResult {
     MatTableModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
-    TranslocoPipe,
-  ],
+    TranslocoPipe
+],
   templateUrl: './panel-finder-dialog.component.html',
 })
 export class PanelFinderDialogComponent {

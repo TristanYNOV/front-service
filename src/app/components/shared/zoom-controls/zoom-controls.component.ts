@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,7 +7,7 @@ import { MatSliderModule } from '@angular/material/slider';
 @Component({
   selector: 'app-zoom-controls',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatSliderModule],
+  imports: [MatButtonModule, MatIconModule, MatSliderModule],
   templateUrl: './zoom-controls.component.html',
 })
 export class ZoomControlsComponent {

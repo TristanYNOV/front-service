@@ -1,6 +1,6 @@
 import { Component, inject, Input } from '@angular/core';
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
-import { CommonModule } from '@angular/common';
+
 import { PriceTableComponent } from '../specialized-data/PriceTable/price-table.component';
 import { TextBlockComponent } from '../specialized-data/TextBlock/text-block.component';
 import { Store } from '@ngrx/store';
@@ -12,7 +12,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 @Component({
   selector: 'app-data-item-container',
   standalone: true,
-  imports: [CommonModule, PriceTableComponent, TextBlockComponent, MatIconModule, TranslocoPipe],
+  imports: [PriceTableComponent, TextBlockComponent, MatIconModule, TranslocoPipe],
   templateUrl: './data-item-container.component.html',
 })
 export class DataItemContainerComponent {

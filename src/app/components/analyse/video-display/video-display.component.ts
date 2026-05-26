@@ -10,7 +10,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { VideoService } from '../../../core/services/video.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,7 +20,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 @Component({
   selector: 'app-video-display',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, TranslocoPipe],
+  imports: [FormsModule, MatIconModule, TranslocoPipe],
   templateUrl: './video-display.component.html',
   styleUrl: './video-display.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

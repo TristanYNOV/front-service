@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import {Injectable, PLATFORM_ID, inject, signal, DOCUMENT, computed, effect} from '@angular/core';
+import { Injectable, PLATFORM_ID, inject, signal, DOCUMENT } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 
 const LANGUAGE_COOKIE_NAME = 'app_lang';

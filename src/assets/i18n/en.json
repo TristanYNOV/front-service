@@ -657,6 +657,7 @@
     "color": "Color",
     "buttonColor": "Button color",
     "anonymize": "Anonymize this button",
+    "anonymizeHint": "A generic name will be used to replace yours.",
     "links": "Links",
     "activateIds": "Activate IDs",
     "deactivateIds": "Deactivate IDs",
@@ -688,9 +689,27 @@
     "query": "Query",
     "constant": "Constant",
     "value": "Value",
+    "newQuery": "New query",
+    "unnamed": "Unnamed",
     "addTerm": "Add term",
     "hotkeyInvalid": "Invalid or already used hotkey.",
-    "liveStat": "Live stat"
+    "liveStat": "Live stat",
+    "errors": {
+      "idNameRequired": "ID and name are required.",
+      "colorInvalid": "Invalid color (format #RRGGBB).",
+      "selectEvent": "Select at least one event.",
+      "invalidTermDefinition": "Each term must have a name and a valid definition.",
+      "emptyExpression": "The expression is empty.",
+      "missingOperator": "Missing operator between two terms.",
+      "termNotFound": "A referenced term could not be found.",
+      "invalidTerm": "The term \"{{ term }}\" is invalid.",
+      "misplacedOpenParenthesis": "Opening parenthesis is misplaced.",
+      "unbalancedParentheses": "Parentheses are not balanced.",
+      "divisionByZero": "Static division by zero detected.",
+      "operatorWithoutOperand": "Operator without operand.",
+      "incompleteExpression": "The expression is incomplete.",
+      "invalidExpression": "The expression is invalid."
+    }
   },
   "importExport": {
     "invalidJson": "The selected file is not valid JSON.",

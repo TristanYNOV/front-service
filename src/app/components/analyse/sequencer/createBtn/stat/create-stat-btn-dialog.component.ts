@@ -22,7 +22,7 @@ import {
   StatBtn,
 } from '../../../../../interfaces/sequencer-btn.interface';
 import { THEME_COLOR_HEX } from '../../../../../../theme/theme-colors';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 interface EditableStatTerm {
   id: string;
@@ -32,6 +32,21 @@ interface EditableStatTerm {
   eventIds: string[];
   labelIds: string[];
   labelColorById: Record<string, string>;
+}
+
+interface StatExpressionMessages {
+  emptyExpression: string;
+  missingOperator: string;
+  termNotFound: string;
+  misplacedOpenParenthesis: string;
+  unbalancedParentheses: string;
+  divisionByZero: string;
+  operatorWithoutOperand: string;
+  incompleteExpression: string;
+  invalidExpression: string;
+  invalidTerm: (term: string) => string;
+  constant: string;
+  query: string;
 }
 
 export interface StatBtnDialogData {
@@ -61,6 +76,7 @@ export class CreateStatBtnDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<CreateStatBtnDialogComponent>);
   readonly data = inject<StatBtnDialogData>(MAT_DIALOG_DATA);
   private readonly panelService = inject(SequencerPanelService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly isEdit = this.data.mode === 'edit';
   readonly submitted = signal(false);
@@ -129,7 +145,7 @@ export class CreateStatBtnDialogComponent {
     }
 
     if (this.form.controls.id.invalid || this.form.controls.name.invalid) {
-      return 'ID et nom sont requis.';
+      return this.transloco.translate('sequencer.errors.idNameRequired');
     }
 
     return null;
@@ -141,7 +157,7 @@ export class CreateStatBtnDialogComponent {
     if (!(this.submitted() || control.touched) || !control.invalid) {
       return null;
     }
-    return 'Couleur invalide (format #RRGGBB).';
+    return this.transloco.translate('sequencer.errors.colorInvalid');
   });
 
   readonly simpleError = computed(() => {
@@ -150,7 +166,7 @@ export class CreateStatBtnDialogComponent {
       return null;
     }
 
-    return this.simpleEventIds().length > 0 ? null : 'Sélectionne au moins un event.';
+    return this.simpleEventIds().length > 0 ? null : this.transloco.translate('sequencer.errors.selectEvent');
   });
 
   readonly complexTermError = computed(() => {
@@ -171,7 +187,7 @@ export class CreateStatBtnDialogComponent {
       return !Number.isFinite(term.constantValue);
     });
 
-    return invalidTerm ? 'Chaque terme doit avoir un nom et une définition valide.' : null;
+    return invalidTerm ? this.transloco.translate('sequencer.errors.invalidTermDefinition') : null;
   });
 
   readonly expressionValidation = computed(() => {
@@ -180,7 +196,7 @@ export class CreateStatBtnDialogComponent {
       return { ok: true, error: null as string | null, node: null as SequencerStatNode | null };
     }
 
-    return buildExpressionTree(this.expressionTokens(), this.complexTerms());
+    return buildExpressionTree(this.expressionTokens(), this.complexTerms(), this.expressionMessages());
   });
 
   readonly formError = computed(() => {
@@ -391,13 +407,13 @@ export class CreateStatBtnDialogComponent {
       };
     }
 
-    return flattenAstForEditing(statDefinition.expression);
+    return flattenAstForEditing(statDefinition.expression, this.expressionMessages());
   }
 
   private createQueryTerm(): EditableStatTerm {
     return {
       id: `term_${cryptoRandom()}`,
-      displayName: 'Nouvelle requête',
+      displayName: this.transloco.translate('sequencer.newQuery'),
       kind: 'query',
       constantValue: 0,
       eventIds: [],
@@ -409,7 +425,7 @@ export class CreateStatBtnDialogComponent {
   private createConstantTerm(): EditableStatTerm {
     return {
       id: `term_${cryptoRandom()}`,
-      displayName: 'Constante',
+      displayName: this.transloco.translate('sequencer.constant'),
       kind: 'constant',
       constantValue: 1,
       eventIds: [],
@@ -433,11 +449,28 @@ export class CreateStatBtnDialogComponent {
   getTermSelectedLabels(term: EditableStatTerm) {
     return term.labelIds.map(id => this.availableLabels().find(label => label.id === id)).filter(Boolean);
   }
+
+  private expressionMessages(): StatExpressionMessages {
+    return {
+      emptyExpression: this.transloco.translate('sequencer.errors.emptyExpression'),
+      missingOperator: this.transloco.translate('sequencer.errors.missingOperator'),
+      termNotFound: this.transloco.translate('sequencer.errors.termNotFound'),
+      misplacedOpenParenthesis: this.transloco.translate('sequencer.errors.misplacedOpenParenthesis'),
+      unbalancedParentheses: this.transloco.translate('sequencer.errors.unbalancedParentheses'),
+      divisionByZero: this.transloco.translate('sequencer.errors.divisionByZero'),
+      operatorWithoutOperand: this.transloco.translate('sequencer.errors.operatorWithoutOperand'),
+      incompleteExpression: this.transloco.translate('sequencer.errors.incompleteExpression'),
+      invalidExpression: this.transloco.translate('sequencer.errors.invalidExpression'),
+      invalidTerm: (term: string) => this.transloco.translate('sequencer.errors.invalidTerm', { term }),
+      constant: this.transloco.translate('sequencer.constant'),
+      query: this.transloco.translate('sequencer.query'),
+    };
+  }
 }
 
-function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: EditableStatTerm[]) {
+function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: EditableStatTerm[], messages: StatExpressionMessages) {
   if (!tokens.length) {
-    return { ok: false, error: 'L’expression est vide.', node: null as SequencerStatNode | null };
+    return { ok: false, error: messages.emptyExpression, node: null as SequencerStatNode | null };
   }
 
   const termById = new Map(terms.map(term => [term.id, term]));
@@ -464,15 +497,15 @@ function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: Edit
   for (const token of tokens) {
     if (token.kind === 'term') {
       if (!expectOperand) {
-        return { ok: false, error: 'Opérateur manquant entre deux termes.', node: null };
+        return { ok: false, error: messages.missingOperator, node: null };
       }
       const term = termById.get(token.termId);
       if (!term) {
-        return { ok: false, error: 'Un terme référencé est introuvable.', node: null };
+        return { ok: false, error: messages.termNotFound, node: null };
       }
       const node = toNode(term);
       if (!node) {
-        return { ok: false, error: `Le terme "${term.displayName}" est invalide.`, node: null };
+        return { ok: false, error: messages.invalidTerm(term.displayName), node: null };
       }
       nodes.push(node);
       expectOperand = false;
@@ -482,7 +515,7 @@ function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: Edit
     if (token.kind === 'paren') {
       if (token.value === '(') {
         if (!expectOperand) {
-          return { ok: false, error: 'Parenthèse ouvrante mal placée.', node: null };
+          return { ok: false, error: messages.misplacedOpenParenthesis, node: null };
         }
         operators.push('(');
         openParens += 1;
@@ -490,12 +523,12 @@ function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: Edit
       }
 
       if (expectOperand || openParens <= 0) {
-        return { ok: false, error: 'Parenthèses non équilibrées.', node: null };
+        return { ok: false, error: messages.unbalancedParentheses, node: null };
       }
 
       while (operators.length && operators[operators.length - 1] !== '(') {
         if (!reduce()) {
-          return { ok: false, error: 'Division statique par zéro détectée.', node: null };
+          return { ok: false, error: messages.divisionByZero, node: null };
         }
       }
 
@@ -506,7 +539,7 @@ function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: Edit
     }
 
     if (expectOperand) {
-      return { ok: false, error: 'Opérateur sans opérande.', node: null };
+      return { ok: false, error: messages.operatorWithoutOperand, node: null };
     }
 
     while (operators.length) {
@@ -515,7 +548,7 @@ function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: Edit
         break;
       }
       if (!reduce()) {
-        return { ok: false, error: 'Division statique par zéro détectée.', node: null };
+        return { ok: false, error: messages.divisionByZero, node: null };
       }
     }
 
@@ -524,22 +557,22 @@ function buildExpressionTree(tokens: SequencerStatExpressionToken[], terms: Edit
   }
 
   if (expectOperand) {
-    return { ok: false, error: 'L’expression est incomplète.', node: null };
+    return { ok: false, error: messages.incompleteExpression, node: null };
   }
 
   if (openParens !== 0) {
-    return { ok: false, error: 'Parenthèses non équilibrées.', node: null };
+    return { ok: false, error: messages.unbalancedParentheses, node: null };
   }
 
   while (operators.length) {
     if (!reduce()) {
-      return { ok: false, error: 'Division statique par zéro détectée.', node: null };
+      return { ok: false, error: messages.divisionByZero, node: null };
     }
   }
 
   return nodes.length === 1
     ? { ok: true, error: null, node: nodes[0] }
-    : { ok: false, error: 'L’expression est invalide.', node: null };
+    : { ok: false, error: messages.invalidExpression, node: null };
 }
 
 function toNode(term: EditableStatTerm): SequencerStatNode | null {
@@ -570,7 +603,7 @@ function toNode(term: EditableStatTerm): SequencerStatNode | null {
   };
 }
 
-function flattenAstForEditing(root: SequencerStatNode): { terms: EditableStatTerm[]; tokens: SequencerStatExpressionToken[] } {
+function flattenAstForEditing(root: SequencerStatNode, messages: StatExpressionMessages): { terms: EditableStatTerm[]; tokens: SequencerStatExpressionToken[] } {
   const terms: EditableStatTerm[] = [];
   const tokens: SequencerStatExpressionToken[] = [];
 
@@ -589,7 +622,7 @@ function flattenAstForEditing(root: SequencerStatNode): { terms: EditableStatTer
     if (node.kind === 'constant') {
       terms.push({
         id: termId,
-        displayName: `Constante ${terms.length + 1}`,
+        displayName: `${messages.constant} ${terms.length + 1}`,
         kind: 'constant',
         constantValue: node.value,
         eventIds: [],
@@ -599,7 +632,7 @@ function flattenAstForEditing(root: SequencerStatNode): { terms: EditableStatTer
     } else {
       terms.push({
         id: termId,
-        displayName: `Requête ${terms.length + 1}`,
+        displayName: `${messages.query} ${terms.length + 1}`,
         kind: 'query',
         constantValue: 0,
         eventIds: [...node.query.eventIds],

@@ -41,7 +41,7 @@
     <select
       id="desktop-language-select"
       class="language-select hidden md:inline-flex"
-      [value]="languageService.getCurrentLang()"
+      [value]="languageService.currentLang()"
       [attr.aria-label]="'language.label' | transloco"
       (change)="setLanguage($any($event.target).value)"
     >
@@ -92,7 +92,7 @@
         <span class="block text-xs text-muted mb-2">{{ 'language.label' | transloco }}</span>
         <select
           class="language-select w-full"
-          [value]="languageService.getCurrentLang()"
+          [value]="languageService.currentLang()"
           [attr.aria-label]="'language.label' | transloco"
           (change)="setLanguage($any($event.target).value)"
         >

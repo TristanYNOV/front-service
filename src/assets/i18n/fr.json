@@ -657,6 +657,7 @@
     "color": "Couleur",
     "buttonColor": "Couleur du bouton",
     "anonymize": "Anonymiser ce bouton",
+    "anonymizeHint": "Un nom générique remplacera le nom choisi",
     "links": "Liens",
     "activateIds": "IDs d’activation",
     "deactivateIds": "IDs de désactivation",
@@ -688,9 +689,27 @@
     "query": "Requête",
     "constant": "Constante",
     "value": "Valeur",
+    "newQuery": "Nouvelle requête",
+    "unnamed": "Sans nom",
     "addTerm": "Ajouter un terme",
     "hotkeyInvalid": "Raccourci invalide ou déjà utilisé.",
-    "liveStat": "Stat live"
+    "liveStat": "Stat live",
+    "errors": {
+      "idNameRequired": "ID et nom sont requis.",
+      "colorInvalid": "Couleur invalide (format #RRGGBB).",
+      "selectEvent": "Sélectionne au moins un event.",
+      "invalidTermDefinition": "Chaque terme doit avoir un nom et une définition valide.",
+      "emptyExpression": "L’expression est vide.",
+      "missingOperator": "Opérateur manquant entre deux termes.",
+      "termNotFound": "Un terme référencé est introuvable.",
+      "invalidTerm": "Le terme \"{{ term }}\" est invalide.",
+      "misplacedOpenParenthesis": "Parenthèse ouvrante mal placée.",
+      "unbalancedParentheses": "Parenthèses non équilibrées.",
+      "divisionByZero": "Division statique par zéro détectée.",
+      "operatorWithoutOperand": "Opérateur sans opérande.",
+      "incompleteExpression": "L’expression est incomplète.",
+      "invalidExpression": "L’expression est invalide."
+    }
   },
   "importExport": {
     "invalidJson": "Le fichier sélectionné n’est pas un JSON valide.",

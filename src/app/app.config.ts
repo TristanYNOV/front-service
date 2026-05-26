@@ -21,6 +21,8 @@ import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
 import { provideLanguageBootstrap } from './core/i18n/language.bootstrap';
 import { environment } from '../environments/environment';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { provideThemeBootstrap } from './core/theme/theme.bootstrap';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +30,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideAnimations(),
-    importProvidersFrom(MatSnackBarModule),
     provideStore({
       dataState: dataStateReducer,
       timelineState: timelineReducer,
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideEffects(DataEffects, AnalysisStoreEffects),
     provideHttpClient(withInterceptors([jwtInterceptor, analysisStoreDevAuthInterceptor, refreshInterceptor])),
+    provideThemeBootstrap(),
     provideTransloco({
       config: translocoConfig({
         availableLangs: ['fr', 'en'],

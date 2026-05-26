@@ -4,6 +4,7 @@
 @use './theme/sequencer.class';
 @use './theme/layout.class';
 @use './theme/public.class';
+@use './theme/variables/themes.variables';
 
 @use 'theme/override/material-override';
 
@@ -12,7 +13,8 @@
 @tailwind utilities;
 
 body {
-  background-color: var(--bg-layer-1);
+  background: var(--bg-app);
+  color: var(--text-default);
 }
 
 // CSS OVERRIDE HTML BASIC STYLE
@@ -51,5 +53,6 @@ body {
 
 input {
   @apply py-3 px-2 rounded-md cursor-pointer;
-  background-color: var(--dark);
+  background-color: var(--bg-layer-2);
+  color: var(--text-default);
 }

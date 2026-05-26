@@ -1,10 +1,10 @@
 <section class="bg-layer-0 text-default flex h-full w-full min-h-0 min-w-0 flex-col gap-1 p-2 text-xs">
   <div class="flex justify-around">
     <p class="font-semibold">
-      {{ videoName() ?? 'Aucune vidéo chargée' }}
+      {{ videoName() ?? ('video.noVideoLoaded' | transloco) }}
     </p>
     @if (videoService.fps()) {
-      <p class="ml-auto">FPS estimé : {{ videoService.fps() }}</p>
+      <p class="ml-auto">{{ 'video.estimatedFps' | transloco }} : {{ videoService.fps() }}</p>
     }
   </div>
 
@@ -16,14 +16,14 @@
         (loadedmetadata)="onVideoLoaded()"
         (error)="onVideoError()"
       >
-        Votre navigateur ne supporte pas la lecture vidéo.
+        {{ 'video.browserUnsupported' | transloco }}
       </video>
 
       @if (errorMessage()) {
         <div class="bg-overlay absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center">
           <p class="alert-text text-sm">{{ errorMessage() }}</p>
           <button type="button" class="btn-primary" (click)="onChangeVideoClick()">
-            Choisir une autre vidéo
+            {{ 'video.chooseAnotherVideo' | transloco }}
           </button>
         </div>
       } @else if (!hasVideo()) {
@@ -61,7 +61,7 @@
         <button type="button" class="btn-default" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
           <mat-icon class="text-md">chevron_right</mat-icon>
         </button>
-        <button type="button" class="btn-default" (click)="onClearVideo()" [disabled]="!hasVideo()" aria-label="Retirer la vidéo">
+        <button type="button" class="btn-default" (click)="onClearVideo()" [disabled]="!hasVideo()" [attr.aria-label]="'accessibility.removeVideo' | transloco">
           <mat-icon class="text-md">delete_outline</mat-icon>
         </button>
       </div>

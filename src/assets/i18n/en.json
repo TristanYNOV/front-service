@@ -188,6 +188,15 @@
   "canvas": {
     "show": "Show"
   },
+  "video": {
+    "noVideoLoaded": "No video loaded",
+    "estimatedFps": "Estimated FPS",
+    "browserUnsupported": "Your browser does not support video playback.",
+    "chooseAnotherVideo": "Choose another video",
+    "removeTitle": "Remove video",
+    "removeMessage": "Do you want to remove the loaded video?",
+    "loadError": "The video could not be loaded."
+  },
   "panel": {
     "find": "Find a panel",
     "compactHint": "Expand to edit the Sequencer Canvas.",

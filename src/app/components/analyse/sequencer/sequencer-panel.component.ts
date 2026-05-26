@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   Component,
@@ -15,8 +15,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { NotificationService } from '../../../core/notifications/notification.service';
 import { filter, firstValueFrom, skip, take } from 'rxjs';
 import { AuthSessionService } from '../../../core/auth/auth-session.service';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
@@ -55,15 +56,14 @@ import { PanelPublishDialogComponent } from './modals/panel-publish-dialog/panel
   templateUrl: './sequencer-panel.component.html',
   styleUrl: './sequencer-panel.component.scss',
   imports: [
-    CommonModule,
     MatButtonModule,
     MatMenuModule,
     MatIconModule,
     MatDialogModule,
     MatInputModule,
-    MatSnackBarModule,
-    SequencerCanvasComponent,
-  ],
+    TranslocoPipe,
+    SequencerCanvasComponent
+],
 })
 export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   @ViewChild('panelRoot', { static: true }) panelRoot?: ElementRef<HTMLElement>;
@@ -74,7 +74,8 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   private readonly hotkeysService = inject(HotkeysService);
   private readonly authSession = inject(AuthSessionService);
   private readonly confirmDialogService = inject(ConfirmDialogService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notifications = inject(NotificationService);
+  private readonly transloco = inject(TranslocoService);
   private readonly store = inject(Store);
   private readonly dialog = inject(MatDialog);
   private resizeObserver?: ResizeObserver;
@@ -216,10 +217,10 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
 
       if (this.shouldConfirmReplaceCurrentPanelOnImport(parsedPayload)) {
         const shouldContinue = await this.confirmDialogService.confirm({
-          title: 'Écraser le panel courant ?',
-          message: 'Le panel courant sera remplacé par le fichier importé.',
-          confirmLabel: 'Écraser',
-          cancelLabel: 'Annuler',
+          title: this.transloco.translate('panel.overwriteTitle'),
+          message: this.transloco.translate('panel.overwriteImportMessage'),
+          confirmLabel: this.transloco.translate('panel.overwrite'),
+          cancelLabel: this.transloco.translate('actions.cancel'),
         });
         if (!shouldContinue) {
           return;
@@ -228,7 +229,7 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
 
       this.store.dispatch(analysisStoreImportPanel({ payload: parsedPayload }));
     } catch {
-      this.snackBar.open('Le fichier sélectionné n’est pas un JSON valide.', 'Fermer', { duration: 3500 });
+      this.notifications.notifyError('importExport.invalidJson');
       return;
     }
   }
@@ -251,10 +252,10 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   async createNewPanel() {
     if (this.panelService.getPanel().btnList.length > 0) {
       const shouldContinue = await this.confirmDialogService.confirm({
-        title: 'Create a new panel?',
-        message: 'The current panel contains buttons. Continuing will discard the current panel.',
-        confirmLabel: 'Create new panel',
-        cancelLabel: 'Cancel',
+        title: this.transloco.translate('panel.createNewTitle'),
+        message: this.transloco.translate('panel.createNewMessage'),
+        confirmLabel: this.transloco.translate('panel.createNewConfirm'),
+        cancelLabel: this.transloco.translate('actions.cancel'),
       });
 
       if (!shouldContinue) {
@@ -279,7 +280,7 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
 
     const panels = this.panelResources();
     if (!panels.length) {
-      this.snackBar.open('Aucun panel distant disponible.', 'Fermer', { duration: 2800 });
+      this.notifications.notifyInfo('panel.noRemote', undefined, 2800);
       return;
     }
 
@@ -372,10 +373,10 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
     }
 
     return this.confirmDialogService.confirm({
-      title: 'Écraser le panel courant ?',
-      message: 'Le panel courant sera remplacé par le panel distant sélectionné.',
-      confirmLabel: 'Écraser',
-      cancelLabel: 'Annuler',
+      title: this.transloco.translate('panel.overwriteTitle'),
+      message: this.transloco.translate('panel.overwriteRemoteMessage'),
+      confirmLabel: this.transloco.translate('panel.overwrite'),
+      cancelLabel: this.transloco.translate('actions.cancel'),
     });
   }
 

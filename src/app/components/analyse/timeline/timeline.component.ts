@@ -14,8 +14,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { NotificationService } from '../../../core/notifications/notification.service';
 import { filter, firstValueFrom, skip, take } from 'rxjs';
 import {
   TIMELINE_AUTO_FOLLOW_COMFORT_ZONE,
@@ -51,7 +52,7 @@ import { THEME_COLOR_HEX } from '../../../../theme/theme-colors';
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatMenuModule, ZoomControlsComponent],
+  imports: [CommonModule, MatIconModule, MatMenuModule, TranslocoPipe, ZoomControlsComponent],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })
@@ -64,7 +65,8 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
   readonly timebase = inject(TimebaseService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialogService = inject(ConfirmDialogService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notifications = inject(NotificationService);
+  private readonly transloco = inject(TranslocoService);
   private readonly store = inject(Store);
   readonly timelineZoom = inject(TimelineZoomService);
 
@@ -317,10 +319,10 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
       if (hasTimelineImportDataLossFromRawPayload(this.timelineState(), parsedPayload)) {
         const shouldContinue = await this.confirmDialogService.confirm({
-          title: 'Écraser la timeline courante ?',
-          message: 'Des événements/occurrences seront perdus. Voulez-vous continuer ?',
-          confirmLabel: 'Écraser',
-          cancelLabel: 'Annuler',
+          title: this.transloco.translate('timeline.overwriteTitle'),
+          message: this.transloco.translate('timeline.overwriteLocalMessage'),
+          confirmLabel: this.transloco.translate('timeline.overwrite'),
+          cancelLabel: this.transloco.translate('actions.cancel'),
         });
         if (!shouldContinue) {
           return;
@@ -329,7 +331,7 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
       this.store.dispatch(analysisStoreImportTimeline({ payload: parsedPayload }));
     } catch {
-      this.snackBar.open('Le fichier sélectionné n’est pas un JSON valide.', 'Fermer', { duration: 3500 });
+      this.notifications.notifyError('importExport.invalidJson');
     }
   }
 
@@ -349,7 +351,7 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
     const resources = this.timelineResources();
     if (!resources.length) {
-      this.snackBar.open('Aucune timeline distante disponible.', 'Fermer', { duration: 2800 });
+      this.notifications.notifyInfo('timeline.noRemote', undefined, 2800);
       return;
     }
 
@@ -369,10 +371,10 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
       if (this.shouldConfirmReplaceCurrentTimeline()) {
         const shouldContinue = await this.confirmDialogService.confirm({
-          title: 'Écraser la timeline courante ?',
-          message: 'La timeline courante sera remplacée par la timeline distante sélectionnée.',
-          confirmLabel: 'Écraser',
-          cancelLabel: 'Annuler',
+          title: this.transloco.translate('timeline.overwriteTitle'),
+          message: this.transloco.translate('timeline.overwriteRemoteMessage'),
+          confirmLabel: this.transloco.translate('timeline.overwrite'),
+          cancelLabel: this.transloco.translate('actions.cancel'),
         });
         if (!shouldContinue) {
           return;
@@ -391,13 +393,13 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
     const selectedIds = this.selectedOccurrences().map(occurrence => occurrence.id);
     const count = selectedIds.length;
     const confirmed = await this.confirmDialogService.confirm({
-      title: 'Confirmer la suppression',
+      title: this.transloco.translate('timeline.deleteConfirmTitle'),
       message:
         count === 1
-          ? 'Voulez-vous supprimer cette occurrence ?'
-          : `Voulez-vous supprimer ces ${count} occurrences ?`,
-      confirmLabel: 'Supprimer',
-      cancelLabel: 'Annuler',
+          ? this.transloco.translate('timeline.deleteConfirmOne')
+          : this.transloco.translate('timeline.deleteConfirmMany', { count }),
+      confirmLabel: this.transloco.translate('actions.delete'),
+      cancelLabel: this.transloco.translate('actions.cancel'),
     });
 
     if (!confirmed) {
@@ -409,10 +411,10 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
   deleteSelectionTooltip() {
     if (this.selectionContainsOpen()) {
-      return 'Impossible de supprimer une occurrence en cours. Terminez l’événement d’abord.';
+      return this.transloco.translate('timeline.deleteBlockedTooltip');
     }
 
-    return `Supprimer la sélection (${this.selectedCount()})`;
+    return this.transloco.translate('timeline.deleteSelectionTooltip', { count: this.selectedCount() });
   }
 
   startTimelineNameEdit() {

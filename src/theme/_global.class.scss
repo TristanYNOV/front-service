@@ -39,8 +39,8 @@
 
 .bg-canvas-grid {
   background-image:
-    linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -89,6 +89,29 @@
   color: var(--text-strong);
 }
 
+.text-disabled {
+  color: var(--text-disabled);
+}
+
+.text-inverse {
+  color: var(--text-inverse);
+}
+
+.surface-default {
+  background: var(--bg-layer-2);
+  color: var(--text-default);
+}
+
+.surface-raised {
+  background: var(--bg-layer-3);
+  color: var(--text-default);
+}
+
+.surface-contrast {
+  background: var(--surface-contrast);
+  color: var(--text-inverse);
+}
+
 .border-layer {
   border-color: var(--border-layer);
 }
@@ -125,4 +148,20 @@
 
 .discover-canvas-item {
   border: 1px solid var(--border-layer);
+}
+
+.language-select {
+  background-color: var(--bg-layer-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius);
+  color: var(--text-default);
+  cursor: pointer;
+  font-size: 0.8rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.language-select:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }

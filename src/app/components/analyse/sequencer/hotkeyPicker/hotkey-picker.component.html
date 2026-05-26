@@ -1,8 +1,8 @@
-<div class="flex flex-col gap-3">
+﻿<div class="flex flex-col gap-3">
   <mat-form-field appearance="fill" class="w-full">
-    <mat-label>Base key</mat-label>
+    <mat-label>{{ 'sequencer.baseKey' | transloco }}</mat-label>
     <mat-select [value]="baseKey()" (valueChange)="onBaseKeyChange($event)">
-      <mat-option [value]="null">Aucune</mat-option>
+      <mat-option [value]="null">{{ 'sequencer.none' | transloco }}</mat-option>
       @for (key of baseKeys; track key) {
         <mat-option [value]="key">{{ formatNormalized(key) }}</mat-option>
       }
@@ -21,23 +21,23 @@
   </div>
 
   <div class="text-muted flex items-center gap-2.5 text-xs">
-    <span class="font-semibold">Preview:</span>
+    <span class="font-semibold">{{ 'sequencer.preview' | transloco }}</span>
     <span class="font-mono">{{ preview() || '—' }}</span>
-    <button mat-stroked-button type="button" (click)="clear()">Retirer</button>
+    <button mat-stroked-button type="button" (click)="clear()">{{ 'sequencer.remove' | transloco }}</button>
   </div>
 
   @if (status(); as status) {
     <div class="text-xs">
       @if (!status.isValid) {
-        <span class="alert-text">Touche non autorisée.</span>
+        <span class="alert-text">{{ 'sequencer.notAllowed' | transloco }}</span>
       } @else if (status.usedBy?.kind === 'reserved') {
-        <span class="alert-text">Réservée vidéo: {{ status.usedBy?.label ?? '—' }}</span>
+        <span class="alert-text">{{ 'sequencer.reservedVideo' | transloco }}: {{ status.usedBy?.label ?? '—' }}</span>
       } @else if (status.usedBy?.kind === 'sequencer') {
         <span class="alert-text">
-          Déjà utilisée: {{ status.usedBy?.label ?? status.usedBy?.actionId ?? '—' }}
+          {{ 'sequencer.alreadyUsed' | transloco }}: {{ status.usedBy?.label ?? status.usedBy?.actionId ?? '—' }}
         </span>
       } @else {
-        <span class="text-success">Disponible</span>
+        <span class="text-success">{{ 'sequencer.available' | transloco }}</span>
       }
     </div>
   }

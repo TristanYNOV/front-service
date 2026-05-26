@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 export interface PanelDescriptionDialogData {
   description: string | null;
@@ -17,7 +18,7 @@ export interface PanelDescriptionDialogResult {
 @Component({
   selector: 'app-panel-description-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule],
+  imports: [FormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, TranslocoPipe],
   templateUrl: './panel-description-dialog.component.html',
 })
 export class PanelDescriptionDialogComponent {

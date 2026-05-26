@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
@@ -22,6 +22,7 @@ import {
   StatBtn,
 } from '../../../../../interfaces/sequencer-btn.interface';
 import { THEME_COLOR_HEX } from '../../../../../../theme/theme-colors';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 interface EditableStatTerm {
   id: string;
@@ -42,7 +43,6 @@ export interface StatBtnDialogData {
   selector: 'app-create-stat-btn-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -52,7 +52,8 @@ export interface StatBtnDialogData {
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
-  ],
+    TranslocoPipe
+],
   templateUrl: './create-stat-btn-dialog.component.html',
   styleUrl: './create-stat-btn-dialog.component.scss',
 })

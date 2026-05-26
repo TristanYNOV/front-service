@@ -1,0 +1,752 @@
+{
+  "common": {
+    "appName": "Action Board",
+    "sportVideoPlatform": "Sports video analysis platform",
+    "loading": "Loading...",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "actions": {
+    "add": "Add",
+    "backspace": "Backspace",
+    "cancel": "Cancel",
+    "chooseVideo": "Choose a video",
+    "clear": "Clear",
+    "close": "Close",
+    "confirm": "Confirm",
+    "copy": "Copy",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "export": "Export",
+    "import": "Import",
+    "load": "Load",
+    "login": "Log in",
+    "logout": "Log out",
+    "publish": "Publish",
+    "register": "Sign up",
+    "remove": "Remove",
+    "save": "Save",
+    "show": "Show",
+    "update": "Update",
+    "use": "Use"
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "main": "Main navigation",
+    "seo": "SEO navigation",
+    "usefulPages": "Useful public pages"
+  },
+  "menu": {
+    "applicationSpace": "Application space",
+    "club": "Club",
+    "teams": "Teams",
+    "players": "Players",
+    "tournaments": "Tournaments",
+    "matches": "Matches",
+    "analysis": "Analysis",
+    "menu": "Menu",
+    "deleteAccount": "Delete account",
+    "editLayout": "Edit layout",
+    "lockLayout": "Lock layout",
+    "unlockLayout": "Unlock layout"
+  },
+  "theme": {
+    "title": "Theme",
+    "intro": "Choose a palette suited to your workflow.",
+    "comingSoon": "Theme customization will be available later.",
+    "current": "Current theme",
+    "choice": "Theme choice",
+    "options": {
+      "classic": {
+        "label": "Standard",
+        "description": "Stable Action Board theme, close to the original experience."
+      },
+      "nocturne": {
+        "label": "Obsidian",
+        "description": "Soft dark interface for long sessions in low-light environments."
+      },
+      "dynamic": {
+        "label": "Momentum",
+        "description": "Sporty, high-contrast palette with deep blue, cyan and vivid orange."
+      },
+      "verdant": {
+        "label": "Canopy",
+        "description": "Dominant green, structured black and light silver surfaces."
+      },
+      "oriental": {
+        "label": "Sumi",
+        "description": "White canvas, black ink and deep red inspired by calligraphy."
+      }
+    }
+  },
+  "language": {
+    "label": "Language",
+    "fr": "FR",
+    "en": "ENG"
+  },
+  "auth": {
+    "loginTitle": "Log in",
+    "registerTitle": "Sign up",
+    "createAccount": "Create an account",
+    "pseudo": "Username (optional)",
+    "pseudoHint": "If empty, the email will be used by default.",
+    "email": "Email",
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Invalid email format.",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "passwordHidden": "Password hidden",
+    "passwordVisible": "Password visible",
+    "passwordMinLength": "The password must contain at least 8 characters.",
+    "passwordLowercase": "The password must contain at least one lowercase letter.",
+    "passwordUppercase": "The password must contain at least one uppercase letter.",
+    "passwordDigit": "The password must contain at least one digit.",
+    "passwordSpecial": "The password must contain at least one special character.",
+    "acceptTermsPrefix": "I have read and accept the",
+    "terms": "Terms of Use",
+    "termsRequired": "You must accept the Terms of Use to create an account.",
+    "genericError": "An error occurred. Please try again.",
+    "deleteAccountTitle": "Delete account",
+    "deleteAccountMessage": "Deleting your account will remove your private analyses and panels. Public panels may be kept in anonymized form to preserve resources shared with the community.",
+    "confirmDeleteAccount": "Confirm deletion"
+  },
+  "landing": {
+    "heroTitle": "Action Board, sports video analysis platform",
+    "heroDescription": "Action Board helps coaches, clubs, video analysts and students structure observations with analysis panels, a clear timeline, statistics and saved online resources.",
+    "discoverFeatures": "Discover features",
+    "viewPricing": "View pricing",
+    "sections": {
+      "accessibleTitle": "Make sports video analysis more accessible",
+      "accessibleText": "Video analysis should not be reserved for professional structures. Action Board provides a progressive, educational way to observe video, qualify important actions and prepare more useful feedback for athletes.",
+      "panelsTitle": "Create custom analysis panels",
+      "panelsText": "An analysis panel groups event, label and stats buttons. You can adapt it to your sport, working method or a specific training goal.",
+      "timelineTitle": "Analyze videos with a structured timeline",
+      "timelineText": "The timeline helps you find important moments, visualize occurrences and connect observations to the video. Timelines are private and visible only to their owner.",
+      "saveTitle": "Save analyses and panels online",
+      "saveText": "Panels and timelines can be saved so you can retrieve your work. Panels can be private or public, while timelines cannot be public. Import/export also helps reuse or share an analysis structure.",
+      "statsTitle": "Use statistics during analysis",
+      "statsText": "Stats buttons let you track indicators during video analysis based on configured events and labels.",
+      "privacyTitle": "Protect and anonymize shared data",
+      "privacyText": "When an account is deleted, private resources are removed according to the existing logic. Public panels may be kept in anonymized form to preserve resources shared with the community.",
+      "freeTitle": "A free platform with an account",
+      "freeText": "Action Board is currently free for users with an account. The platform will continue to evolve and may later offer dedicated plans for clubs, teams or organizations."
+    }
+  },
+  "features": {
+    "title": "Action Board features",
+    "description": "Discover sports video analysis, custom panels, the timeline, keyboard shortcuts, statistics, online saving and imports/exports available in Action Board."
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "title": "Action Board is currently free with an account",
+    "intro": "The platform is in active development and continuous improvement. You can create a free account to use analysis panels, the timeline and available saving tools.",
+    "freeTitle": "A free base to democratize sports video analysis",
+    "freeText": "Action Board first aims to make sports video analysis more accessible to amateur coaches, clubs, independent analysts and students. Current access lets you test essential workflows without a subscription.",
+    "futureTitle": "Plans may evolve later",
+    "futureText": "Dedicated offers for clubs, teams or organizations may be proposed later once support, storage and collaboration needs are better stabilized.",
+    "askQuestion": "Ask a question"
+  },
+  "legal": {
+    "termsEyebrow": "Terms",
+    "termsTitle": "Temporary Terms of Use",
+    "termsIntro": "This page presents the current general usage charter for Action Board. It is temporary and may be expanded with a more detailed legal version.",
+    "temporaryTitle": "Temporary version",
+    "temporaryText": "These terms of use are a temporary version intended to frame current platform usage. They may later be completed or replaced by a detailed legal version.",
+    "purposeTitle": "Platform purpose",
+    "purposeText": "Action Board is a sports video analysis platform. It lets users create and use analysis panels, work with a timeline, save resources online and import or export panels and timelines.",
+    "accountTitle": "User account and responsibility",
+    "accountText": "The user is responsible for the information provided when creating an account. In this platform version, users may choose to use a dedicated or temporary email address. Using a real personal email address remains their own choice and responsibility.",
+    "dataTitle": "Data and content",
+    "dataText": "Timelines are private. Panels may be private or public. Public panels are intended to be viewed or reused by logged-in users, depending on the available features.",
+    "deletionTitle": "Account deletion",
+    "deletionText": "Deleting an account removes private analyses and panels according to the existing logic. Public panels may be kept in anonymized form to preserve resources shared with the community.",
+    "contactTitle": "Contact",
+    "contactTextStart": "For any question, you can visit the",
+    "contactTextEnd": "page or write to"
+  },
+  "privacy": {
+    "eyebrow": "Privacy",
+    "title": "Temporary Privacy Policy",
+    "intro": "This privacy policy is a temporary version describing how the platform currently works. It may be completed later.",
+    "accountTitle": "Account and authentication",
+    "accountText": "Creating an account links panels, timelines and private resources to a user. Authentication protects application routes and restores saved work.",
+    "timelinesTitle": "Private timelines",
+    "timelinesText": "Timelines are private. Public timelines are not available in the current Action Board behavior. They are visible only to their owner.",
+    "panelsTitle": "Private or public panels",
+    "panelsText": "Panels may be private or public. Public panels may be visible to logged-in users to make analysis resources easier to reuse.",
+    "deletionTitle": "Deletion and anonymization",
+    "deletionText": "Private panels and private analyses are deleted when the account is removed according to the existing logic. Public panels may be kept in anonymized form after account deletion.",
+    "cookiesTitle": "Cookies and session",
+    "cookiesText": "The application uses authentication and may rely on cookies or session information depending on the current technical configuration. These elements maintain the user session and secure access to logged-in features."
+  },
+  "dataItems": {
+    "tags": {
+      "features": "Features",
+      "guide": "Guide",
+      "video": "Video",
+      "shortcuts": "Shortcuts",
+      "keyboard": "Keyboard",
+      "videoAnalysis": "Video analysis",
+      "timeline": "Timeline",
+      "panel": "Panel",
+      "event": "Event",
+      "label": "Label",
+      "stats": "Stats",
+      "save": "Save",
+      "importExport": "Import/export",
+      "privacy": "Privacy",
+      "sport": "Sport",
+      "beginner": "Getting started",
+      "interface": "Interface",
+      "editMode": "Edit mode",
+      "productivity": "Productivity",
+      "sequencer": "Sequencer",
+      "timeSaving": "Time saving",
+      "observation": "Observation",
+      "tracking": "Tracking",
+      "preparation": "Preparation",
+      "comingSoon": "Coming soon",
+      "ffmpeg": "FFMPEG",
+      "home": "Home",
+      "discovery": "Discovery",
+      "subscription": "Subscription",
+      "club": "Club"
+    },
+    "featuresGuide": {
+      "title": "Feature user guide",
+      "miniDescription": "A guide to understand the page and display useful components.",
+      "intro": "This page presents the main Action Board features and keeps the logic of displayable, minimizable and reusable components.",
+      "sections": {
+        "explore": {
+          "heading": "How to explore this page",
+          "paragraphs": {
+            "0": "The cards shown in the center explain the platform's key uses. Components available in the left column can be opened in the canvas, then saved or removed as needed."
+          },
+          "iconTips": {
+            "0": {
+              "label": "Available components",
+              "description": "Opens a minimized content item in the main canvas."
+            },
+            "1": {
+              "label": "Saved components",
+              "description": "Finds saved content so it can be displayed again later."
+            },
+            "2": {
+              "label": "Save",
+              "description": "Minimizes a displayed component to keep it in the saved area."
+            },
+            "3": {
+              "label": "Minimize",
+              "description": "Removes the component from the canvas without deleting the app resource."
+            },
+            "4": {
+              "label": "Edit mode",
+              "description": "Unlocks the layout to move and resize components."
+            }
+          }
+        },
+        "discover": {
+          "heading": "What you will discover",
+          "bullets": {
+            "0": "The general video analysis workflow with panel, video and timeline.",
+            "1": "Event, label and stats buttons that structure observations.",
+            "2": "Online saving, import/export and the differences between public panels, private panels and private timelines."
+          }
+        },
+        "related": {
+          "heading": "Related public pages",
+          "paragraphs": {
+            "0": "To complete this overview, visit Pricing, FAQ, Contact, Terms and Privacy from the main navigation."
+          }
+        }
+      }
+    },
+    "videoShortcuts": {
+      "title": "Video shortcuts cheatsheet",
+      "miniDescription": "The reserved video shortcuts actually configured in the hotkey service.",
+      "intro": "These shortcuts come from the existing hotkey service configuration and help control the video during analysis.",
+      "sections": {
+        "configured": {
+          "heading": "Configured shortcuts",
+          "bullets": {
+            "0": "Space: play / pause.",
+            "1": "Left arrow: rewind 1 second.",
+            "2": "Right arrow: forward 1 second.",
+            "3": ",: step back one frame.",
+            "4": ".: step forward one frame.",
+            "5": "/: increase playback speed by 0.25.",
+            "6": "-: reduce playback speed by 0.25."
+          }
+        },
+        "why": {
+          "heading": "Why use them",
+          "paragraphs": {
+            "0": "They help you stay focused on observation, return precisely to an action and adjust speed without leaving the keyboard."
+          }
+        }
+      }
+    },
+    "videoAnalysis": {
+      "title": "How does video analysis work?",
+      "miniDescription": "The three main elements: analysis panel, video and timeline.",
+      "intro": "Video analysis in Action Board relies on three complementary elements: the analysis panel, the video and the timeline.",
+      "sections": {
+        "core": {
+          "bullets": {
+            "0": "Analysis panel: groups the buttons that trigger or qualify observations.",
+            "1": "Video: can be controlled with shortcuts and playback controls.",
+            "2": "Timeline: structures occurrences created during analysis so important moments can be found again."
+          }
+        },
+        "workflow": {
+          "paragraphs": {
+            "0": "During playback, the user can control the video, trigger analysis buttons and produce structured information in the timeline."
+          }
+        }
+      }
+    },
+    "analysisPanel": {
+      "title": "How does an analysis panel work?",
+      "miniDescription": "Understand event, label and stats buttons in a custom panel.",
+      "intro": "A custom analysis panel speeds up observation by grouping the actions useful to your workflow.",
+      "sections": {
+        "types": {
+          "heading": "Button types",
+          "bullets": {
+            "0": "Event: generates occurrences in the timeline.",
+            "1": "Label: defines or qualifies an occurrence.",
+            "2": "Stats: produces statistics during analysis."
+          }
+        },
+        "speed": {
+          "heading": "Speed up analysis",
+          "paragraphs": {
+            "0": "Hotkeys and activation links make repetitive actions faster to trigger. A panel adapted to your sport can reduce time spent searching, qualifying and counting important situations.",
+            "1": "Public panels can be reused by other logged-in users. Detailed documentation may be added later."
+          }
+        }
+      }
+    },
+    "saveShare": {
+      "title": "How do I save my analyses and panels?",
+      "miniDescription": "Online saving, panel visibility and timeline privacy.",
+      "intro": "Action Board lets you find your work online through panel and timeline saving, plus import/export.",
+      "sections": {
+        "panels": {
+          "heading": "Panels",
+          "bullets": {
+            "0": "A panel can be saved online.",
+            "1": "A panel can be private or public.",
+            "2": "Public panels are visible only to logged-in users.",
+            "3": "Panels can be imported or exported."
+          }
+        },
+        "timelines": {
+          "heading": "Timelines",
+          "bullets": {
+            "0": "A saved timeline always remains private.",
+            "1": "Public timelines are not available.",
+            "2": "Timelines can be imported or exported.",
+            "3": "Timelines are visible only to their owner."
+          }
+        }
+      }
+    },
+    "projectGoal": {
+      "title": "Why this project exists",
+      "miniDescription": "Simpler video analysis for every sports profile.",
+      "intro": "Our goal is simple: make video analysis accessible and useful every day, without unnecessary complexity.",
+      "sections": {
+        "main": {
+          "heading": "Goals",
+          "bullets": {
+            "0": "Observe key moments of a match or training session faster.",
+            "1": "Share clear feedback with staff and players.",
+            "2": "Save time between preparation, observation and follow-up."
+          }
+        }
+      }
+    },
+    "uxWorkflow": {
+      "title": "How the interface works",
+      "miniDescription": "Easily identify pending, saved and editable data.",
+      "intro": "The home area is organized to help you quickly find the right information at the right time.",
+      "sections": {
+        "states": {
+          "heading": "Useful states",
+          "bullets": {
+            "0": "Pending data: information linked to the current page, ready to display.",
+            "1": "Saved data: items kept so you can find them later in one click.",
+            "2": "Edit mode: customize the display to match how you work."
+          }
+        }
+      }
+    },
+    "analysisOverview": {
+      "title": "Discover the Analysis page",
+      "miniDescription": "Video, timeline and sequencer work together to guide your analysis.",
+      "intro": "The Analysis page is your main workspace for reviewing an action, annotating and tracking sequences.",
+      "sections": {
+        "main": {
+          "heading": "Overview",
+          "bullets": {
+            "0": "Login required: your settings and markers stay linked to your account.",
+            "1": "Video component: control playback and return precisely to each phase.",
+            "2": "Timeline: visualize match flow and important moments.",
+            "3": "Sequencing panel: classify and trigger your analysis actions quickly."
+          }
+        }
+      }
+    },
+    "legacyVideoShortcuts": {
+      "title": "Default video shortcuts",
+      "miniDescription": "Control playback and video exploration without leaving the keyboard.",
+      "intro": "These shortcuts let you analyze an action without breaking concentration or losing time in menus.",
+      "sections": {
+        "actions": {
+          "heading": "Useful everyday actions",
+          "bullets": {
+            "0": "Quick play / pause to stop at exactly the right moment.",
+            "1": "More precise navigation to return to a key sequence in seconds.",
+            "2": "Frame-by-frame analysis to check a technical or tactical detail.",
+            "3": "Slow motion and speed changes to better read movement and timing."
+          }
+        },
+        "benefits": {
+          "heading": "What the video component brings you",
+          "paragraphs": {
+            "0": "You can review the same action several times, compare two passages and validate your observation more calmly.",
+            "1": "The goal is simple: provide a smooth analysis experience, even during a quick debrief after a match or training session."
+          }
+        },
+        "compatibility": {
+          "paragraphs": {
+            "0": "The player is designed to remain compatible with common video workflows, so you can start quickly without complicating your routine."
+          }
+        }
+      }
+    },
+    "sequencerOverview": {
+      "title": "Understand the sequencing panel",
+      "miniDescription": "Structure your events and labels to keep a clear view of the match.",
+      "intro": "The sequencing panel helps you organize markers and analyze methodically, during the action and later during review.",
+      "sections": {
+        "first": {
+          "heading": "Three simple notions",
+          "bullets": {
+            "0": "Event: an important moment you want to identify, such as a shot, recovery or turnover.",
+            "1": "Label: a tag to qualify the action with an area, intention, result or context.",
+            "2": "Stat: a summary to track trends and support decisions."
+          }
+        },
+        "second": {
+          "heading": "Why it is useful in practice",
+          "bullets": {
+            "0": "During analysis, you capture information as the video runs without losing focus.",
+            "1": "After analysis, you quickly find key passages to prepare clear feedback for your group.",
+            "2": "You save time comparing, prioritizing and sharing the points that really matter."
+          }
+        }
+      }
+    },
+    "timelineOverview": {
+      "title": "Read the timeline efficiently",
+      "miniDescription": "Place each sequence in time to prepare targeted feedback.",
+      "intro": "The timeline gives you a clear chronological reading of the match or training session so you can find a passage instantly.",
+      "sections": {
+        "first": {
+          "heading": "What you can do quickly",
+          "bullets": {
+            "0": "Visualize key moments in the order they happen.",
+            "1": "Identify an important sequence and restart targeted playback.",
+            "2": "Navigate easily through the analysis to compare several situations.",
+            "3": "Select events to build a more structured debrief."
+          }
+        },
+        "second": {
+          "heading": "Daily benefit",
+          "bullets": {},
+          "paragraphs": {
+            "0": "Instead of searching through the video for a long time, you access useful passages directly to explain, correct or highlight an action.",
+            "1": "If navigation shortcuts are enabled, they make moving from one sequence to another even smoother."
+          }
+        }
+      }
+    },
+    "ffmpegInstallation": {
+      "title": "Prepare FFMPEG installation",
+      "miniDescription": "A future simple guide to prepare your machine for video processing.",
+      "intro": "This component is ready to host step-by-step help for installing FFMPEG.",
+      "sections": {
+        "main": {
+          "heading": "Coming soon",
+          "bullets": {},
+          "paragraphs": {
+            "0": "Eventually, this will help use local video files more fully with a smoother experience.",
+            "1": "The final guide will remain user-oriented, without technical jargon."
+          }
+        }
+      }
+    },
+    "fallback": {
+      "title": "Information",
+      "miniDescription": "Presentation content.",
+      "intro": "Find the platform's important information here."
+    },
+    "generic": {
+      "title": "Content"
+    },
+    "price": {
+      "title": "Platform pricing",
+      "miniDescription": "Compare offers and choose a level adapted to your usage.",
+      "videoRetention": "Video retention",
+      "monthlyPrice": "€{{ price }} / month",
+      "availableOffers": "{{ count }} available offers",
+      "fromMonthlyPrice": "From €{{ price }} / month"
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Frequently asked questions about Action Board",
+    "intro": "Find key answers about the sports video analysis platform, panels, timelines, statistics, current free access and data management.",
+    "listLabel": "Frequently asked questions",
+    "items": [
+      {
+        "question": "What is Action Board?",
+        "answer": "Action Board is a sports video analysis platform that helps create analysis panels, annotate video with a timeline and track statistics during observation."
+      },
+      {
+        "question": "Who is the platform for?",
+        "answer": "The platform is for amateur coaches, amateur clubs, independent or club video analysts, and students."
+      },
+      {
+        "question": "Which sports are compatible?",
+        "answer": "Action Board targets every sport. Panels can be adapted to a sport, team or analysis method."
+      },
+      {
+        "question": "Do I need to be logged in to use public panels?",
+        "answer": "Yes. Public panels can be found and reused by logged-in users."
+      },
+      {
+        "question": "Can timelines be public?",
+        "answer": "No. Timelines are private and visible only to their owner."
+      }
+    ]
+  },
+  "welcome": {
+    "title": "Welcome {{ pseudo }}",
+    "joinClub": "Join / Find a club",
+    "startAnalysis": "Start an analysis"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Contact Action Board",
+    "intro": "Have a question about the sports video analysis platform, panels, timelines or a club workflow? You can use this temporary form.",
+    "temporaryAddress": "Temporary address",
+    "temporaryText": "This contact page is temporary. The address shown may later be replaced by an official address.",
+    "formLabel": "Contact form",
+    "sent": "Message prepared in the interface. No real email is sent for now."
+  },
+  "analyse": {
+    "idleEmpty": "No pending data.",
+    "savedEmpty": "No saved data."
+  },
+  "canvas": {
+    "show": "Show"
+  },
+  "video": {
+    "noneLoaded": "No video loaded",
+    "estimatedFps": "Estimated FPS",
+    "unsupported": "Your browser does not support video playback.",
+    "loadFailed": "The video could not be loaded.",
+    "chooseAnother": "Choose another video",
+    "choose": "Choose a video",
+    "removeTitle": "Remove video",
+    "removeMessage": "Do you want to remove the loaded video?"
+  },
+  "panel": {
+    "find": "Find a panel",
+    "compactHint": "Expand to edit the Sequencer Canvas.",
+    "newPanel": "New panel",
+    "rename": "Rename",
+    "createEvent": "Create event",
+    "createLabel": "Create label",
+    "createStat": "Create stat",
+    "editMode": "Edit mode",
+    "savePrivate": "Save privately",
+    "publish": "Publish panel",
+    "publishIntro": "Choose the publication visibility.",
+    "panelName": "Panel name",
+    "visibility": "Visibility",
+    "events": "Events",
+    "labels": "Labels",
+    "action": "Action",
+    "all": "All",
+    "public": "Public",
+    "private": "Private",
+    "club": "Club",
+    "search": "Search for a panel",
+    "filterByVisibility": "Filter by visibility",
+    "onlyMine": "Show only mine",
+    "showEvents": "Show events",
+    "showLabels": "Show labels",
+    "panelEventsTitle": "Panel events",
+    "panelLabelsTitle": "Panel labels",
+    "noData": "No data available.",
+    "noMatch": "No panel matches the filters.",
+    "noRemote": "No remote panel available.",
+    "overwriteTitle": "Overwrite current panel?",
+    "overwriteImportMessage": "The current panel will be replaced by the imported file.",
+    "overwriteRemoteMessage": "The current panel will be replaced by the selected remote panel.",
+    "overwrite": "Overwrite",
+    "createNewTitle": "Create a new panel?",
+    "createNewMessage": "The current panel contains buttons. Continuing will discard the current panel.",
+    "createNewConfirm": "Create new panel",
+    "editDescription": "Edit description",
+    "description": "Description",
+    "addDescription": "Add a description"
+  },
+  "timeline": {
+    "labels": "Labels",
+    "rename": "Rename timeline",
+    "startTimer": "Start timer",
+    "autoFollow": "Auto-follow",
+    "recenter": "Recenter",
+    "playSelection": "Play selection",
+    "save": "Save timeline",
+    "findRemote": "Find a remote timeline",
+    "menu": "Timeline menu",
+    "importExport": "Import / Export",
+    "deleteSelection": "Delete selection",
+    "selection": "Selection",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "undoShift": "Undo shift",
+    "undoRemove": "Undo deletion",
+    "deleteConfirmTitle": "Confirm deletion",
+    "deleteConfirmOne": "Do you want to delete this occurrence?",
+    "deleteConfirmMany": "Do you want to delete these {{ count }} occurrences?",
+    "deleteBlockedTooltip": "You cannot delete an occurrence in progress. Finish the event first.",
+    "deleteSelectionTooltip": "Delete selection ({{ count }})",
+    "editLabels": "Edit labels",
+    "emptyHint": "Add Event/Label buttons in the sequencer to feed the timeline.",
+    "searchLabel": "Search for a label",
+    "noLabelFound": "No label found.",
+    "loadRemote": "Load a remote timeline",
+    "searchTimeline": "Search for a timeline",
+    "name": "Name",
+    "updatedAt": "Last updated",
+    "noMatch": "No timeline matches the filters.",
+    "overwriteTitle": "Overwrite current timeline?",
+    "overwriteLocalMessage": "Events/occurrences will be lost. Do you want to continue?",
+    "overwriteRemoteMessage": "The current timeline will be replaced by the selected remote timeline.",
+    "overwrite": "Overwrite",
+    "noRemote": "No remote timeline available."
+  },
+  "sequencer": {
+    "id": "ID",
+    "name": "Name",
+    "color": "Color",
+    "buttonColor": "Button color",
+    "anonymize": "Anonymize this button",
+    "links": "Links",
+    "activateIds": "Activate IDs",
+    "deactivateIds": "Deactivate IDs",
+    "addId": "Add an ID",
+    "missing": "missing",
+    "hotkey": "Hotkey",
+    "baseKey": "Base key",
+    "none": "None",
+    "preview": "Preview:",
+    "remove": "Remove",
+    "notAllowed": "Key not allowed.",
+    "available": "Available",
+    "alreadyUsed": "Already used",
+    "reservedVideo": "Reserved video",
+    "limited": "Limited",
+    "indefinite": "Indefinite",
+    "once": "Once",
+    "preSeconds": "Pre (sec)",
+    "postSeconds": "Post (sec)",
+    "simpleSearch": "Simple search",
+    "complexSearch": "Complex search",
+    "simpleQuery": "Simple query",
+    "targetEvents": "Target events *",
+    "filterLabels": "Filter labels",
+    "mathExpression": "Mathematical expression",
+    "availableTerms": "Available terms",
+    "termName": "Term name",
+    "type": "Type",
+    "query": "Query",
+    "constant": "Constant",
+    "value": "Value",
+    "addTerm": "Add term",
+    "hotkeyInvalid": "Invalid or already used hotkey.",
+    "liveStat": "Live stat"
+  },
+  "importExport": {
+    "invalidJson": "The selected file is not valid JSON.",
+    "panelExportGenerated": "Panel export generated.",
+    "timelineExportGenerated": "Timeline export generated."
+  },
+  "forms": {
+    "name": "Name",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "network": "Network error",
+    "unauthorized": "Session expired, please log in again",
+    "forbidden": "Access denied",
+    "notFound": "Resource not found",
+    "validation": "Some information is invalid",
+    "panelSave": "Failed to save panel.",
+    "panelImportValidation": "Failed to validate imported panel.",
+    "panelExport": "Failed to export panel.",
+    "panelLoad": "Unable to load this panel.",
+    "panelListLoad": "Unable to load the panel list.",
+    "panelCopy": "Unable to copy this panel.",
+    "timelineSave": "Failed to save timeline.",
+    "timelineImportValidation": "Failed to validate imported timeline.",
+    "timelineExport": "Failed to export timeline.",
+    "timelineLoad": "Unable to load remote timeline.",
+    "timelineListLoad": "Unable to load the timeline list."
+  },
+  "notifications": {
+    "saved": "Changes saved",
+    "deleted": "Item deleted",
+    "copied": "Copy created",
+    "panelSaved": "Panel saved successfully.",
+    "panelImported": "Panel imported successfully.",
+    "panelLoaded": "Panel loaded.",
+    "timelineSaved": "Timeline saved successfully.",
+    "timelineImported": "Timeline imported successfully.",
+    "timelineLoaded": "Remote timeline loaded.",
+    "importSuccess": "Import successful",
+    "exportSuccess": "Export successful"
+  },
+  "emptyStates": {
+    "noData": "No data available.",
+    "importVideo": "Import a local video to start."
+  },
+  "accessibility": {
+    "home": "Home",
+    "language": "Language",
+    "filterVisibility": "Filter by visibility",
+    "showEvents": "View events",
+    "showLabels": "View labels",
+    "delete": "Delete",
+    "save": "Save",
+    "removeVideo": "Remove video"
+  }
+}

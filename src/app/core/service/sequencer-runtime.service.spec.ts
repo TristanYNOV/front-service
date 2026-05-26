@@ -34,7 +34,7 @@ describe('SequencerRuntimeService', () => {
     const messages = logSpy.calls.allArgs().map(args => String(args[0]));
     expect(messages).toEqual([
       '[Sequencer] EVENT INDEFINITE main START',
-      '[Sequencer] EVENT INDEFINITE oldEvent ENDED | Labels=[]',
+      '[Sequencer] EVENT INDEFINITE oldEvent ENDED | Labels=[oldLabel]',
       '[Sequencer] LABEL INDEFINITE oldLabel ENDED',
       '[Sequencer] LABEL INDEFINITE nextLabel START',
       '[Sequencer] EVENT INDEFINITE nextEvent START',

@@ -1,0 +1,752 @@
+{
+  "common": {
+    "appName": "Action Board",
+    "sportVideoPlatform": "Plateforme d’analyse vidéo sportive",
+    "loading": "Chargement...",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "actions": {
+    "add": "Ajouter",
+    "backspace": "Retour arrière",
+    "cancel": "Annuler",
+    "chooseVideo": "Choisir une vidéo",
+    "clear": "Effacer",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "copy": "Copier",
+    "create": "Créer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "export": "Exporter",
+    "import": "Importer",
+    "load": "Charger",
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "publish": "Publier",
+    "register": "Inscription",
+    "remove": "Retirer",
+    "save": "Enregistrer",
+    "show": "Afficher",
+    "update": "Mettre à jour",
+    "use": "Utiliser"
+  },
+  "nav": {
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "terms": "CGU",
+    "privacy": "Confidentialité",
+    "main": "Navigation principale",
+    "seo": "Navigation SEO",
+    "usefulPages": "Pages publiques utiles"
+  },
+  "menu": {
+    "applicationSpace": "Espace applicatif",
+    "club": "Club",
+    "teams": "Équipes",
+    "players": "Joueurs",
+    "tournaments": "Tournois",
+    "matches": "Matchs",
+    "analysis": "Analyse",
+    "menu": "Menu",
+    "deleteAccount": "Supprimer son compte",
+    "editLayout": "Éditer le layout",
+    "lockLayout": "Verrouiller le layout",
+    "unlockLayout": "Déverrouiller le layout"
+  },
+  "theme": {
+    "title": "Thème",
+    "intro": "Choisissez une palette adaptée à votre usage.",
+    "comingSoon": "La personnalisation des thèmes sera disponible plus tard.",
+    "current": "Thème actuel",
+    "choice": "Choix du thème",
+    "options": {
+      "classic": {
+        "label": "Standard",
+        "description": "Thème Action Board stable, proche de l'expérience d'origine."
+      },
+      "nocturne": {
+        "label": "Obsidienne",
+        "description": "Interface sombre et douce, adaptée aux sessions longues en environnement peu lumineux."
+      },
+      "dynamic": {
+        "label": "Momentum",
+        "description": "Palette sportive et contrastée, bleu profond, cyan et orange vif."
+      },
+      "verdant": {
+        "label": "Canopée",
+        "description": "Vert dominant, noir structurant et surfaces claires argentées."
+      },
+      "oriental": {
+        "label": "Sumi",
+        "description": "Canvas blanc, encre noire et rouge profond inspiré de la calligraphie."
+      }
+    }
+  },
+  "language": {
+    "label": "Langue",
+    "fr": "FR",
+    "en": "ENG"
+  },
+  "auth": {
+    "loginTitle": "Connexion",
+    "registerTitle": "S’inscrire",
+    "createAccount": "Créer un compte",
+    "pseudo": "Pseudo (optionnel)",
+    "pseudoHint": "Si vide, l’email sera utilisé par défaut.",
+    "email": "Email",
+    "emailRequired": "Email requis.",
+    "emailInvalid": "Format email invalide.",
+    "password": "Mot de passe",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "passwordHidden": "Mot de passe masqué",
+    "passwordVisible": "Mot de passe visible",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères.",
+    "passwordLowercase": "Le mot de passe doit contenir au moins une lettre minuscule.",
+    "passwordUppercase": "Le mot de passe doit contenir au moins une lettre majuscule.",
+    "passwordDigit": "Le mot de passe doit contenir au moins un chiffre.",
+    "passwordSpecial": "Le mot de passe doit contenir au moins un caractère spécial.",
+    "acceptTermsPrefix": "J’ai lu et j’accepte les",
+    "terms": "Conditions Générales d’Utilisation",
+    "termsRequired": "Vous devez accepter les Conditions Générales d’Utilisation pour créer un compte.",
+    "genericError": "Une erreur est survenue. Veuillez réessayer.",
+    "deleteAccountTitle": "Supprimer son compte",
+    "deleteAccountMessage": "La suppression de votre compte supprimera vos analyses et panneaux privés. Les panneaux publics pourront être conservés sous forme anonymisée afin de préserver les ressources partagées avec la communauté.",
+    "confirmDeleteAccount": "Confirmer la suppression"
+  },
+  "landing": {
+    "heroTitle": "Action Board, plateforme d’analyse vidéo sportive",
+    "heroDescription": "Action Board aide les coachs, clubs, analystes vidéo et étudiants à structurer leurs observations avec des panneaux d’analyse, une timeline claire, des statistiques et des ressources sauvegardées en ligne.",
+    "discoverFeatures": "Découvrir les fonctionnalités",
+    "viewPricing": "Voir les tarifs",
+    "sections": {
+      "accessibleTitle": "Rendre l’analyse vidéo sportive plus accessible",
+      "accessibleText": "L’analyse vidéo ne devrait pas être réservée aux structures professionnelles. Action Board propose une approche pédagogique et progressive pour observer une vidéo, qualifier les actions importantes et préparer des retours plus utiles aux sportifs.",
+      "panelsTitle": "Créez vos panneaux d’analyse personnalisés",
+      "panelsText": "Un panneau d’analyse regroupe des boutons événement, label et stats. Vous pouvez l’adapter à votre sport, à votre méthode de travail ou à un objectif précis d’entraînement.",
+      "timelineTitle": "Analysez vos vidéos avec une timeline structurée",
+      "timelineText": "La timeline permet de retrouver les moments importants, de visualiser les occurrences et de relier les observations à la vidéo. Les timelines sont privées et visibles uniquement par leur propriétaire.",
+      "saveTitle": "Sauvegardez vos analyses et vos panneaux en ligne",
+      "saveText": "Les panneaux et timelines peuvent être sauvegardés pour retrouver votre travail. Les panneaux peuvent être privés ou publics, tandis qu’aucune timeline publique n’est possible. L’import/export facilite aussi la reprise ou le partage d’une structure d’analyse.",
+      "statsTitle": "Utilisez des statistiques pendant vos analyses",
+      "statsText": "Les boutons de type stats permettent de suivre des indicateurs pendant l’analyse vidéo, à partir des événements et labels configurés dans le panneau.",
+      "privacyTitle": "Protégez et anonymisez les données partagées",
+      "privacyText": "Lors de la suppression d’un compte, les ressources privées sont supprimées selon la logique existante. Les panneaux publics peuvent être conservés sous forme anonymisée afin de préserver les ressources partagées avec la communauté.",
+      "freeTitle": "Une plateforme gratuite avec un compte",
+      "freeText": "Action Board est actuellement gratuit pour les utilisateurs disposant d’un compte. La plateforme continue d’évoluer et pourra proposer plus tard des offres dédiées aux clubs, équipes ou organisations."
+    }
+  },
+  "features": {
+    "title": "Fonctionnalités d’Action Board",
+    "description": "Découvrez l’analyse vidéo sportive, les panneaux personnalisés, la timeline, les raccourcis clavier, les statistiques, la sauvegarde en ligne et les imports/exports disponibles dans Action Board."
+  },
+  "pricing": {
+    "eyebrow": "Tarifs",
+    "title": "Action Board est actuellement gratuit avec un compte",
+    "intro": "La plateforme est en phase de développement et d’amélioration continue. Vous pouvez créer un compte gratuitement pour utiliser les panneaux d’analyse, la timeline et les outils de sauvegarde disponibles.",
+    "freeTitle": "Une base gratuite pour démocratiser l’analyse vidéo sportive",
+    "freeText": "Action Board cherche d’abord à rendre l’analyse vidéo sportive plus accessible aux coachs amateurs, clubs, analystes indépendants et étudiants. L’accès actuel permet de tester les usages essentiels sans abonnement.",
+    "futureTitle": "Des offres pourront évoluer plus tard",
+    "futureText": "Des offres dédiées aux clubs, équipes ou organisations pourront être proposées ultérieurement, lorsque les besoins d’accompagnement, de stockage ou de collaboration seront mieux stabilisés.",
+    "askQuestion": "Poser une question"
+  },
+  "legal": {
+    "termsEyebrow": "CGU",
+    "termsTitle": "Conditions Générales d’Utilisation temporaires",
+    "termsIntro": "Cette page présente la charte générale d’utilisation actuelle d’Action Board. Elle est temporaire et pourra être enrichie par une version juridique plus détaillée.",
+    "temporaryTitle": "Version temporaire",
+    "temporaryText": "Ces conditions générales d’utilisation sont une version temporaire destinée à encadrer l’utilisation actuelle de la plateforme. Elles pourront être complétées ou remplacées ultérieurement par une version juridique détaillée.",
+    "purposeTitle": "Objet de la plateforme",
+    "purposeText": "Action Board est une plateforme d’analyse vidéo sportive. Elle permet de créer et utiliser des panneaux d’analyse, de travailler avec une timeline, de sauvegarder des ressources en ligne et d’importer ou exporter des panneaux et timelines.",
+    "accountTitle": "Compte utilisateur et responsabilité",
+    "accountText": "L’utilisateur est responsable des informations qu’il renseigne lors de la création de son compte. Dans cette version de la plateforme, il peut choisir d’utiliser une adresse email dédiée ou temporaire. L’utilisation d’une adresse email personnelle réelle relève de son choix et de sa responsabilité.",
+    "dataTitle": "Données et contenus",
+    "dataText": "Les timelines sont privées. Les panneaux peuvent être privés ou publics. Les panneaux publics sont destinés à être consultés ou réutilisés par des utilisateurs connectés, selon les fonctionnalités disponibles.",
+    "deletionTitle": "Suppression du compte",
+    "deletionText": "La suppression d’un compte entraîne la suppression des analyses et panneaux privés selon la logique existante. Les panneaux publics pourront être conservés sous forme anonymisée afin de préserver les ressources partagées avec la communauté.",
+    "contactTitle": "Contact",
+    "contactTextStart": "Pour toute question, vous pouvez consulter la page",
+    "contactTextEnd": "ou écrire à"
+  },
+  "privacy": {
+    "eyebrow": "Confidentialité",
+    "title": "Politique de confidentialité temporaire",
+    "intro": "Cette politique de confidentialité est une version temporaire destinée à décrire le fonctionnement actuel de la plateforme. Elle pourra être complétée ultérieurement.",
+    "accountTitle": "Compte et authentification",
+    "accountText": "La création d’un compte permet d’associer les panneaux, timelines et ressources privées à un utilisateur. L’authentification sert à protéger les routes applicatives et à retrouver le travail sauvegardé.",
+    "timelinesTitle": "Timelines privées",
+    "timelinesText": "Les timelines sont privées. Aucune timeline publique n’est possible dans le fonctionnement actuel d’Action Board. Elles sont visibles uniquement par leur utilisateur propriétaire.",
+    "panelsTitle": "Panneaux privés ou publics",
+    "panelsText": "Les panneaux peuvent être privés ou publics. Les panneaux publics peuvent être visibles par des utilisateurs connectés afin de faciliter la réutilisation de ressources d’analyse.",
+    "deletionTitle": "Suppression et anonymisation",
+    "deletionText": "Les panneaux privés et analyses privées sont supprimés lors de la suppression du compte selon la logique existante. Les panneaux publics peuvent être conservés sous forme anonymisée après suppression du compte.",
+    "cookiesTitle": "Cookies et session",
+    "cookiesText": "L’application utilise l’authentification et peut s’appuyer sur des cookies ou informations de session selon la configuration technique en place. Ces éléments servent à maintenir la session utilisateur et à sécuriser l’accès aux fonctionnalités connectées."
+  },
+  "dataItems": {
+    "tags": {
+      "features": "Fonctionnalités",
+      "guide": "Guide",
+      "video": "Vidéo",
+      "shortcuts": "Raccourcis",
+      "keyboard": "Clavier",
+      "videoAnalysis": "Analyse vidéo",
+      "timeline": "Timeline",
+      "panel": "Panneau",
+      "event": "Événement",
+      "label": "Label",
+      "stats": "Stats",
+      "save": "Sauvegarde",
+      "importExport": "Import/export",
+      "privacy": "Confidentialité",
+      "sport": "Sport",
+      "beginner": "Débuter",
+      "interface": "Interface",
+      "editMode": "Mode édition",
+      "productivity": "Productivité",
+      "sequencer": "Séquenceur",
+      "timeSaving": "Gain de temps",
+      "observation": "Observation",
+      "tracking": "Suivi",
+      "preparation": "Préparation",
+      "comingSoon": "À venir",
+      "ffmpeg": "FFMPEG",
+      "home": "Accueil",
+      "discovery": "Découverte",
+      "subscription": "Abonnement",
+      "club": "Club"
+    },
+    "featuresGuide": {
+      "title": "Guide utilisateur des fonctionnalités",
+      "miniDescription": "Un guide pour comprendre la page et afficher les composants utiles.",
+      "intro": "Cette page présente les principales fonctionnalités d’Action Board et conserve la logique de composants affichables, minifiables et réutilisables.",
+      "sections": {
+        "explore": {
+          "heading": "Comment explorer cette page",
+          "paragraphs": {
+            "0": "Les cartes affichées au centre expliquent les usages clés de la plateforme. Les composants disponibles dans la colonne de gauche peuvent être ouverts dans le canvas, puis sauvegardés ou retirés selon vos besoins."
+          },
+          "iconTips": {
+            "0": {
+              "label": "Composants disponibles",
+              "description": "Ouvre un contenu minifié dans le canvas principal."
+            },
+            "1": {
+              "label": "Composants sauvegardés",
+              "description": "Retrouve un contenu conservé pour le réafficher plus tard."
+            },
+            "2": {
+              "label": "Sauvegarder",
+              "description": "Minifie un composant affiché pour le garder dans la zone sauvegardée."
+            },
+            "3": {
+              "label": "Minifier",
+              "description": "Retire le composant du canvas sans supprimer la ressource applicative."
+            },
+            "4": {
+              "label": "Mode édition",
+              "description": "Déverrouille le layout pour déplacer et redimensionner les composants."
+            }
+          }
+        },
+        "discover": {
+          "heading": "Ce que vous allez découvrir",
+          "bullets": {
+            "0": "Le fonctionnement général de l’analyse vidéo avec panneau, vidéo et timeline.",
+            "1": "Les boutons événement, label et stats qui structurent les observations.",
+            "2": "La sauvegarde en ligne, l’import/export et les différences entre panneaux publics, panneaux privés et timelines privées."
+          }
+        },
+        "related": {
+          "heading": "Pages publiques liées",
+          "paragraphs": {
+            "0": "Pour compléter cette présentation, consultez les pages Tarifs, FAQ, Contact, CGU et Confidentialité accessibles depuis la navigation principale."
+          }
+        }
+      }
+    },
+    "videoShortcuts": {
+      "title": "Cheatsheet des raccourcis vidéo",
+      "miniDescription": "Les raccourcis vidéo réservés réellement configurés dans le service de hotkeys.",
+      "intro": "Ces raccourcis viennent de la configuration existante du service de hotkeys et servent à contrôler la vidéo pendant l’analyse.",
+      "sections": {
+        "configured": {
+          "heading": "Raccourcis configurés",
+          "bullets": {
+            "0": "Espace : lecture / pause.",
+            "1": "Flèche gauche : reculer de 1 seconde.",
+            "2": "Flèche droite : avancer de 1 seconde.",
+            "3": ", : reculer d’une image.",
+            "4": ". : avancer d’une image.",
+            "5": "/ : augmenter la vitesse de lecture de 0,25.",
+            "6": "- : réduire la vitesse de lecture de 0,25."
+          }
+        },
+        "why": {
+          "heading": "Pourquoi les utiliser",
+          "paragraphs": {
+            "0": "Ils permettent de rester concentré sur l’observation, de revenir précisément sur une action et d’ajuster la vitesse sans quitter le clavier."
+          }
+        }
+      }
+    },
+    "videoAnalysis": {
+      "title": "Comment fonctionne l’analyse vidéo ?",
+      "miniDescription": "Les trois éléments principaux : panneau d’analyse, vidéo et timeline.",
+      "intro": "L’analyse vidéo dans Action Board repose sur trois éléments complémentaires : le panneau d’analyse, la vidéo et la timeline.",
+      "sections": {
+        "core": {
+          "bullets": {
+            "0": "Panneau d’analyse : il regroupe les boutons qui déclenchent ou qualifient les observations.",
+            "1": "Vidéo : elle peut être contrôlée avec les raccourcis et les commandes de lecture.",
+            "2": "Timeline : elle structure les occurrences créées pendant l’analyse pour retrouver les moments importants."
+          }
+        },
+        "workflow": {
+          "paragraphs": {
+            "0": "Pendant la lecture, l’utilisateur peut contrôler la vidéo, déclencher des boutons d’analyse et produire des informations structurées dans la timeline."
+          }
+        }
+      }
+    },
+    "analysisPanel": {
+      "title": "Comment fonctionne un panneau d’analyse ?",
+      "miniDescription": "Comprendre les boutons événement, label et stats d’un panneau personnalisé.",
+      "intro": "Un panneau d’analyse personnalisé accélère l’observation en regroupant les actions utiles à votre méthode de travail.",
+      "sections": {
+        "types": {
+          "heading": "Les types de boutons",
+          "bullets": {
+            "0": "Événement : génère des occurrences dans la timeline.",
+            "1": "Label : définit ou qualifie une occurrence.",
+            "2": "Stats : produit des statistiques pendant l’analyse."
+          }
+        },
+        "speed": {
+          "heading": "Accélérer l’analyse",
+          "paragraphs": {
+            "0": "Les hotkeys et les liens d’activation permettent de déclencher plus vite les actions répétitives. Un panneau adapté à votre sport peut réduire le temps passé à chercher, qualifier et compter les situations importantes.",
+            "1": "Des panneaux publics peuvent être réutilisés par d’autres utilisateurs connectés. Une documentation détaillée pourra être ajoutée ultérieurement."
+          }
+        }
+      }
+    },
+    "saveShare": {
+      "title": "Comment sauvegarder mes analyses et mes panneaux ?",
+      "miniDescription": "Sauvegarde en ligne, visibilité des panneaux et confidentialité des timelines.",
+      "intro": "Action Board permet de retrouver son travail en ligne grâce à la sauvegarde des panneaux et timelines, ainsi qu’à l’import/export.",
+      "sections": {
+        "panels": {
+          "heading": "Panneaux",
+          "bullets": {
+            "0": "Un panneau peut être sauvegardé en ligne.",
+            "1": "Un panneau peut être privé ou public.",
+            "2": "Les panneaux publics sont visibles uniquement par des utilisateurs connectés.",
+            "3": "Les panneaux peuvent être importés ou exportés."
+          }
+        },
+        "timelines": {
+          "heading": "Timelines",
+          "bullets": {
+            "0": "Une timeline sauvegardée reste toujours privée.",
+            "1": "Aucune timeline publique n’est possible.",
+            "2": "Les timelines peuvent être importées ou exportées.",
+            "3": "Les timelines sont visibles uniquement par leur utilisateur propriétaire."
+          }
+        }
+      }
+    },
+    "projectGoal": {
+      "title": "Pourquoi ce projet existe",
+      "miniDescription": "Une analyse vidéo plus simple, pour tous les profils sportifs.",
+      "intro": "Notre objectif est simple : rendre l’analyse vidéo accessible et utile au quotidien, sans complexité inutile.",
+      "sections": {
+        "main": {
+          "heading": "Objectifs",
+          "bullets": {
+            "0": "Observer plus vite les moments clés d’un match ou d’un entraînement.",
+            "1": "Partager des retours clairs avec le staff et les joueurs.",
+            "2": "Gagner du temps entre la préparation, l’observation et le suivi."
+          }
+        }
+      }
+    },
+    "uxWorkflow": {
+      "title": "Comment fonctionne l’interface",
+      "miniDescription": "Repérez facilement les données en attente, sauvegardées et en édition.",
+      "intro": "L’accueil est organisé pour vous aider à retrouver rapidement la bonne information au bon moment.",
+      "sections": {
+        "states": {
+          "heading": "Les différents états utiles",
+          "bullets": {
+            "0": "Données en attente : informations liées à la page en cours, prêtes à être affichées.",
+            "1": "Données sauvegardées : éléments conservés pour les retrouver plus tard en un clic.",
+            "2": "Mode édition : personnalisez l’affichage selon votre manière de travailler."
+          }
+        }
+      }
+    },
+    "analysisOverview": {
+      "title": "Découvrir la page Analyse",
+      "miniDescription": "Vidéo, timeline et séquenceur travaillent ensemble pour guider votre analyse.",
+      "intro": "La page Analyse est votre espace principal pour revoir une action, annoter et suivre vos séquences.",
+      "sections": {
+        "main": {
+          "heading": "Vue d’ensemble",
+          "bullets": {
+            "0": "Connexion requise : vos réglages et vos repères restent associés à votre compte.",
+            "1": "Composant vidéo : contrôlez la lecture et revenez précisément sur chaque phase.",
+            "2": "Timeline : visualisez le déroulé du match et les moments importants.",
+            "3": "Panneau de séquençage : classez et déclenchez rapidement vos actions d’analyse."
+          }
+        }
+      }
+    },
+    "legacyVideoShortcuts": {
+      "title": "Raccourcis vidéo par défaut",
+      "miniDescription": "Pilotez la lecture et l’exploration vidéo sans quitter votre clavier.",
+      "intro": "Ces raccourcis vous permettent d’analyser une action sans casser votre concentration ni perdre du temps dans les menus.",
+      "sections": {
+        "actions": {
+          "heading": "Les actions utiles au quotidien",
+          "bullets": {
+            "0": "Lecture / pause rapide pour arrêter exactement au bon moment.",
+            "1": "Navigation plus précise pour revenir sur une séquence clé en quelques secondes.",
+            "2": "Analyse image par image pour vérifier un détail technique ou tactique.",
+            "3": "Ralenti et variation de vitesse pour mieux lire les déplacements et les timings."
+          }
+        },
+        "benefits": {
+          "heading": "Ce que le composant vidéo vous apporte",
+          "paragraphs": {
+            "0": "Vous pouvez revoir plusieurs fois la même action, comparer deux passages et valider plus sereinement votre observation.",
+            "1": "L’objectif est simple : vous offrir un confort d’analyse fluide, même lors d’un débrief rapide après match ou entraînement."
+          }
+        },
+        "compatibility": {
+          "paragraphs": {
+            "0": "Le lecteur est pensé pour rester compatible avec les usages vidéo courants, afin de démarrer rapidement sans complexifier votre routine."
+          }
+        }
+      }
+    },
+    "sequencerOverview": {
+      "title": "Comprendre le panneau de séquençage",
+      "miniDescription": "Structurez vos événements et labels pour garder une lecture claire du match.",
+      "intro": "Le panneau de séquençage vous aide à organiser vos repères pour analyser avec méthode, pendant l’action puis au moment du bilan.",
+      "sections": {
+        "first": {
+          "heading": "Trois notions simples",
+          "bullets": {
+            "0": "Event : un moment important que vous souhaitez repérer, par exemple un tir, une récupération ou une perte de balle.",
+            "1": "Label : une étiquette pour qualifier l’action avec une zone, une intention, un résultat ou un contexte.",
+            "2": "Stat : une synthèse pour suivre des tendances et appuyer vos décisions."
+          }
+        },
+        "second": {
+          "heading": "Pourquoi c’est utile en pratique",
+          "bullets": {
+            "0": "Pendant l’analyse, vous capturez les informations au fil de la vidéo sans perdre le fil.",
+            "1": "Après l’analyse, vous retrouvez rapidement les passages clés pour préparer un retour clair à votre groupe.",
+            "2": "Vous gagnez du temps pour comparer, prioriser et partager les points qui comptent vraiment."
+          }
+        }
+      }
+    },
+    "timelineOverview": {
+      "title": "Lire la timeline efficacement",
+      "miniDescription": "Situez chaque séquence dans le temps pour préparer des retours ciblés.",
+      "intro": "La timeline vous donne une lecture chronologique claire du match ou de l’entraînement pour retrouver un passage en un instant.",
+      "sections": {
+        "first": {
+          "heading": "Ce que vous pouvez faire rapidement",
+          "bullets": {
+            "0": "Visualiser les moments clés dans l’ordre où ils se produisent.",
+            "1": "Repérer une séquence importante et relancer une lecture ciblée.",
+            "2": "Naviguer facilement dans l’analyse pour comparer plusieurs situations.",
+            "3": "Sélectionner des événements pour construire un débrief plus structuré."
+          }
+        },
+        "second": {
+          "heading": "Bénéfice au quotidien",
+          "bullets": {},
+          "paragraphs": {
+            "0": "Au lieu de chercher longtemps dans la vidéo, vous accédez directement aux passages utiles pour expliquer, corriger ou valoriser une action.",
+            "1": "Si des raccourcis de navigation sont activés, ils renforcent encore la fluidité pour passer d’une séquence à l’autre."
+          }
+        }
+      }
+    },
+    "ffmpegInstallation": {
+      "title": "Préparer l’installation de FFMPEG",
+      "miniDescription": "Un futur guide simple pour préparer votre machine aux traitements vidéo.",
+      "intro": "Ce composant est prêt pour accueillir une aide pas à pas sur l’installation de FFMPEG.",
+      "sections": {
+        "main": {
+          "heading": "À venir",
+          "bullets": {},
+          "paragraphs": {
+            "0": "À terme, cela permettra d’exploiter davantage les fichiers vidéo en local, avec une expérience plus fluide.",
+            "1": "Le guide final restera orienté utilisateur, sans jargon technique."
+          }
+        }
+      }
+    },
+    "fallback": {
+      "title": "Information",
+      "miniDescription": "Contenu de présentation.",
+      "intro": "Retrouvez ici les informations importantes de la plateforme."
+    },
+    "generic": {
+      "title": "Contenu"
+    },
+    "price": {
+      "title": "Tarifs de la plateforme",
+      "miniDescription": "Comparez les offres et choisissez un niveau adapté à votre usage.",
+      "videoRetention": "Conservation vidéo",
+      "monthlyPrice": "{{ price }} € / mois",
+      "availableOffers": "{{ count }} offres disponibles",
+      "fromMonthlyPrice": "À partir de {{ price }} € / mois"
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Questions fréquentes sur Action Board",
+    "intro": "Retrouvez les réponses essentielles sur la plateforme d’analyse vidéo sportive, les panneaux, les timelines, les statistiques, la gratuité actuelle et la gestion des données.",
+    "listLabel": "Questions fréquentes",
+    "items": [
+      {
+        "question": "Qu’est-ce qu’Action Board ?",
+        "answer": "Action Board est une plateforme d’analyse vidéo sportive qui aide à créer des panneaux d’analyse, annoter une vidéo avec une timeline et suivre des statistiques pendant l’observation."
+      },
+      {
+        "question": "À qui s’adresse la plateforme ?",
+        "answer": "La plateforme s’adresse aux coachs amateurs, clubs amateurs, analystes vidéo indépendants ou rattachés à un club, ainsi qu’aux étudiants."
+      },
+      {
+        "question": "Quels sports sont compatibles ?",
+        "answer": "Action Board vise toutes les pratiques sportives. Les panneaux peuvent être adaptés aux besoins d’un sport, d’une équipe ou d’une méthode d’analyse."
+      },
+      {
+        "question": "Faut-il être connecté pour utiliser les panneaux publics ?",
+        "answer": "Oui. Les panneaux publics peuvent être retrouvés et réutilisés par des utilisateurs connectés."
+      },
+      {
+        "question": "Les timelines peuvent-elles être publiques ?",
+        "answer": "Non. Les timelines sont privées et visibles uniquement par leur utilisateur propriétaire."
+      }
+    ]
+  },
+  "welcome": {
+    "title": "Bienvenue {{ pseudo }}",
+    "joinClub": "Rejoindre / Trouver un club",
+    "startAnalysis": "Démarrer une analyse"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Contacter Action Board",
+    "intro": "Une question sur la plateforme d’analyse vidéo sportive, les panneaux, les timelines ou un usage club ? Vous pouvez utiliser ce formulaire temporaire.",
+    "temporaryAddress": "Adresse temporaire",
+    "temporaryText": "Cette page de contact est temporaire. L’adresse indiquée pourra être remplacée ultérieurement par une adresse officielle.",
+    "formLabel": "Formulaire de contact",
+    "sent": "Message préparé côté interface. Aucun email réel n’est envoyé pour le moment."
+  },
+  "analyse": {
+    "idleEmpty": "Aucune donnée en attente.",
+    "savedEmpty": "Aucune donnée sauvegardée."
+  },
+  "canvas": {
+    "show": "Afficher"
+  },
+  "video": {
+    "noneLoaded": "Aucune vidéo chargée",
+    "estimatedFps": "FPS estimé",
+    "unsupported": "Votre navigateur ne supporte pas la lecture vidéo.",
+    "loadFailed": "La vidéo n’a pas pu être chargée.",
+    "chooseAnother": "Choisir une autre vidéo",
+    "choose": "Choisir une vidéo",
+    "removeTitle": "Retirer la vidéo",
+    "removeMessage": "Voulez-vous retirer la vidéo chargée ?"
+  },
+  "panel": {
+    "find": "Trouver un panneau",
+    "compactHint": "Agrandir pour éditer le Sequencer Canvas.",
+    "newPanel": "Nouveau panneau",
+    "rename": "Renommer",
+    "createEvent": "Créer un événement",
+    "createLabel": "Créer un label",
+    "createStat": "Créer une statistique",
+    "editMode": "Mode édition",
+    "savePrivate": "Sauvegarder en privé",
+    "publish": "Publier le panneau",
+    "publishIntro": "Choisissez la visibilité de publication.",
+    "panelName": "Nom du panneau",
+    "visibility": "Visibilité",
+    "events": "Événements",
+    "labels": "Labels",
+    "action": "Action",
+    "all": "Tous",
+    "public": "Public",
+    "private": "Privé",
+    "club": "Club",
+    "search": "Rechercher un panneau",
+    "filterByVisibility": "Filtrer par visibilité",
+    "onlyMine": "Voir uniquement les miens",
+    "showEvents": "Voir les événements",
+    "showLabels": "Voir les labels",
+    "panelEventsTitle": "Événements du panneau",
+    "panelLabelsTitle": "Labels du panneau",
+    "noData": "Aucune donnée disponible.",
+    "noMatch": "Aucun panneau ne correspond aux filtres.",
+    "noRemote": "Aucun panneau distant disponible.",
+    "overwriteTitle": "Écraser le panneau courant ?",
+    "overwriteImportMessage": "Le panneau courant sera remplacé par le fichier importé.",
+    "overwriteRemoteMessage": "Le panneau courant sera remplacé par le panneau distant sélectionné.",
+    "overwrite": "Écraser",
+    "createNewTitle": "Créer un nouveau panneau ?",
+    "createNewMessage": "Le panneau courant contient des boutons. Continuer supprimera le panneau courant.",
+    "createNewConfirm": "Créer un nouveau panneau",
+    "editDescription": "Éditer la description",
+    "description": "Description",
+    "addDescription": "Ajouter une description"
+  },
+  "timeline": {
+    "labels": "Labels",
+    "rename": "Renommer la timeline",
+    "startTimer": "Démarrer un chronomètre",
+    "autoFollow": "Suivi auto",
+    "recenter": "Centrer",
+    "playSelection": "Jouer la sélection",
+    "save": "Sauvegarder la timeline",
+    "findRemote": "Trouver une timeline distante",
+    "menu": "Menu timeline",
+    "importExport": "Importer / Exporter",
+    "deleteSelection": "Supprimer la sélection",
+    "selection": "Sélection",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "undoShift": "Annuler décalage",
+    "undoRemove": "Annuler suppression",
+    "deleteConfirmTitle": "Confirmer la suppression",
+    "deleteConfirmOne": "Voulez-vous supprimer cette occurrence ?",
+    "deleteConfirmMany": "Voulez-vous supprimer ces {{ count }} occurrences ?",
+    "deleteBlockedTooltip": "Impossible de supprimer une occurrence en cours. Terminez l’événement d’abord.",
+    "deleteSelectionTooltip": "Supprimer la sélection ({{ count }})",
+    "editLabels": "Modifier les labels",
+    "emptyHint": "Ajoutez des boutons Event/Label dans le séquenceur pour alimenter la timeline.",
+    "searchLabel": "Rechercher un label",
+    "noLabelFound": "Aucun label trouvé.",
+    "loadRemote": "Charger une timeline distante",
+    "searchTimeline": "Rechercher une timeline",
+    "name": "Nom",
+    "updatedAt": "Dernière mise à jour",
+    "noMatch": "Aucune timeline ne correspond aux filtres.",
+    "overwriteTitle": "Écraser la timeline courante ?",
+    "overwriteLocalMessage": "Des événements/occurrences seront perdus. Voulez-vous continuer ?",
+    "overwriteRemoteMessage": "La timeline courante sera remplacée par la timeline distante sélectionnée.",
+    "overwrite": "Écraser",
+    "noRemote": "Aucune timeline distante disponible."
+  },
+  "sequencer": {
+    "id": "ID",
+    "name": "Nom",
+    "color": "Couleur",
+    "buttonColor": "Couleur du bouton",
+    "anonymize": "Anonymiser ce bouton",
+    "links": "Liens",
+    "activateIds": "IDs d’activation",
+    "deactivateIds": "IDs de désactivation",
+    "addId": "Ajouter un ID",
+    "missing": "manquant",
+    "hotkey": "Raccourci",
+    "baseKey": "Touche de base",
+    "none": "Aucune",
+    "preview": "Aperçu :",
+    "remove": "Retirer",
+    "notAllowed": "Touche non autorisée.",
+    "available": "Disponible",
+    "alreadyUsed": "Déjà utilisée",
+    "reservedVideo": "Réservée vidéo",
+    "limited": "Limité",
+    "indefinite": "Indéfini",
+    "once": "Une fois",
+    "preSeconds": "Pré (sec)",
+    "postSeconds": "Post (sec)",
+    "simpleSearch": "Recherche simple",
+    "complexSearch": "Recherche complexe",
+    "simpleQuery": "Requête simple",
+    "targetEvents": "Événements ciblés *",
+    "filterLabels": "Labels filtres",
+    "mathExpression": "Expression mathématique",
+    "availableTerms": "Termes disponibles",
+    "termName": "Nom du terme",
+    "type": "Type",
+    "query": "Requête",
+    "constant": "Constante",
+    "value": "Valeur",
+    "addTerm": "Ajouter un terme",
+    "hotkeyInvalid": "Raccourci invalide ou déjà utilisé.",
+    "liveStat": "Stat live"
+  },
+  "importExport": {
+    "invalidJson": "Le fichier sélectionné n’est pas un JSON valide.",
+    "panelExportGenerated": "Export panneau généré.",
+    "timelineExportGenerated": "Export timeline généré."
+  },
+  "forms": {
+    "name": "Nom",
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue",
+    "network": "Erreur réseau",
+    "unauthorized": "Session expirée, veuillez vous reconnecter",
+    "forbidden": "Accès refusé",
+    "notFound": "Ressource introuvable",
+    "validation": "Certaines informations sont invalides",
+    "panelSave": "Échec de sauvegarde du panneau.",
+    "panelImportValidation": "Échec de validation du panneau importé.",
+    "panelExport": "Échec de l’export du panneau.",
+    "panelLoad": "Impossible de charger ce panneau.",
+    "panelListLoad": "Impossible de charger la liste des panneaux.",
+    "panelCopy": "Impossible de copier ce panneau.",
+    "timelineSave": "Échec de sauvegarde de la timeline.",
+    "timelineImportValidation": "Échec de validation de la timeline importée.",
+    "timelineExport": "Échec de l’export timeline.",
+    "timelineLoad": "Impossible de charger la timeline distante.",
+    "timelineListLoad": "Impossible de charger la liste des timelines."
+  },
+  "notifications": {
+    "saved": "Modifications enregistrées",
+    "deleted": "Élément supprimé",
+    "copied": "Copie créée",
+    "panelSaved": "Panneau sauvegardé avec succès.",
+    "panelImported": "Panneau importé avec succès.",
+    "panelLoaded": "Panneau chargé.",
+    "timelineSaved": "Timeline sauvegardée avec succès.",
+    "timelineImported": "Timeline importée avec succès.",
+    "timelineLoaded": "Timeline distante chargée.",
+    "importSuccess": "Import réussi",
+    "exportSuccess": "Export réussi"
+  },
+  "emptyStates": {
+    "noData": "Aucune donnée disponible.",
+    "importVideo": "Importez une vidéo locale pour démarrer."
+  },
+  "accessibility": {
+    "home": "Accueil",
+    "language": "Langue",
+    "filterVisibility": "Filtrer par visibilité",
+    "showEvents": "Voir les événements",
+    "showLabels": "Voir les labels",
+    "delete": "Supprimer",
+    "save": "Sauvegarder",
+    "removeVideo": "Retirer la vidéo"
+  }
+}

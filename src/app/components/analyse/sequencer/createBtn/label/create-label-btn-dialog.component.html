@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="bg-layer-3 light-text m-0 text-center">
-  {{ isEdit ? 'Éditer un Label' : 'Créer un Label' }}
+  {{ isEdit ? ('actions.update' | transloco) : ('actions.create' | transloco) }}
 </h2>
 
 <mat-dialog-content class="bg-layer-3 light-text pt-3">
@@ -91,7 +91,7 @@
     }
 
     <div>
-      <h4 class="mb-2 text-[13px] font-semibold">Hotkey</h4>
+      <h4 class="mb-2 text-[13px] font-semibold">{{ 'sequencer.hotkey' | transloco }}</h4>
       <app-hotkey-picker
         [currentActionId]="currentActionId"
         [chord]="selectedChord()"
@@ -105,8 +105,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="center" class="bg-layer-3 light-text pb-3">
-  <button mat-stroked-button type="button" (click)="close()">Annuler</button>
+  <button mat-stroked-button type="button" (click)="close()">{{ 'actions.cancel' | transloco }}</button>
   <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="!canSave()">
-    {{ isEdit ? 'Mettre à jour' : 'Créer' }}
+    {{ isEdit ? ('actions.update' | transloco) : ('actions.create' | transloco) }}
   </button>
 </mat-dialog-actions>

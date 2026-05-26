@@ -1,10 +1,10 @@
 <section class="bg-layer-0 text-default flex h-full w-full min-h-0 min-w-0 flex-col gap-1 p-2 text-xs">
   <div class="flex justify-around">
     <p class="font-semibold">
-      {{ videoName() ?? 'Aucune vidéo chargée' }}
+      {{ videoName() ?? ('video.noneLoaded' | transloco) }}
     </p>
     @if (videoService.fps()) {
-      <p class="ml-auto">FPS estimé : {{ videoService.fps() }}</p>
+      <p class="ml-auto">{{ 'video.estimatedFps' | transloco }} : {{ videoService.fps() }}</p>
     }
   </div>
 
@@ -15,21 +15,18 @@
         class="absolute inset-0 block h-full w-full min-h-0 min-w-0 object-contain"
         (loadedmetadata)="onVideoLoaded()"
         (error)="onVideoError()"
-      >
-        Votre navigateur ne supporte pas la lecture vidéo.
-      </video>
+      >{{ 'video.unsupported' | transloco }}</video>
 
       @if (errorMessage()) {
         <div class="bg-overlay absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center">
-          <p class="alert-text text-sm">{{ errorMessage() }}</p>
+          <p class="alert-text text-sm">{{ (errorMessage() ?? '') | transloco }}</p>
           <button type="button" class="btn-primary" (click)="onChangeVideoClick()">
-            Choisir une autre vidéo
-          </button>
+            {{ 'video.chooseAnother' | transloco }}</button>
         </div>
       } @else if (!hasVideo()) {
         <div class="text-muted absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
-          <p>Importez une vidéo locale pour démarrer.</p>
-          <button type="button" class="btn-primary px-3 py-2" (click)="onChangeVideoClick()">Choisir une vidéo</button>
+          <p>{{ 'emptyStates.importVideo' | transloco }}</p>
+          <button type="button" class="btn-primary px-3 py-2" (click)="onChangeVideoClick()">{{ 'video.choose' | transloco }}</button>
         </div>
       }
     </div>
@@ -44,7 +41,7 @@
       />
 
       @if (!hasVideo()) {
-        <button type="button" class="file-btn-primary mb-0.5" (click)="onChangeVideoClick()">Choisir une vidéo</button>
+        <button type="button" class="file-btn-primary mb-0.5" (click)="onChangeVideoClick()">{{ 'video.choose' | transloco }}</button>
       }
 
       <div class="mx-2 ml-4 flex gap-1">
@@ -61,7 +58,7 @@
         <button type="button" class="btn-default" (click)="videoService.stepFrames(1)" [disabled]="!hasVideo()">
           <mat-icon class="text-md">chevron_right</mat-icon>
         </button>
-        <button type="button" class="btn-default" (click)="onClearVideo()" [disabled]="!hasVideo()" aria-label="Retirer la vidéo">
+        <button type="button" class="btn-default" (click)="onClearVideo()" [disabled]="!hasVideo()" [attr.aria-label]="'video.removeTitle' | transloco">
           <mat-icon class="text-md">delete_outline</mat-icon>
         </button>
       </div>

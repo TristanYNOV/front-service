@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthSessionService } from '../../core/auth/auth-session.service';
 
 @Component({
@@ -8,7 +9,8 @@ import { AuthSessionService } from '../../core/auth/auth-session.service';
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.scss',
   imports: [
-    RouterLink
+    RouterLink,
+    TranslocoPipe,
   ]
 })
 export class WelcomeComponent {

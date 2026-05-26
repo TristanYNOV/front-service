@@ -5,36 +5,36 @@
               title="Menu actions">
         <mat-icon aria-hidden="true">menu</mat-icon>
       </button>
-      <div class="text-muted text-[11px]">Agrandir pour éditer le Sequencer Canvas.</div>
+      <div class="text-muted text-[11px]">{{ 'panel.compactHint' | transloco }}</div>
     </div>
     <mat-menu #menu="matMenu">
       <button mat-menu-item type="button" (click)="createNewPanel()">
         <mat-icon aria-hidden="true">add_box</mat-icon>
-        <span>New Panel</span>
+        <span>{{ 'panel.newPanel' | transloco }}</span>
       </button>
       <button mat-menu-item type="button" (click)="openEditDescriptionDialog()">
         <mat-icon aria-hidden="true">description</mat-icon>
-        <span>Description</span>
+        <span>{{ 'panel.description' | transloco }}</span>
       </button>
       <button mat-menu-item type="button" (click)="exportPanel()">
         <mat-icon aria-hidden="true">download</mat-icon>
-        <span>Exporter</span>
+        <span>{{ 'actions.export' | transloco }}</span>
       </button>
       <button mat-menu-item type="button" (click)="triggerImportPanel()">
         <mat-icon aria-hidden="true">upload_file</mat-icon>
-        <span>Importer</span>
+        <span>{{ 'actions.import' | transloco }}</span>
       </button>
       <button mat-menu-item type="button" (click)="savePrivatePanel()">
         <mat-icon aria-hidden="true">save</mat-icon>
-        <span>Sauvegarder</span>
+        <span>{{ 'actions.save' | transloco }}</span>
       </button>
       <button mat-menu-item type="button" (click)="openPanelFinderDialog()">
         <mat-icon aria-hidden="true">search</mat-icon>
-        <span>Trouver un panel</span>
+        <span>{{ 'panel.find' | transloco }}</span>
       </button>
       <button mat-menu-item type="button" (click)="openPublishDialog()">
         <mat-icon aria-hidden="true">publish</mat-icon>
-        <span>Publier</span>
+        <span>{{ 'actions.publish' | transloco }}</span>
       </button>
     </mat-menu>
   } @else {
@@ -45,48 +45,45 @@
       <mat-menu #menu="matMenu">
         <button mat-menu-item type="button" (click)="createNewPanel()">
           <mat-icon aria-hidden="true">add_box</mat-icon>
-          <span>New Panel</span>
+          <span>{{ 'panel.newPanel' | transloco }}</span>
         </button>
         <button mat-menu-item type="button" (click)="toggleRename()">
           <mat-icon aria-hidden="true">edit</mat-icon>
-          <span>Renommer</span>
+          <span>{{ 'panel.rename' | transloco }}</span>
         </button>
         <button mat-menu-item type="button" (click)="openEditDescriptionDialog()">
           <mat-icon aria-hidden="true">description</mat-icon>
-          <span>Description</span>
+          <span>{{ 'panel.description' | transloco }}</span>
         </button>
         <button mat-menu-item type="button" (click)="exportPanel()">
           <mat-icon aria-hidden="true">download</mat-icon>
-          <span>Exporter</span>
+          <span>{{ 'actions.export' | transloco }}</span>
         </button>
         <button mat-menu-item type="button" (click)="triggerImportPanel()">
           <mat-icon aria-hidden="true">upload_file</mat-icon>
-          <span>Importer</span>
+          <span>{{ 'actions.import' | transloco }}</span>
         </button>
         <button mat-menu-item type="button" (click)="savePrivatePanel()">
           <mat-icon aria-hidden="true">save</mat-icon>
-          <span>Sauvegarder</span>
+          <span>{{ 'actions.save' | transloco }}</span>
         </button>
         <button mat-menu-item type="button" (click)="openPanelFinderDialog()">
           <mat-icon aria-hidden="true">search</mat-icon>
-          <span>Trouver un panel</span>
+          <span>{{ 'panel.find' | transloco }}</span>
         </button>
         <button mat-menu-item type="button" (click)="openPublishDialog()">
           <mat-icon aria-hidden="true">publish</mat-icon>
-          <span>Publier</span>
+          <span>{{ 'actions.publish' | transloco }}</span>
         </button>
       </mat-menu>
 
-      <button type="button" class="seq-btn-event icon p-2" (click)="openEventDialog()" aria-label="Créer un event"
-              title="Créer un event">
+      <button type="button" class="seq-btn-event icon p-2" (click)="openEventDialog()" [attr.aria-label]="'panel.createEvent' | transloco" [title]="'panel.createEvent' | transloco">
         <mat-icon aria-hidden="true">new_label</mat-icon>
       </button>
-      <button type="button" class="seq-btn-label icon p-2" (click)="openLabelDialog()" aria-label="Créer un label"
-              title="Créer un label">
+      <button type="button" class="seq-btn-label icon p-2" (click)="openLabelDialog()" [attr.aria-label]="'panel.createLabel' | transloco" [title]="'panel.createLabel' | transloco">
         <mat-icon aria-hidden="true">new_label</mat-icon>
       </button>
-      <button type="button" class="seq-btn-stat icon p-2" (click)="openStatDialog()" aria-label="Créer une stat"
-              title="Créer une stat">
+      <button type="button" class="seq-btn-stat icon p-2" (click)="openStatDialog()" [attr.aria-label]="'panel.createStat' | transloco" [title]="'panel.createStat' | transloco">
         <mat-icon aria-hidden="true">query_stats</mat-icon>
       </button>
 
@@ -108,7 +105,7 @@
         }
       </div>
 
-      <button type="button" class="icon p-2 ml-auto" (click)="toggleEditMode()" aria-label="Mode édition" title="Mode édition">
+      <button type="button" class="icon p-2 ml-auto" (click)="toggleEditMode()" [attr.aria-label]="'panel.editMode' | transloco" [title]="'panel.editMode' | transloco">
         @if (editMode()) {
           <mat-icon aria-hidden="true">lock_open</mat-icon>
         } @else {
@@ -116,11 +113,11 @@
         }
       </button>
 
-      <button type="button" class="icon p-2" (click)="savePrivatePanel()" aria-label="Sauvegarder en privé" title="Sauvegarder">
+      <button type="button" class="icon p-2" (click)="savePrivatePanel()" [attr.aria-label]="'panel.savePrivate' | transloco" [title]="'actions.save' | transloco">
         <mat-icon aria-hidden="true">save</mat-icon>
       </button>
 
-      <button type="button" class="icon p-2" (click)="openPanelFinderDialog()" aria-label="Trouver un panel" title="Trouver un panel">
+      <button type="button" class="icon p-2" (click)="openPanelFinderDialog()" [attr.aria-label]="'panel.find' | transloco" [title]="'panel.find' | transloco">
         <mat-icon aria-hidden="true">search</mat-icon>
       </button>
     </div>

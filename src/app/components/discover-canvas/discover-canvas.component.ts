@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AnyDataItems } from '../../interfaces/dataItem.interface';
 import { DataItemContainerComponent } from '../data-item-container/data-item-container.component';
 import { CdkDragResizeDirective, DragResizeRect } from '../../directives/cdk-drag-resize.directive';
@@ -7,7 +7,7 @@ import { CdkDragResizeDirective, DragResizeRect } from '../../directives/cdk-dra
 @Component({
   selector: 'app-discover-canvas',
   standalone: true,
-  imports: [CommonModule, DataItemContainerComponent, CdkDragResizeDirective],
+  imports: [DataItemContainerComponent, CdkDragResizeDirective],
   templateUrl: './discover-canvas.component.html',
   host: { class: 'block h-full' },
 })

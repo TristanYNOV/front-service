@@ -6,11 +6,12 @@ import { displayFromIdle, displayFromSaved } from '../../../store/Data/dataState
 import { selectDisplayedItems } from '../../../store/Data/dataState.selectors';
 import { MatIconModule } from '@angular/material/icon';
 import { DataItemMeta, getDataItemMeta } from '../../specialized-data/data-item-content.registry';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-mini',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [MatIconModule, TranslocoPipe],
   templateUrl: './mini.component.html',
 })
 export class MiniComponent {

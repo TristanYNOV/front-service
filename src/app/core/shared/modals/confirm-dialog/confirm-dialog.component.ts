@@ -1,7 +1,8 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, HostListener, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 export interface ConfirmDialogData {
   title: string;
@@ -13,7 +14,7 @@ export interface ConfirmDialogData {
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
+  imports: [MatDialogModule, MatButtonModule, TranslocoPipe],
   templateUrl: './confirm-dialog.component.html',
 })
 export class ConfirmDialogComponent {
@@ -29,7 +30,11 @@ export class ConfirmDialogComponent {
   }
 
   @HostListener('keydown.enter', ['$event'])
-  onEnter(event: KeyboardEvent) {
+  onEnter(event: Event): void {
+    if (!(event instanceof KeyboardEvent)) {
+      return;
+    }
+
     event.preventDefault();
     this.confirm();
   }

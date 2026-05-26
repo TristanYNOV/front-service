@@ -1,44 +1,38 @@
 <article class="public-page light-text">
   <header class="public-page__hero">
-    <p class="public-page__eyebrow">Contact</p>
-    <h1>Contacter Action Board</h1>
-    <p>
-      Une question sur la plateforme d’analyse vidéo sportive, les panneaux, les timelines ou un usage club ?
-      Vous pouvez utiliser ce formulaire temporaire.
-    </p>
+    <p class="public-page__eyebrow">{{ 'contact.eyebrow' | transloco }}</p>
+    <h1>{{ 'contact.title' | transloco }}</h1>
+    <p>{{ 'contact.intro' | transloco }}</p>
   </header>
 
   <section class="public-section public-grid">
     <div>
-      <h2>Adresse temporaire</h2>
+      <h2>{{ 'contact.temporaryAddress' | transloco }}</h2>
       <p><a href="mailto:app.contact@actionboard.fr">app.contact&#64;actionboard.fr</a></p>
-      <p>
-        Cette page de contact est temporaire. L’adresse indiquée pourra être remplacée ultérieurement par une
-        adresse officielle.
-      </p>
+      <p>{{ 'contact.temporaryText' | transloco }}</p>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="public-form" aria-label="Formulaire de contact">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="public-form" [attr.aria-label]="'contact.formLabel' | transloco">
       <mat-form-field>
-        <mat-label>Nom</mat-label>
+        <mat-label>{{ 'forms.name' | transloco }}</mat-label>
         <input matInput formControlName="name" autocomplete="name" />
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Email</mat-label>
+        <mat-label>{{ 'auth.email' | transloco }}</mat-label>
         <input matInput formControlName="email" autocomplete="email" />
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Sujet</mat-label>
+        <mat-label>{{ 'forms.subject' | transloco }}</mat-label>
         <input matInput formControlName="subject" />
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Message</mat-label>
+        <mat-label>{{ 'forms.message' | transloco }}</mat-label>
         <textarea matInput formControlName="message" rows="6"></textarea>
       </mat-form-field>
-      <button mat-flat-button type="submit" class="btn-accent">Envoyer</button>
+      <button mat-flat-button type="submit" class="btn-accent">{{ 'forms.send' | transloco }}</button>
       @if (sent()) {
         <p class="primary-text" role="status">
-          Message préparé côté interface. Aucun email réel n’est envoyé pour le moment.
+          {{ 'contact.sent' | transloco }}
         </p>
       }
     </form>

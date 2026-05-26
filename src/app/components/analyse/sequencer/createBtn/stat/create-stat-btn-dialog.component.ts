@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
@@ -43,7 +43,6 @@ export interface StatBtnDialogData {
   selector: 'app-create-stat-btn-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -53,8 +52,8 @@ export interface StatBtnDialogData {
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
-    TranslocoPipe,
-  ],
+    TranslocoPipe
+],
   templateUrl: './create-stat-btn-dialog.component.html',
   styleUrl: './create-stat-btn-dialog.component.scss',
 })

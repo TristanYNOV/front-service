@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,7 +27,6 @@ export interface LabelBtnDialogData {
   selector: 'app-create-label-btn-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -38,8 +37,8 @@ export interface LabelBtnDialogData {
     MatSelectModule,
     MatIconModule,
     TranslocoPipe,
-    HotkeyPickerComponent,
-  ],
+    HotkeyPickerComponent
+],
   templateUrl: './create-label-btn-dialog.component.html',
   styleUrl: './create-label-btn-dialog.component.scss',
 })

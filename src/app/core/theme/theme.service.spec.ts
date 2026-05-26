@@ -1,5 +1,5 @@
-import { DOCUMENT } from '@angular/common';
-import { PLATFORM_ID } from '@angular/core';
+
+import { PLATFORM_ID, DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ThemeService } from './theme.service';
 

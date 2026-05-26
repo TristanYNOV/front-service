@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -16,7 +16,7 @@ interface TimelineLabelsDialogData {
 @Component({
   selector: 'app-timeline-labels-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatCheckboxModule, MatButtonModule, TranslocoPipe],
+  imports: [FormsModule, MatDialogModule, MatCheckboxModule, MatButtonModule, TranslocoPipe],
   templateUrl: './timeline-labels-dialog.component.html',
   styleUrl: './timeline-labels-dialog.component.scss',
 })

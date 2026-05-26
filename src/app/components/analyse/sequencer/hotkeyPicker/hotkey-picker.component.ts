@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,7 +18,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 @Component({
   selector: 'app-hotkey-picker',
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatCheckboxModule, MatButtonModule, TranslocoPipe],
+  imports: [MatFormFieldModule, MatSelectModule, MatCheckboxModule, MatButtonModule, TranslocoPipe],
   templateUrl: './hotkey-picker.component.html',
   styleUrl: './hotkey-picker.component.scss',
 })

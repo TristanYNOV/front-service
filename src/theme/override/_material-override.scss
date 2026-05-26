@@ -13,6 +13,27 @@
   --mdc-dialog-subhead-color: var(--text-strong);
   --mdc-dialog-supporting-text-color: var(--text-default);
 
+  --mat-form-field-filled-container-color: var(--input-filled-bg);
+  --mat-form-field-filled-disabled-container-color: var(--input-filled-disabled-bg);
+  --mat-form-field-filled-input-text-color: var(--text-default);
+  --mat-form-field-filled-label-text-color: var(--text-muted);
+  --mat-form-field-filled-focus-label-text-color: var(--text-strong);
+  --mat-form-field-filled-hover-label-text-color: var(--text-default);
+  --mat-form-field-filled-caret-color: var(--accent);
+  --mat-form-field-filled-active-indicator-color: var(--border-subtle);
+  --mat-form-field-filled-focus-active-indicator-color: var(--accent);
+  --mat-form-field-filled-hover-active-indicator-color: var(--accent);
+  --mat-form-field-state-layer-color: var(--accent);
+  --mat-form-field-hover-state-layer-opacity: 0.06;
+  --mat-form-field-focus-state-layer-opacity: 0.08;
+
+  --mdc-filled-text-field-container-color: var(--input-filled-bg);
+
+  --mdc-dialog-container-color: var(--bg-layer-3);
+  --mdc-dialog-container-text-color: var(--text-default);
+  --mdc-dialog-subhead-color: var(--text-strong);
+  --mdc-dialog-supporting-text-color: var(--text-default);
+
   --mdc-filled-text-field-container-color: var(--bg-layer-3);
   --mdc-filled-text-field-input-text-color: var(--text-default);
   --mdc-filled-text-field-label-text-color: var(--text-muted);
@@ -113,6 +134,25 @@
 
   .mat-mdc-radio-button .theme-option-description {
     color: var(--text-muted);
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: var(--input-filled-bg);
+    color: var(--text-default);
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled):hover {
+    background-color: var(--input-filled-hover-bg);
+  }
+
+  .mdc-text-field--filled.mdc-text-field--disabled {
+    background-color: var(--input-filled-disabled-bg);
+  }
+
+  .mat-mdc-form-field .mdc-text-field__input,
+  .mat-mdc-form-field .mat-mdc-select-value,
+  .mat-mdc-form-field .mat-mdc-select-arrow {
+    color: var(--text-default);
   }
 }
 

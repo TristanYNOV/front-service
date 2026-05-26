@@ -7,8 +7,10 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnChanges,
   OnDestroy,
   Output,
+  SimpleChanges,
   ViewChild,
   computed,
   inject,
@@ -42,8 +44,9 @@ import { TranslocoPipe } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MatButtonModule, MatIconModule, TranslocoPipe, ZoomControlsComponent],
 })
-export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
+export class SequencerCanvasComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('canvasContainer', { static: false }) canvasContainerRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('canvasViewport', { static: false }) canvasViewportRef?: ElementRef<HTMLDivElement>;
 
   private readonly minZoomContainerPx = 250;
   private readonly defaultEventColor = THEME_COLOR_HEX.sequencerEventBg;
@@ -55,6 +58,8 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
   readonly showZoom = computed(() => this.containerWidthPx() >= this.minZoomContainerPx);
 
   private resizeObserver?: ResizeObserver;
+  private pendingScrollAnimationFrame?: number;
+  private previousBtnIds = new Set<string>();
 
   @Input({ required: true }) btnList: SequencerBtn[] = [];
   @Input({ required: true }) editMode = false;
@@ -134,6 +139,10 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
     }
 
     this.containerWidthPx.set(canvasContainer.clientWidth);
+    if (!this.btnList.length) {
+      this.scheduleCenterViewport();
+    }
+
     if (typeof window === 'undefined' || !('ResizeObserver' in window)) {
       return;
     }
@@ -144,9 +153,34 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
     this.resizeObserver.observe(canvasContainer);
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes['btnList']) {
+      return;
+    }
+
+    const currentIds = new Set(this.btnList.map(btn => btn.id));
+    const addedButtons = this.btnList.filter(btn => !this.previousBtnIds.has(btn.id));
+    const shouldScrollToCreatedButton = !changes['btnList'].firstChange && addedButtons.length === 1;
+
+    this.previousBtnIds = currentIds;
+
+    if (!this.btnList.length) {
+      this.scheduleCenterViewport();
+      return;
+    }
+
+    if (shouldScrollToCreatedButton) {
+      this.scheduleScrollToButton(addedButtons[0]);
+    }
+  }
+
   ngOnDestroy() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+    if (this.pendingScrollAnimationFrame !== undefined && typeof window !== 'undefined') {
+      window.cancelAnimationFrame(this.pendingScrollAnimationFrame);
+      this.pendingScrollAnimationFrame = undefined;
+    }
   }
 
   ensureBtnLayout(btn: SequencerBtn) {
@@ -328,5 +362,78 @@ export class SequencerCanvasComponent implements AfterViewInit, OnDestroy {
     const y = Math.min(Math.max(patch.y ?? base.y, 0), maxY);
 
     return { x, y, w, h };
+  }
+
+  private scheduleCenterViewport() {
+    this.scheduleViewportScroll(() => {
+      const viewport = this.canvasViewportRef?.nativeElement;
+      if (!viewport) {
+        return;
+      }
+
+      const left = (viewport.scrollWidth - viewport.clientWidth) / 2;
+      const top = (viewport.scrollHeight - viewport.clientHeight) / 2;
+      this.setViewportScroll(viewport, left, top, 'auto');
+    });
+  }
+
+  private scheduleScrollToButton(btn: SequencerBtn) {
+    this.scheduleViewportScroll(() => {
+      const viewport = this.canvasViewportRef?.nativeElement;
+      if (!viewport) {
+        return;
+      }
+
+      const buttonElement = this.findButtonElement(btn.id);
+      if (!buttonElement) {
+        return;
+      }
+
+      const viewportRect = viewport.getBoundingClientRect();
+      const buttonRect = buttonElement.getBoundingClientRect();
+      const left = viewport.scrollLeft + buttonRect.left + buttonRect.width / 2 - viewportRect.left - viewport.clientWidth / 2;
+      const top = viewport.scrollTop + buttonRect.top + buttonRect.height / 2 - viewportRect.top - viewport.clientHeight / 2;
+      this.setViewportScroll(viewport, left, top, 'smooth');
+    });
+  }
+
+  private findButtonElement(btnId: string) {
+    const viewport = this.canvasViewportRef?.nativeElement;
+    if (!viewport) {
+      return null;
+    }
+
+    return Array.from(viewport.querySelectorAll<HTMLElement>('[data-sequencer-btn-id]'))
+      .find(element => element.dataset['sequencerBtnId'] === btnId) ?? null;
+  }
+
+  private scheduleViewportScroll(callback: () => void) {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (this.pendingScrollAnimationFrame !== undefined) {
+      window.cancelAnimationFrame(this.pendingScrollAnimationFrame);
+    }
+
+    this.pendingScrollAnimationFrame = window.requestAnimationFrame(() => {
+      this.pendingScrollAnimationFrame = window.requestAnimationFrame(() => {
+        this.pendingScrollAnimationFrame = undefined;
+        callback();
+      });
+    });
+  }
+
+  private setViewportScroll(viewport: HTMLElement, left: number, top: number, behavior: ScrollBehavior) {
+    const maxLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    const maxTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+    const nextLeft = Math.min(Math.max(0, left), maxLeft);
+    const nextTop = Math.min(Math.max(0, top), maxTop);
+
+    viewport.scrollTo({
+      left: nextLeft,
+      top: nextTop,
+      behavior,
+    });
   }
 }

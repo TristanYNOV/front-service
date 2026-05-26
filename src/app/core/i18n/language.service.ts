@@ -20,7 +20,8 @@ export class LanguageService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly transloco = inject(TranslocoService);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
-  private readonly currentLang = signal<SupportedLang>('fr');
+  private readonly currentLangSignal = signal<SupportedLang>('fr');
+  readonly currentLang = this.currentLangSignal.asReadonly();
 
   private readonly languages: LanguageOption[] = [
     { value: 'fr', label: 'FR' },
@@ -28,7 +29,7 @@ export class LanguageService {
   ];
 
   getCurrentLang(): SupportedLang {
-    return this.currentLang();
+    return this.currentLangSignal();
   }
 
   getAvailableLangs(): LanguageOption[] {
@@ -36,7 +37,7 @@ export class LanguageService {
   }
 
   initLang(): void {
-    this.applyLang(this.readCookieLang() ?? 'fr', false);
+    this.applyLang(this.readCookieLang() ?? this.getActiveTranslocoLang() ?? 'fr', false);
   }
 
   setLang(lang: SupportedLang): void {
@@ -48,7 +49,7 @@ export class LanguageService {
   }
 
   private applyLang(lang: SupportedLang, persist: boolean): void {
-    this.currentLang.set(lang);
+    this.currentLangSignal.set(lang);
     this.transloco.setActiveLang(lang);
     this.document.documentElement.setAttribute('lang', lang);
 
@@ -76,5 +77,10 @@ export class LanguageService {
     } catch {
       return null;
     }
+  }
+
+  private getActiveTranslocoLang(): SupportedLang | null {
+    const lang = this.transloco.getActiveLang();
+    return this.isValidLang(lang) ? lang : null;
   }
 }

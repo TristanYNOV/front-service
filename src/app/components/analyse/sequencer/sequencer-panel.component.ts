@@ -66,6 +66,10 @@ import { PanelPublishDialogComponent } from './modals/panel-publish-dialog/panel
 ],
 })
 export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
+  private readonly createButtonDialogConfig = {
+    height: '70vh',
+  };
+
   @ViewChild('panelRoot', { static: true }) panelRoot?: ElementRef<HTMLElement>;
   @ViewChild('panelFileInput', { static: true }) panelFileInput?: ElementRef<HTMLInputElement>;
 
@@ -133,6 +137,7 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
 
   openEventDialog(btn?: EventBtn) {
     this.dialog.open(CreateEventBtnDialogComponent, {
+      ...this.createButtonDialogConfig,
       width: '60%',
       data: { mode: btn ? 'edit' : 'create', btn },
     });
@@ -140,12 +145,14 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
 
   openLabelDialog(btn?: LabelBtn) {
     this.dialog.open(CreateLabelBtnDialogComponent, {
+      ...this.createButtonDialogConfig,
       width: '60%',
       data: { mode: btn ? 'edit' : 'create', btn },
     });
   }
   openStatDialog(btn?: StatBtn) {
     this.dialog.open(CreateStatBtnDialogComponent, {
+      ...this.createButtonDialogConfig,
       width: '70%',
       data: { mode: btn ? 'edit' : 'create', btn },
     });

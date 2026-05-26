@@ -2,62 +2,62 @@
   {{ isEdit ? ('actions.update' | transloco) : ('actions.create' | transloco) }}
 </h2>
 
-<mat-dialog-content class="bg-layer-3 light-text">
+<mat-dialog-content class="bg-layer-3 light-text create-button-dialog-content">
   <form [formGroup]="form" class="flex flex-col gap-4">
     <mat-radio-group class="flex justify-center gap-2" formControlName="kind">
-      <mat-radio-button value="limited">Limited</mat-radio-button>
-      <mat-radio-button value="indefinite">Indefinite</mat-radio-button>
+      <mat-radio-button value="limited">{{ 'sequencer.limited' | transloco }}</mat-radio-button>
+      <mat-radio-button value="indefinite">{{ 'sequencer.indefinite' | transloco }}</mat-radio-button>
     </mat-radio-group>
 
     <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3">
       <mat-form-field appearance="fill">
-        <mat-label>ID</mat-label>
+        <mat-label>{{ 'sequencer.id' | transloco }}</mat-label>
         <input matInput formControlName="id" />
       </mat-form-field>
       <mat-form-field appearance="fill">
-        <mat-label>Nom</mat-label>
+        <mat-label>{{ 'sequencer.name' | transloco }}</mat-label>
         <input matInput formControlName="name" />
       </mat-form-field>
     </div>
 
     <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3">
       <mat-form-field appearance="fill">
-        <mat-label>Pré (sec)</mat-label>
+        <mat-label>{{ 'sequencer.preSeconds' | transloco }}</mat-label>
         <input matInput type="number" min="0" formControlName="preSec" />
       </mat-form-field>
       <mat-form-field appearance="fill">
-        <mat-label>Post (sec)</mat-label>
+        <mat-label>{{ 'sequencer.postSeconds' | transloco }}</mat-label>
         <input matInput type="number" min="0" formControlName="postSec" />
       </mat-form-field>
     </div>
 
     <div class="flex items-center gap-3">
-      <label for="event-color" class="text-xs font-semibold">Couleur</label>
+      <label for="event-color" class="text-xs font-semibold">{{ 'sequencer.color' | transloco }}</label>
       <input id="event-color" type="color" formControlName="colorHex" class="timeline-color-input" />
     </div>
     <div class="border-layer rounded-md border p-3">
-      <mat-checkbox formControlName="isAnonymized">Anonymiser ce bouton</mat-checkbox>
+      <mat-checkbox formControlName="isAnonymized">{{ 'sequencer.anonymize' | transloco }}</mat-checkbox>
       <p class="text-muted mt-1 text-xs italic">
-        Active l’obfuscation du nom du bouton dans les vues concernées.
+        {{ 'sequencer.anonymizeHint' | transloco }}
       </p>
     </div>
 
     @if (isEdit) {
       <div class="border-layer rounded-md border p-3">
-        <h4 class="mb-3 text-[13px] font-semibold">Liens</h4>
+        <h4 class="mb-3 text-[13px] font-semibold">{{ 'sequencer.links' | transloco }}</h4>
 
         <div class="mb-4 flex flex-col gap-2">
-          <div class="text-muted text-[11px] uppercase">Deactivate IDs</div>
+          <div class="text-muted text-[11px] uppercase">{{ 'sequencer.deactivateIds' | transloco }}</div>
           <div class="flex gap-2">
             <mat-form-field class="flex-1" appearance="fill">
-              <mat-label>Ajouter un ID</mat-label>
+              <mat-label>{{ 'sequencer.addId' | transloco }}</mat-label>
               <mat-select [value]="selectedDeactivateId()" (valueChange)="selectedDeactivateId.set($event)">
                 @for (id of availableBtnIds(); track id) {
                   <mat-option [value]="id">{{ id }} · {{ getBtnName(id) }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
-            <button mat-stroked-button type="button" (click)="addDeactivateLink()">Ajouter</button>
+            <button mat-stroked-button type="button" (click)="addDeactivateLink()">{{ 'actions.add' | transloco }}</button>
           </div>
           <div class="flex flex-wrap gap-2">
             @for (id of deactivateIds(); track id) {
@@ -65,7 +65,7 @@
                 [class.opacity-50]="!getBtnName(id)">
                 <span>{{ id }} @if (getBtnName(id)) { · {{ getBtnName(id) }} }</span>
                 @if (!getBtnName(id)) {
-                  <span class="border-layer rounded border px-1 text-[10px] uppercase">missing</span>
+                  <span class="border-layer rounded border px-1 text-[10px] uppercase">{{ 'sequencer.missing' | transloco }}</span>
                 }
                 <button mat-icon-button type="button" (click)="removeDeactivateLink(id)">
                   <mat-icon>close</mat-icon>
@@ -76,17 +76,17 @@
         </div>
 
         <div class="flex flex-col gap-2">
-          <div class="text-muted text-[11px] uppercase">Activate IDs</div>
+          <div class="text-muted text-[11px] uppercase">{{ 'sequencer.activateIds' | transloco }}</div>
           <div class="flex gap-2">
             <mat-form-field class="flex-1" appearance="fill">
-              <mat-label>Ajouter un ID</mat-label>
+              <mat-label>{{ 'sequencer.addId' | transloco }}</mat-label>
               <mat-select [value]="selectedActivateId()" (valueChange)="selectedActivateId.set($event)">
                 @for (id of availableBtnIds(); track id) {
                   <mat-option [value]="id">{{ id }} · {{ getBtnName(id) }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
-            <button mat-stroked-button type="button" (click)="addActivateLink()">Ajouter</button>
+            <button mat-stroked-button type="button" (click)="addActivateLink()">{{ 'actions.add' | transloco }}</button>
           </div>
           <div class="flex flex-wrap gap-2">
             @for (id of activateIds(); track id) {
@@ -94,7 +94,7 @@
                 [class.opacity-50]="!getBtnName(id)">
                 <span>{{ id }} @if (getBtnName(id)) { · {{ getBtnName(id) }} }</span>
                 @if (!getBtnName(id)) {
-                  <span class="border-layer rounded border px-1 text-[10px] uppercase">missing</span>
+                  <span class="border-layer rounded border px-1 text-[10px] uppercase">{{ 'sequencer.missing' | transloco }}</span>
                 }
                 <button mat-icon-button type="button" (click)="removeActivateLink(id)">
                   <mat-icon>close</mat-icon>
@@ -120,7 +120,7 @@
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align="center" class="bg-layer-3 light-text pb-3">
+<mat-dialog-actions align="center" class="bg-layer-3 light-text create-button-dialog-actions pb-3">
   <button mat-stroked-button type="button" (click)="close()">{{ 'actions.cancel' | transloco }}</button>
   <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="!canSave()">
     {{ isEdit ? ('actions.update' | transloco) : ('actions.create' | transloco) }}

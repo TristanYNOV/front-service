@@ -7,6 +7,7 @@ import { HeaderComponent } from './header.component';
 import { AuthSessionService } from '../core/auth/auth-session.service';
 import { LayoutEditModeService } from '../core/services/layout-edit-mode.service';
 import { getTranslocoTestingModule } from '../core/i18n/transloco-testing';
+import { LanguageService } from '../core/i18n/language.service';
 
 describe('HeaderComponent', () => {
   @Component({
@@ -83,4 +84,14 @@ describe('HeaderComponent', () => {
 
     expect(pricingLink?.classList).toContain('public-nav-link--active');
   }));
+
+  it('displays the restored current language in the desktop selector', () => {
+    const languageService = TestBed.inject(LanguageService);
+    languageService.setLang('en');
+    fixture.detectChanges();
+
+    const select = fixture.nativeElement.querySelector('#desktop-language-select') as HTMLSelectElement | null;
+    expect(select?.value).toBe('en');
+    expect(select?.selectedOptions[0]?.textContent?.trim()).toBe('ENG');
+  });
 });

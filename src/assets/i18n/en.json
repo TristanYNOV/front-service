@@ -264,7 +264,18 @@
     "overwriteLocalMessage": "Events/occurrences will be lost. Do you want to continue?",
     "overwriteRemoteMessage": "The current timeline will be replaced by the selected remote timeline.",
     "overwrite": "Overwrite",
-    "noRemote": "No remote timeline available."
+    "noRemote": "No remote timeline available.",
+    "confirmDeleteTitle": "Confirm deletion",
+    "confirmDeleteOne": "Do you want to delete this occurrence?",
+    "confirmDeleteMany": "Do you want to delete these {{ count }} occurrences?",
+    "deleteOpenBlocked": "Cannot delete an ongoing occurrence. End the event first.",
+    "deleteSelectionCount": "Delete selection ({{ count }})",
+    "singleSelectionOnly": "Available only for a single selection",
+    "selection": "Selection",
+    "selectAll": "Select all",
+    "unselectAll": "Unselect all",
+    "undoShift": "Undo shift",
+    "undoDelete": "Undo delete"
   },
   "sequencer": {
     "id": "ID",
@@ -300,7 +311,9 @@
     "type": "Type",
     "query": "Query",
     "constant": "Constant",
-    "value": "Value"
+    "value": "Value",
+    "reservedVideo": "Video reserved",
+    "alreadyUsed": "Already used"
   },
   "importExport": {
     "invalidJson": "The selected file is not valid JSON.",

@@ -393,12 +393,12 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
     const selectedIds = this.selectedOccurrences().map(occurrence => occurrence.id);
     const count = selectedIds.length;
     const confirmed = await this.confirmDialogService.confirm({
-      title: 'Confirmer la suppression',
+      title: this.transloco.translate('timeline.confirmDeleteTitle'),
       message:
         count === 1
-          ? 'Voulez-vous supprimer cette occurrence ?'
-          : `Voulez-vous supprimer ces ${count} occurrences ?`,
-      confirmLabel: 'Supprimer',
+          ? this.transloco.translate('timeline.confirmDeleteOne')
+          : this.transloco.translate('timeline.confirmDeleteMany', { count }),
+      confirmLabel: this.transloco.translate('actions.delete'),
       cancelLabel: this.transloco.translate('actions.cancel'),
     });
 
@@ -411,10 +411,10 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
 
   deleteSelectionTooltip() {
     if (this.selectionContainsOpen()) {
-      return 'Impossible de supprimer une occurrence en cours. Terminez l’événement d’abord.';
+      return this.transloco.translate('timeline.deleteOpenBlocked');
     }
 
-    return `Supprimer la sélection (${this.selectedCount()})`;
+    return this.transloco.translate('timeline.deleteSelectionCount', { count: this.selectedCount() });
   }
 
   startTimelineNameEdit() {
@@ -527,7 +527,9 @@ export class TimelineComponent implements OnDestroy, AfterViewInit {
   }
 
   labelsEditTooltip() {
-    return this.selectedCount() === 1 ? 'Modifier les labels' : 'Disponible uniquement pour une sélection unique';
+    return this.selectedCount() === 1
+      ? this.transloco.translate('timeline.editLabels')
+      : this.transloco.translate('timeline.singleSelectionOnly');
   }
 
   nudgeSelection(deltaMs: number) {

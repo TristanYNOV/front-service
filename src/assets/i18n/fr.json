@@ -264,7 +264,18 @@
     "overwriteLocalMessage": "Des événements/occurrences seront perdus. Voulez-vous continuer ?",
     "overwriteRemoteMessage": "La timeline courante sera remplacée par la timeline distante sélectionnée.",
     "overwrite": "Écraser",
-    "noRemote": "Aucune timeline distante disponible."
+    "noRemote": "Aucune timeline distante disponible.",
+    "confirmDeleteTitle": "Confirmer la suppression",
+    "confirmDeleteOne": "Voulez-vous supprimer cette occurrence ?",
+    "confirmDeleteMany": "Voulez-vous supprimer ces {{ count }} occurrences ?",
+    "deleteOpenBlocked": "Impossible de supprimer une occurrence en cours. Terminez l’événement d’abord.",
+    "deleteSelectionCount": "Supprimer la sélection ({{ count }})",
+    "singleSelectionOnly": "Disponible uniquement pour une sélection unique",
+    "selection": "Sélection",
+    "selectAll": "Tout sélectionner",
+    "unselectAll": "Tout désélectionner",
+    "undoShift": "Annuler décalage",
+    "undoDelete": "Annuler suppression"
   },
   "sequencer": {
     "id": "ID",
@@ -300,7 +311,9 @@
     "type": "Type",
     "query": "Requête",
     "constant": "Constante",
-    "value": "Valeur"
+    "value": "Valeur",
+    "reservedVideo": "Réservée vidéo",
+    "alreadyUsed": "Déjà utilisée"
   },
   "importExport": {
     "invalidJson": "Le fichier sélectionné n’est pas un JSON valide.",

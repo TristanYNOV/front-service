@@ -31,10 +31,10 @@
       @if (!status.isValid) {
         <span class="alert-text">{{ 'sequencer.notAllowed' | transloco }}</span>
       } @else if (status.usedBy?.kind === 'reserved') {
-        <span class="alert-text">Réservée vidéo: {{ status.usedBy?.label ?? '—' }}</span>
+        <span class="alert-text">{{ 'sequencer.reservedVideo' | transloco }}: {{ status.usedBy?.label ?? '—' }}</span>
       } @else if (status.usedBy?.kind === 'sequencer') {
         <span class="alert-text">
-          Déjà utilisée: {{ status.usedBy?.label ?? status.usedBy?.actionId ?? '—' }}
+          {{ 'sequencer.alreadyUsed' | transloco }}: {{ status.usedBy?.label ?? status.usedBy?.actionId ?? '—' }}
         </span>
       } @else {
         <span class="text-success">{{ 'sequencer.available' | transloco }}</span>

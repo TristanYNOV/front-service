@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { TextData } from '../../../interfaces/dataItem.interface';
 import { getTextContent, TextBlockContent } from '../data-item-content.registry';
 import { MatIconModule } from '@angular/material/icon';
+import { LanguageService } from '../../../core/i18n/language.service';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-text-block',
@@ -12,8 +14,9 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class TextBlockComponent {
   @Input({ required: true }) data!: TextData;
+  private readonly languageService = inject(LanguageService);
 
   get content(): TextBlockContent {
-    return getTextContent(this.data.id);
+    return getTextContent(this.data.id, this.languageService.getCurrentLang());
   }
 }

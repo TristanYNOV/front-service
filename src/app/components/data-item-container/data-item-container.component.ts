@@ -8,6 +8,7 @@ import { removeFromDisplay, saveFromDisplay } from '../../store/Data/dataState.a
 import { MatIconModule } from '@angular/material/icon';
 import { DataItemMeta, getDataItemMeta } from '../specialized-data/data-item-content.registry';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { LanguageService } from '../../core/i18n/language.service';
 
 @Component({
   selector: 'app-data-item-container',
@@ -19,9 +20,10 @@ export class DataItemContainerComponent {
   @Input({ required: true }) item!: AnyDataItems;
 
   private readonly store = inject(Store);
+  private readonly languageService = inject(LanguageService);
 
   get metadata(): DataItemMeta {
-    return getDataItemMeta(this.item);
+    return getDataItemMeta(this.item, this.languageService.getCurrentLang());
   }
 
   onDelete(): void {

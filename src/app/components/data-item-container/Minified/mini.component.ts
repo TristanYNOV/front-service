@@ -6,6 +6,7 @@ import { displayFromIdle, displayFromSaved } from '../../../store/Data/dataState
 import { selectDisplayedItems } from '../../../store/Data/dataState.selectors';
 import { MatIconModule } from '@angular/material/icon';
 import { DataItemMeta, getDataItemMeta } from '../../specialized-data/data-item-content.registry';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 @Component({
   selector: 'app-mini',
@@ -17,9 +18,10 @@ export class MiniComponent {
   @Input({ required: true }) item!: AnyDataItems;
   private readonly store = inject(Store);
   private readonly displayedItems = this.store.selectSignal(selectDisplayedItems);
+  private readonly languageService = inject(LanguageService);
 
   get metadata(): DataItemMeta {
-    return getDataItemMeta(this.item);
+    return getDataItemMeta(this.item, this.languageService.getCurrentLang());
   }
 
   isDisplayed(): boolean {

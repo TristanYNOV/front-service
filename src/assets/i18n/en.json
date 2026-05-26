@@ -144,28 +144,28 @@
     "title": "Frequently asked questions about Action Board",
     "intro": "Find key answers about the sports video analysis platform, panels, timelines, statistics, current free access and data management.",
     "listLabel": "Frequently asked questions",
-    "items": [
-      {
+    "items": {
+      "0": {
         "question": "What is Action Board?",
         "answer": "Action Board is a sports video analysis platform that helps create analysis panels, annotate video with a timeline and track statistics during observation."
       },
-      {
+      "1": {
         "question": "Who is the platform for?",
         "answer": "The platform is for amateur coaches, amateur clubs, independent or club video analysts, and students."
       },
-      {
+      "2": {
         "question": "Which sports are compatible?",
         "answer": "Action Board targets every sport. Panels can be adapted to a sport, team or analysis method."
       },
-      {
+      "3": {
         "question": "Do I need to be logged in to use public panels?",
         "answer": "Yes. Public panels can be found and reused by logged-in users."
       },
-      {
+      "4": {
         "question": "Can timelines be public?",
         "answer": "No. Timelines are private and visible only to their owner."
       }
-    ]
+    }
   },
   "welcome": {
     "title": "Welcome {{ pseudo }}",

@@ -10,6 +10,7 @@ RUN npm prune --omit=dev
 
 FROM node:22-alpine AS runner
 WORKDIR /app
+
 ENV NODE_ENV=production
 ENV PORT=4000
 
@@ -17,6 +18,8 @@ COPY --from=builder /workspace/node_modules ./node_modules
 COPY --from=builder /workspace/dist/front-service/browser ./browser
 COPY --from=builder /workspace/dist/front-service/server ./server
 COPY docker/entrypoint.sh ./entrypoint.sh
+
+RUN sed -i 's/\r$//' ./entrypoint.sh && chmod +x ./entrypoint.sh
 
 EXPOSE 4000
 

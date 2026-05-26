@@ -13,6 +13,8 @@ import {
 import { SequencerPanel } from '../../interfaces/sequencer-panel.interface';
 import { SequencerBtnLayout } from '../../interfaces/sequencer-btn-layout.interface';
 import {
+  contentMinHeightPx,
+  contentMinWidthPx,
   defaultButtonHeightPx,
   defaultButtonWidthPx,
   minButtonHeightPx,
@@ -294,7 +296,9 @@ export class SequencerPanelService {
   }
 
   private generateSpiralCandidates() {
-    const points: { x: number; y: number }[] = [{ x: 16, y: 16 }];
+    const originX = Math.round((contentMinWidthPx - defaultButtonWidthPx) / 2);
+    const originY = Math.round((contentMinHeightPx - defaultButtonHeightPx) / 2);
+    const points: { x: number; y: number }[] = [{ x: originX, y: originY }];
     let x = 0;
     let y = 0;
     let stepLength = 1;
@@ -312,7 +316,7 @@ export class SequencerPanelService {
         for (let i = 0; i < stepLength; i += 1) {
           x += dx * step;
           y += dy * step;
-          points.push({ x: 16 + x, y: 16 + y });
+          points.push({ x: originX + x, y: originY + y });
           if (points.length >= placementSpiral.maxAttempts) {
             return points;
           }

@@ -1,4 +1,10 @@
 import { TestBed } from '@angular/core/testing';
+import {
+  contentMinHeightPx,
+  contentMinWidthPx,
+  defaultButtonHeightPx,
+  defaultButtonWidthPx,
+} from '../../utils/sequencer/sequencer-canvas-defaults.util';
 import { SequencerPanelService } from './sequencer-panel.service';
 
 describe('SequencerPanelService', () => {
@@ -22,6 +28,17 @@ describe('SequencerPanelService', () => {
 
     expect(created?.type).toBe('stat');
     expect(service.getBtnById('stat-shots')?.type).toBe('stat');
+  });
+
+  it('places newly created buttons at the center of the default canvas', () => {
+    const created = service.addEventBtn({
+      id: 'evt-centered',
+      name: 'Centered',
+      eventProps: { kind: 'limited', preMs: 0, postMs: 0 },
+    });
+
+    expect(created?.layout?.x).toBe(Math.round((contentMinWidthPx - defaultButtonWidthPx) / 2));
+    expect(created?.layout?.y).toBe(Math.round((contentMinHeightPx - defaultButtonHeightPx) / 2));
   });
 
   it('serializes and deserializes stat buttons from JSON', () => {

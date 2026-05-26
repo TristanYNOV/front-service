@@ -20,10 +20,10 @@
   </section>
 
   <footer class="flex justify-end gap-2 pt-3 border-t border-layer shrink-0">
-    <button class="text-sm alert-text hover:underline flex items-center" (click)="onDelete()" aria-label="Supprimer" title="Supprimer">
+    <button class="text-sm alert-text hover:underline flex items-center" (click)="onDelete()" [attr.aria-label]="'actions.delete' | transloco" [title]="'actions.delete' | transloco">
       <mat-icon aria-hidden="true">delete</mat-icon>
     </button>
-    <button class="text-sm primary-text hover:underline flex items-center" (click)="onSave()" aria-label="Sauvegarder" title="Sauvegarder">
+    <button class="text-sm primary-text hover:underline flex items-center" (click)="onSave()" [attr.aria-label]="'actions.save' | transloco" [title]="'actions.save' | transloco">
       <mat-icon aria-hidden="true">save</mat-icon>
     </button>
   </footer>

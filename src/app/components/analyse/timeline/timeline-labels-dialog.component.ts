@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 interface TimelineLabelsDialogData {
   occurrenceId: string;
@@ -15,7 +16,7 @@ interface TimelineLabelsDialogData {
 @Component({
   selector: 'app-timeline-labels-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatCheckboxModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatCheckboxModule, MatButtonModule, TranslocoPipe],
   templateUrl: './timeline-labels-dialog.component.html',
   styleUrl: './timeline-labels-dialog.component.scss',
 })

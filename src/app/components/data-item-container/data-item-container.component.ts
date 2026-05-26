@@ -7,11 +7,12 @@ import { Store } from '@ngrx/store';
 import { removeFromDisplay, saveFromDisplay } from '../../store/Data/dataState.actions';
 import { MatIconModule } from '@angular/material/icon';
 import { DataItemMeta, getDataItemMeta } from '../specialized-data/data-item-content.registry';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-data-item-container',
   standalone: true,
-  imports: [CommonModule, PriceTableComponent, TextBlockComponent, MatIconModule],
+  imports: [CommonModule, PriceTableComponent, TextBlockComponent, MatIconModule, TranslocoPipe],
   templateUrl: './data-item-container.component.html',
 })
 export class DataItemContainerComponent {

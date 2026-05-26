@@ -1,10 +1,10 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { catchError, map, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import { AnalysisStoreApi } from '../../core/api/analysis-store.api';
+import { NotificationService } from '../../core/notifications/notification.service';
 import {
   hasAnonymizedButtons,
   mapPanelStateToSequencerPanelV1,
@@ -65,7 +65,7 @@ export class AnalysisStoreEffects {
   private readonly analysisStoreApi = inject(AnalysisStoreApi);
   private readonly sequencerPanelService = inject(SequencerPanelService);
   private readonly document = inject(DOCUMENT);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notifications = inject(NotificationService);
 
   readonly savePanel$ = createEffect(() =>
     this.actions$.pipe(
@@ -350,7 +350,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreSavePanelSuccess),
-        tap(() => this.snackBar.open('Panel sauvegardé avec succès.', 'Fermer', { duration: 2500 })),
+        tap(() => this.notifications.notifySuccess('notifications.panelSaved')),
       ),
     { dispatch: false },
   );
@@ -359,7 +359,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreSavePanelFailure),
-        tap(({ error }) => this.snackBar.open(error || 'Échec de sauvegarde du panel.', 'Fermer', { duration: 3500 })),
+        tap(() => this.notifications.notifyError('errors.panelSave')),
       ),
     { dispatch: false },
   );
@@ -368,7 +368,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreImportPanelSuccess),
-        tap(() => this.snackBar.open('Panel importé avec succès.', 'Fermer', { duration: 2500 })),
+        tap(() => this.notifications.notifySuccess('notifications.panelImported')),
       ),
     { dispatch: false },
   );
@@ -377,7 +377,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreImportPanelFailure),
-        tap(({ error }) => this.snackBar.open(error || 'Échec de validation du panel importé.', 'Fermer', { duration: 3500 })),
+        tap(() => this.notifications.notifyError('errors.panelImportValidation')),
       ),
     { dispatch: false },
   );
@@ -386,7 +386,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreExportPanelSuccess),
-        tap(() => this.snackBar.open('Export panel généré.', 'Fermer', { duration: 2200 })),
+        tap(() => this.notifications.notifySuccess('importExport.panelExportGenerated', undefined, 2200)),
       ),
     { dispatch: false },
   );
@@ -395,7 +395,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreExportPanelFailure),
-        tap(({ error }) => this.snackBar.open(error || 'Échec de l’export panel.', 'Fermer', { duration: 3500 })),
+        tap(() => this.notifications.notifyError('errors.panelExport')),
       ),
     { dispatch: false },
   );
@@ -404,7 +404,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreLoadRemotePanelSuccess),
-        tap(() => this.snackBar.open('Panel chargé.', 'Fermer', { duration: 2200 })),
+        tap(() => this.notifications.notifyInfo('notifications.panelLoaded', undefined, 2200)),
       ),
     { dispatch: false },
   );
@@ -413,7 +413,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreLoadRemotePanelFailure),
-        tap(({ error }) => this.snackBar.open(error || 'Impossible de charger ce panel.', 'Fermer', { duration: 3500 })),
+        tap(() => this.notifications.notifyError('errors.panelLoad')),
       ),
     { dispatch: false },
   );
@@ -422,7 +422,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreLoadPanelListFailure),
-        tap(({ error }) => this.snackBar.open(error || 'Impossible de charger la liste des panels.', 'Fermer', { duration: 3500 })),
+        tap(() => this.notifications.notifyError('errors.panelListLoad')),
       ),
     { dispatch: false },
   );
@@ -431,7 +431,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreCopyRemotePanelFailure),
-        tap(({ error }) => this.snackBar.open(error || 'Impossible de copier ce panel.', 'Fermer', { duration: 3500 })),
+        tap(() => this.notifications.notifyError('errors.panelCopy')),
       ),
     { dispatch: false },
   );
@@ -440,7 +440,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreSaveTimelineSuccess),
-        tap(() => this.snackBar.open('Timeline sauvegardée avec succès.', 'Fermer', { duration: 2500 })),
+        tap(() => this.notifications.notifySuccess('notifications.timelineSaved')),
       ),
     { dispatch: false },
   );
@@ -449,9 +449,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreSaveTimelineFailure),
-        tap(({ error }) =>
-          this.snackBar.open(error || 'Échec de sauvegarde de la timeline.', 'Fermer', { duration: 3500 }),
-        ),
+        tap(() => this.notifications.notifyError('errors.timelineSave')),
       ),
     { dispatch: false },
   );
@@ -460,7 +458,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreImportTimelineSuccess),
-        tap(() => this.snackBar.open('Timeline importée avec succès.', 'Fermer', { duration: 2500 })),
+        tap(() => this.notifications.notifySuccess('notifications.timelineImported')),
       ),
     { dispatch: false },
   );
@@ -469,9 +467,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreImportTimelineFailure),
-        tap(({ error }) =>
-          this.snackBar.open(error || 'Échec de validation de la timeline importée.', 'Fermer', { duration: 3500 }),
-        ),
+        tap(() => this.notifications.notifyError('errors.timelineImportValidation')),
       ),
     { dispatch: false },
   );
@@ -480,7 +476,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreExportTimelineSuccess),
-        tap(() => this.snackBar.open('Export timeline généré.', 'Fermer', { duration: 2200 })),
+        tap(() => this.notifications.notifySuccess('importExport.timelineExportGenerated', undefined, 2200)),
       ),
     { dispatch: false },
   );
@@ -489,9 +485,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreExportTimelineFailure),
-        tap(({ error }) =>
-          this.snackBar.open(error || 'Échec de l’export timeline.', 'Fermer', { duration: 3500 }),
-        ),
+        tap(() => this.notifications.notifyError('errors.timelineExport')),
       ),
     { dispatch: false },
   );
@@ -500,7 +494,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreLoadRemoteTimelineSuccess),
-        tap(() => this.snackBar.open('Timeline distante chargée.', 'Fermer', { duration: 2500 })),
+        tap(() => this.notifications.notifySuccess('notifications.timelineLoaded')),
       ),
     { dispatch: false },
   );
@@ -509,9 +503,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreLoadRemoteTimelineFailure),
-        tap(({ error }) =>
-          this.snackBar.open(error || 'Impossible de charger la timeline distante.', 'Fermer', { duration: 3500 }),
-        ),
+        tap(() => this.notifications.notifyError('errors.timelineLoad')),
       ),
     { dispatch: false },
   );
@@ -520,9 +512,7 @@ export class AnalysisStoreEffects {
     () =>
       this.actions$.pipe(
         ofType(analysisStoreLoadTimelineListFailure),
-        tap(({ error }) =>
-          this.snackBar.open(error || 'Impossible de charger la liste des timelines.', 'Fermer', { duration: 3500 }),
-        ),
+        tap(() => this.notifications.notifyError('errors.timelineListLoad')),
       ),
     { dispatch: false },
   );

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { FAQ_ITEMS } from '../../core/seo/seo.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-faq',
   standalone: true,
+  imports: [TranslocoPipe],
   templateUrl: './faq.component.html',
 })
 export class FaqComponent {
-  readonly items = FAQ_ITEMS;
+  readonly itemIndexes = [0, 1, 2, 3, 4];
 }

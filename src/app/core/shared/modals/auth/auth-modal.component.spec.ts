@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { of } from 'rxjs';
 import { AuthModalComponent } from './auth-modal.component';
 import { AuthSessionService } from '../../../auth/auth-session.service';
+import { getTranslocoTestingModule } from '../../../i18n/transloco-testing';
 
 describe('AuthModalComponent', () => {
   let fixture: ComponentFixture<AuthModalComponent>;
@@ -22,7 +23,7 @@ describe('AuthModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AuthModalComponent],
+      imports: [AuthModalComponent, getTranslocoTestingModule()],
       providers: [
         { provide: AuthSessionService, useValue: authSessionMock },
         { provide: MatDialogRef, useValue: dialogRefMock },

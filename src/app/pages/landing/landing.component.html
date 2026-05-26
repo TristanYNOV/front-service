@@ -1,81 +1,54 @@
 <article class="public-page public-home light-text">
   <header class="public-page__hero">
-    <p class="public-page__eyebrow">Plateforme d’analyse vidéo sportive</p>
-    <h1>Action Board, plateforme d’analyse vidéo sportive</h1>
-    <p>
-      Action Board aide les coachs, clubs, analystes vidéo et étudiants à structurer leurs observations avec des
-      panneaux d’analyse, une timeline claire, des statistiques et des ressources sauvegardées en ligne.
-    </p>
+    <p class="public-page__eyebrow">{{ 'common.sportVideoPlatform' | transloco }}</p>
+    <h1>{{ 'landing.heroTitle' | transloco }}</h1>
+    <p>{{ 'landing.heroDescription' | transloco }}</p>
     <div class="public-actions">
-      <a routerLink="/fonctionnalites" class="btn-accent public-link-button">Découvrir les fonctionnalités</a>
-      <a routerLink="/tarifs" class="public-secondary-link">Voir les tarifs</a>
+      <a routerLink="/fonctionnalites" class="btn-accent public-link-button">{{ 'landing.discoverFeatures' | transloco }}</a>
+      <a routerLink="/tarifs" class="public-secondary-link">{{ 'landing.viewPricing' | transloco }}</a>
     </div>
   </header>
 
   <section class="public-section">
-    <h2>Rendre l’analyse vidéo sportive plus accessible</h2>
-    <p>
-      L’analyse vidéo ne devrait pas être réservée aux structures professionnelles. Action Board propose une
-      approche pédagogique et progressive pour observer une vidéo, qualifier les actions importantes et préparer
-      des retours plus utiles aux sportifs.
-    </p>
+    <h2>{{ 'landing.sections.accessibleTitle' | transloco }}</h2>
+    <p>{{ 'landing.sections.accessibleText' | transloco }}</p>
   </section>
 
   <section class="public-section">
-    <h2>Créez vos panneaux d’analyse personnalisés</h2>
-    <p>
-      Un panneau d’analyse regroupe des boutons événement, label et stats. Vous pouvez l’adapter à votre sport,
-      à votre méthode de travail ou à un objectif précis d’entraînement.
-    </p>
+    <h2>{{ 'landing.sections.panelsTitle' | transloco }}</h2>
+    <p>{{ 'landing.sections.panelsText' | transloco }}</p>
   </section>
 
   <section class="public-section">
-    <h2>Analysez vos vidéos avec une timeline structurée</h2>
-    <p>
-      La timeline permet de retrouver les moments importants, de visualiser les occurrences et de relier les
-      observations à la vidéo. Les timelines sont privées et visibles uniquement par leur propriétaire.
-    </p>
+    <h2>{{ 'landing.sections.timelineTitle' | transloco }}</h2>
+    <p>{{ 'landing.sections.timelineText' | transloco }}</p>
   </section>
 
   <section class="public-section">
-    <h2>Sauvegardez vos analyses et vos panneaux en ligne</h2>
-    <p>
-      Les panneaux et timelines peuvent être sauvegardés pour retrouver votre travail. Les panneaux peuvent être
-      privés ou publics, tandis qu’aucune timeline publique n’est possible. L’import/export facilite aussi la
-      reprise ou le partage d’une structure d’analyse.
-    </p>
+    <h2>{{ 'landing.sections.saveTitle' | transloco }}</h2>
+    <p>{{ 'landing.sections.saveText' | transloco }}</p>
   </section>
 
   <section class="public-section">
-    <h2>Utilisez des statistiques pendant vos analyses</h2>
-    <p>
-      Les boutons de type stats permettent de suivre des indicateurs pendant l’analyse vidéo, à partir des
-      événements et labels configurés dans le panneau.
-    </p>
+    <h2>{{ 'landing.sections.statsTitle' | transloco }}</h2>
+    <p>{{ 'landing.sections.statsText' | transloco }}</p>
   </section>
 
   <section class="public-section">
-    <h2>Protégez et anonymisez les données partagées</h2>
-    <p>
-      Lors de la suppression d’un compte, les ressources privées sont supprimées selon la logique existante. Les
-      panneaux publics peuvent être conservés sous forme anonymisée afin de préserver les ressources partagées avec
-      la communauté.
-    </p>
+    <h2>{{ 'landing.sections.privacyTitle' | transloco }}</h2>
+    <p>{{ 'landing.sections.privacyText' | transloco }}</p>
   </section>
 
   <section class="public-section">
-    <h2>Une plateforme gratuite avec un compte</h2>
-    <p>
-      Action Board est actuellement gratuit pour les utilisateurs disposant d’un compte. La plateforme continue
-      d’évoluer et pourra proposer plus tard des offres dédiées aux clubs, équipes ou organisations.
-    </p>
-    <nav class="public-inline-nav" aria-label="Pages publiques utiles">
-      <a routerLink="/fonctionnalites">Fonctionnalités</a>
-      <a routerLink="/tarifs">Tarifs</a>
-      <a routerLink="/faq">FAQ</a>
-      <a routerLink="/contact">Contact</a>
-      <a routerLink="/cgu">CGU</a>
-      <a routerLink="/confidentialite">Confidentialité</a>
+    <h2>{{ 'landing.sections.freeTitle' | transloco }}</h2>
+    <p>{{ 'landing.sections.freeText' | transloco }}</p>
+    <nav class="public-inline-nav" [attr.aria-label]="'nav.usefulPages' | transloco">
+      <a routerLink="/fonctionnalites">{{ 'nav.features' | transloco }}</a>
+      <a routerLink="/tarifs">{{ 'nav.pricing' | transloco }}</a>
+      <a routerLink="/faq">{{ 'nav.faq' | transloco }}</a>
+      <a routerLink="/contact">{{ 'nav.contact' | transloco }}</a>
+      <a routerLink="/cgu">{{ 'nav.terms' | transloco }}</a>
+      <a routerLink="/confidentialite">{{ 'nav.privacy' | transloco }}</a>
     </nav>
   </section>
 </article>

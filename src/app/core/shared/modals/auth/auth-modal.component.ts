@@ -6,6 +6,7 @@ import { MatInput } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { finalize } from 'rxjs';
 import { LoadingDotsComponent } from '../../../../components/loading-dots';
 import {
@@ -43,6 +44,7 @@ type AuthForm = FormGroup<{
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
+    TranslocoPipe,
   ],
   standalone: true,
 })
@@ -51,6 +53,7 @@ export class AuthModalComponent {
   private readonly authSession = inject(AuthSessionService);
   private readonly dialogRef = inject(MatDialogRef<AuthModalComponent>);
   private readonly dialog = inject(MatDialog);
+  private readonly transloco = inject(TranslocoService);
 
   hidePassword = true;
   modalType: 'register' | 'login';
@@ -105,7 +108,7 @@ export class AuthModalComponent {
   submit(): void {
     this.termsError = null;
     if (this.modalType === 'register' && !this.form.controls.acceptedTerms.value) {
-      this.termsError = 'Vous devez accepter les Conditions Générales d’Utilisation pour créer un compte.';
+      this.termsError = this.transloco.translate('auth.termsRequired');
       return;
     }
 
@@ -166,6 +169,6 @@ export class AuthModalComponent {
       }
     }
 
-    return 'Une erreur est survenue. Veuillez réessayer.';
+    return this.transloco.translate('auth.genericError');
   }
 }

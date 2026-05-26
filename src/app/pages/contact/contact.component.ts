@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 type ContactForm = FormGroup<{
   name: FormControl<string>;
@@ -14,7 +15,7 @@ type ContactForm = FormGroup<{
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, TranslocoPipe],
   templateUrl: './contact.component.html',
 })
 export class ContactComponent {

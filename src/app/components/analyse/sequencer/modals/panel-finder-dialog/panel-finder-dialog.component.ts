@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AnalysisStoreVisibility, PanelResourceResponse, SequencerPanelV1 } from '../../../../../interfaces/analysis-store';
 import { SequencerPanelBtnV1 } from '../../../../../interfaces/analysis-store/analysis-store-panel.interface';
 import { PanelButtonsPreviewDialogComponent } from './panel-buttons-preview-dialog.component';
@@ -33,12 +34,14 @@ export interface PanelFinderDialogResult {
     MatTableModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
+    TranslocoPipe,
   ],
   templateUrl: './panel-finder-dialog.component.html',
 })
 export class PanelFinderDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<PanelFinderDialogComponent, PanelFinderDialogResult | null>);
   private readonly dialog = inject(MatDialog);
+  private readonly transloco = inject(TranslocoService);
   readonly data = inject<PanelFinderDialogData>(MAT_DIALOG_DATA);
 
   readonly searchTerm = signal('');
@@ -70,12 +73,12 @@ export class PanelFinderDialogComponent {
 
   visibilityLabel(visibility: AnalysisStoreVisibility) {
     if (visibility === 'public') {
-      return 'Public';
+      return this.transloco.translate('panel.public');
     }
     if (visibility === 'club') {
-      return 'Club';
+      return this.transloco.translate('panel.club');
     }
-    return 'Privé';
+    return this.transloco.translate('panel.private');
   }
 
   isOwner(panel: PanelResourceResponse) {
@@ -88,7 +91,7 @@ export class PanelFinderDialogComponent {
       width: '420px',
       panelClass: 'analysis-panel-finder-preview-dialog',
       data: {
-        title: 'Events du panel',
+        title: this.transloco.translate('panel.panelEventsTitle'),
         names,
       },
     });
@@ -100,7 +103,7 @@ export class PanelFinderDialogComponent {
       width: '420px',
       panelClass: 'analysis-panel-finder-preview-dialog',
       data: {
-        title: 'Labels du panel',
+        title: this.transloco.translate('panel.panelLabelsTitle'),
         names,
       },
     });

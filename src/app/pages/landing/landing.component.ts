@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-landing',
@@ -7,7 +8,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './landing.component.scss',
   standalone: true,
   imports: [
-    RouterLink
+    RouterLink,
+    TranslocoPipe,
   ]
 })
 export class LandingComponent {

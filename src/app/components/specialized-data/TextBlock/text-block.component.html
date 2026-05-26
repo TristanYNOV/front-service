@@ -1,39 +1,39 @@
 <section class="flex flex-col gap-4">
   <header class="space-y-2">
-    <h3 class="text-lg font-semibold">{{ content.title }}</h3>
-    <p class="text-sm leading-6 discover-muted">{{ content.intro }}</p>
+    <h3 class="text-lg font-semibold">{{ content.titleKey | transloco }}</h3>
+    <p class="text-sm leading-6 discover-muted">{{ content.introKey | transloco }}</p>
   </header>
 
   @if (content.sections?.length) {
     <div class="space-y-4">
       @for (section of content.sections; track $index) {
         <article class="space-y-2">
-          @if (section.heading) {
-            <h4 class="text-base font-semibold">{{ section.heading }}</h4>
+          @if (section.headingKey) {
+            <h4 class="text-base font-semibold">{{ section.headingKey | transloco }}</h4>
           }
 
-          @if (section.paragraphs?.length) {
-            @for (paragraph of section.paragraphs; track paragraph) {
-              <p class="text-sm leading-6 discover-muted">{{ paragraph }}</p>
+          @if (section.paragraphKeys?.length) {
+            @for (paragraphKey of section.paragraphKeys; track paragraphKey) {
+              <p class="text-sm leading-6 discover-muted">{{ paragraphKey | transloco }}</p>
             }
           }
 
-          @if (section.bullets?.length) {
+          @if (section.bulletKeys?.length) {
             <ul class="list-disc list-inside space-y-1 text-sm leading-6 discover-muted">
-              @for (bullet of section.bullets; track bullet) {
-                <li>{{ bullet }}</li>
+              @for (bulletKey of section.bulletKeys; track bulletKey) {
+                <li>{{ bulletKey | transloco }}</li>
               }
             </ul>
           }
 
           @if (section.iconTips?.length) {
             <div class="grid gap-2 sm:grid-cols-2">
-              @for (tip of section.iconTips; track tip.label) {
+              @for (tip of section.iconTips; track tip.labelKey) {
                 <div class="flex gap-2 rounded-md border border-layer p-2">
                   <mat-icon aria-hidden="true">{{ tip.icon }}</mat-icon>
                   <div>
-                    <h5 class="text-sm font-semibold">{{ tip.label }}</h5>
-                    <p class="text-xs leading-5 discover-muted">{{ tip.description }}</p>
+                    <h5 class="text-sm font-semibold">{{ tip.labelKey | transloco }}</h5>
+                    <p class="text-xs leading-5 discover-muted">{{ tip.descriptionKey | transloco }}</p>
                   </div>
                 </div>
               }

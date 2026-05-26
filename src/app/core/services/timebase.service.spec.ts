@@ -25,6 +25,7 @@ describe('TimebaseService', () => {
 
   it('delegates to video service when a video is loaded', () => {
     videoService.durationMs.set(12000);
+    TestBed.flushEffects();
 
     service.play();
     service.seekTo(1500);

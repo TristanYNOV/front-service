@@ -13,11 +13,12 @@ import {
   formatNormalizedHotkey,
   parseNormalizedHotkey,
 } from '../../../../utils/sequencer/sequencer-hotkey-options.util';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-hotkey-picker',
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatCheckboxModule, MatButtonModule],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatCheckboxModule, MatButtonModule, TranslocoPipe],
   templateUrl: './hotkey-picker.component.html',
   styleUrl: './hotkey-picker.component.scss',
 })

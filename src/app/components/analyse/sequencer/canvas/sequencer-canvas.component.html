@@ -49,7 +49,9 @@
               }
             </div>
 
-            <div class="w-full text-[10px]">{{ btn.type === 'stat' ? 'Live stat' : formatHotkey(btn.hotkeyNormalized) }}</div>
+            <div class="w-full text-[10px]">
+              {{ btn.type === 'stat' ? ('sequencer.liveStat' | transloco) : formatHotkey(btn.hotkeyNormalized) }}
+            </div>
 
             @if (editMode) {
               <span

@@ -6,10 +6,10 @@
   </header>
 
   <section class="public-section faq-list" [attr.aria-label]="'faq.listLabel' | transloco">
-    @for (itemIndex of itemIndexes; track itemIndex) {
+    @for (item of items$ | async; track item.question) {
       <article class="faq-item">
-        <h2>{{ 'faq.items.' + itemIndex + '.question' | transloco }}</h2>
-        <p>{{ 'faq.items.' + itemIndex + '.answer' | transloco }}</p>
+        <h2>{{ item.question }}</h2>
+        <p>{{ item.answer }}</p>
       </article>
     }
   </section>

@@ -1,12 +1,20 @@
-import { Component } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
 
 @Component({
   selector: 'app-faq',
   standalone: true,
-  imports: [TranslocoPipe],
+  imports: [AsyncPipe, TranslocoPipe],
   templateUrl: './faq.component.html',
 })
 export class FaqComponent {
-  readonly itemIndexes = [0, 1, 2, 3, 4];
+  private readonly transloco = inject(TranslocoService);
+
+  readonly items$ = this.transloco.selectTranslateObject<FaqItem[]>('faq.items');
 }

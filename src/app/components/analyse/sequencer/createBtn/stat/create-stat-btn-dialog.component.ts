@@ -22,6 +22,7 @@ import {
   StatBtn,
 } from '../../../../../interfaces/sequencer-btn.interface';
 import { THEME_COLOR_HEX } from '../../../../../../theme/theme-colors';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 interface EditableStatTerm {
   id: string;
@@ -52,6 +53,7 @@ export interface StatBtnDialogData {
     MatRadioModule,
     MatSelectModule,
     MatIconModule,
+    TranslocoPipe,
   ],
   templateUrl: './create-stat-btn-dialog.component.html',
   styleUrl: './create-stat-btn-dialog.component.scss',

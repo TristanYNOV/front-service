@@ -69,6 +69,7 @@ describe('TimelineFacadeService', () => {
 
     spyOn(store, 'dispatch');
     service = TestBed.inject(TimelineFacadeService);
+    TestBed.flushEffects();
   });
 
   it('syncs definitions from sequencer panel source', () => {

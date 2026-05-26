@@ -2,19 +2,19 @@
   <div class="flex items-start gap-2">
     <div class="min-w-0 flex-1">
       <div class="flex flex-wrap gap-1 mb-1">
-        @for (tag of metadata.tags; track tag) {
-          <span class="text-[10px] px-1.5 py-0.5 rounded-full border discover-tag">{{ tag }}</span>
+        @for (tag of metadata.tagsKeys; track tag) {
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full border discover-tag">{{ tag | transloco }}</span>
         }
       </div>
-      <h3 class="font-semibold text-sm leading-5 truncate">{{ metadata.title }}</h3>
+      <h3 class="font-semibold text-sm leading-5 truncate">{{ metadata.titleKey | transloco }}</h3>
     </div>
 
     <button
       (click)="displayData()"
       class="btn-accent w-fit px-2 flex items-center shrink-0"
       [disabled]="isDisplayed()"
-      aria-label="Afficher"
-      title="Afficher"
+      [attr.aria-label]="'actions.show' | transloco"
+      [title]="'actions.show' | transloco"
     >
       <mat-icon aria-hidden="true">display_settings</mat-icon>
     </button>

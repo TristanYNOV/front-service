@@ -4,9 +4,13 @@ const fr = {
   actions: {
     cancel: 'Annuler',
     close: 'Fermer',
+    create: 'Créer',
+    delete: 'Supprimer',
     login: 'Se connecter',
     logout: 'Se déconnecter',
     register: 'Inscription',
+    save: 'Enregistrer',
+    update: 'Mettre à jour',
   },
   auth: {
     createAccount: 'Créer un compte',
@@ -21,6 +25,20 @@ const fr = {
   },
   menu: {
     menu: 'Menu',
+  },
+  sequencer: {
+    addTerm: 'Ajouter un terme',
+    hotkey: 'Raccourci',
+    hotkeyInvalid: 'Raccourci invalide ou déjà utilisé.',
+  },
+  video: {
+    choose: 'Choisir une vidéo',
+    chooseAnother: 'Choisir une autre vidéo',
+    estimatedFps: 'FPS estimé',
+    loadFailed: 'La vidéo n’a pas pu être chargée.',
+    noneLoaded: 'Aucune vidéo chargée',
+    removeTitle: 'Retirer la vidéo',
+    unsupported: 'Votre navigateur ne supporte pas la lecture vidéo.',
   },
 };
 

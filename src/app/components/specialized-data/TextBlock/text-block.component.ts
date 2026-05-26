@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { TextData } from '../../../interfaces/dataItem.interface';
 import { getTextContent, TextBlockContent } from '../data-item-content.registry';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-text-block',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, TranslocoPipe],
   templateUrl: './text-block.component.html',
 })
 export class TextBlockComponent {

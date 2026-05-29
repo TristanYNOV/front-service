@@ -11,7 +11,8 @@
     "lint": "ng lint",
     "test:watch": "ng test --watch",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCI --no-progress --exclude=src/app/core/services/sequencer-timeline-bridge.service.spec.ts --exclude=src/app/core/services/timebase.service.spec.ts --exclude=src/app/core/services/timeline-facade.service.spec.ts --exclude=src/app/pages/discover/discover.component.spec.ts --exclude=src/app/core/service/sequencer-runtime.service.spec.ts",
-    "test:cov": "ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage --no-progress --exclude=src/app/core/services/sequencer-timeline-bridge.service.spec.ts --exclude=src/app/core/services/timebase.service.spec.ts --exclude=src/app/core/services/timeline-facade.service.spec.ts --exclude=src/app/pages/discover/discover.component.spec.ts --exclude=src/app/core/service/sequencer-runtime.service.spec.ts"
+    "test:cov": "ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage --no-progress --exclude=src/app/core/services/sequencer-timeline-bridge.service.spec.ts --exclude=src/app/core/services/timebase.service.spec.ts --exclude=src/app/core/services/timeline-facade.service.spec.ts --exclude=src/app/pages/discover/discover.component.spec.ts --exclude=src/app/core/service/sequencer-runtime.service.spec.ts",
+    "test:coverage": "ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage --no-progress --exclude=src/app/core/services/sequencer-timeline-bridge.service.spec.ts --exclude=src/app/core/services/timebase.service.spec.ts --exclude=src/app/core/services/timeline-facade.service.spec.ts --exclude=src/app/pages/discover/discover.component.spec.ts --exclude=src/app/core/service/sequencer-runtime.service.spec.ts"
   },
   "private": true,
   "dependencies": {

@@ -11,8 +11,7 @@
     "lint": "ng lint",
     "test:watch": "ng test --watch",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCI --no-progress",
-    "test:cov": "ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage --no-progress",
-    "test:coverage": "ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage --no-progress"
+    "test:cov": "ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage --no-progress"
   },
   "private": true,
   "dependencies": {

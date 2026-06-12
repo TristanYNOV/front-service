@@ -23,6 +23,10 @@ describe('TimebaseService', () => {
     videoService = TestBed.inject(VideoService) as unknown as MockVideoService;
   });
 
+  afterEach(() => {
+    service.pause();
+  });
+
   it('delegates to video service when a video is loaded', () => {
     videoService.durationMs.set(12000);
     TestBed.flushEffects();

@@ -28,10 +28,12 @@ import { AnalysisStoreVisibility, SequencerPanelV1 } from '../../../interfaces/a
 import { EventBtn, LabelBtn, SequencerBtn, StatBtn } from '../../../interfaces/sequencer-btn.interface';
 import {
   analysisStoreCopyRemotePanel,
+  analysisStoreDeletePanel,
   analysisStoreExportPanel,
   analysisStoreImportPanel,
   analysisStoreLoadPanelList,
   analysisStoreLoadRemotePanel,
+  analysisStoreMakePanelPrivate,
   analysisStoreResetPanelState,
   analysisStoreSavePanel,
   analysisStoreSetCurrentPanel,
@@ -67,7 +69,9 @@ import { PanelPublishDialogComponent } from './modals/panel-publish-dialog/panel
 })
 export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   private readonly createButtonDialogConfig = {
-    height: '70vh',
+    height: '78vh',
+    maxHeight: '90vh',
+    maxWidth: '96vw',
   };
 
   @ViewChild('panelRoot', { static: true }) panelRoot?: ElementRef<HTMLElement>;
@@ -138,7 +142,7 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   openEventDialog(btn?: EventBtn) {
     this.dialog.open(CreateEventBtnDialogComponent, {
       ...this.createButtonDialogConfig,
-      width: '60%',
+      width: '860px',
       data: { mode: btn ? 'edit' : 'create', btn },
     });
   }
@@ -146,14 +150,14 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
   openLabelDialog(btn?: LabelBtn) {
     this.dialog.open(CreateLabelBtnDialogComponent, {
       ...this.createButtonDialogConfig,
-      width: '60%',
+      width: '860px',
       data: { mode: btn ? 'edit' : 'create', btn },
     });
   }
   openStatDialog(btn?: StatBtn) {
     this.dialog.open(CreateStatBtnDialogComponent, {
       ...this.createButtonDialogConfig,
-      width: '70%',
+      width: '1120px',
       data: { mode: btn ? 'edit' : 'create', btn },
     });
   }
@@ -292,8 +296,10 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
     }
 
     const dialogRef = this.dialog.open(PanelFinderDialogComponent, {
-      width: '980px',
+      width: 'min(980px, 96vw)',
+      height: '86vh',
       maxWidth: '96vw',
+      maxHeight: '86vh',
       panelClass: 'analysis-panel-finder-dialog',
       data: {
         panels,
@@ -306,16 +312,38 @@ export class SequencerPanelComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
-      if (!(await this.confirmReplaceCurrentPanel())) {
-        return;
-      }
-
       if (result.action === 'use') {
+        if (!(await this.confirmReplaceCurrentPanel())) {
+          return;
+        }
         this.store.dispatch(analysisStoreLoadRemotePanel({ resource: result.panel }));
         return;
       }
 
-      this.store.dispatch(analysisStoreCopyRemotePanel({ sourceResource: result.panel }));
+      if (result.action === 'copy') {
+        if (!(await this.confirmReplaceCurrentPanel())) {
+          return;
+        }
+        this.store.dispatch(analysisStoreCopyRemotePanel({ sourceResource: result.panel }));
+        return;
+      }
+
+      if (result.action === 'makePrivate') {
+        this.store.dispatch(analysisStoreMakePanelPrivate({ resource: result.panel }));
+        return;
+      }
+
+      if (result.action === 'delete') {
+        const confirmed = await this.confirmDialogService.confirm({
+          title: this.transloco.translate('panel.deletePanelTitle'),
+          message: this.transloco.translate('panel.deletePanelMessage'),
+          confirmLabel: this.transloco.translate('actions.delete'),
+          cancelLabel: this.transloco.translate('actions.cancel'),
+        });
+        if (confirmed) {
+          this.store.dispatch(analysisStoreDeletePanel({ resource: result.panel }));
+        }
+      }
     });
   }
 

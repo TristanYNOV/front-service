@@ -25,6 +25,7 @@ export interface TimelineLabelDef {
   id: string;
   sourceSequencerBtnId: string;
   name: string;
+  colorHex?: string;
   behavior: TimelineLabelBehavior;
 }
 

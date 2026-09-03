@@ -1,9 +1,10 @@
-<h2 mat-dialog-title>{{ 'panel.publish' | transloco }}</h2>
+<h2 mat-dialog-title>{{ 'panel.visibility' | transloco }}</h2>
 
 <mat-dialog-content>
   <p>{{ 'panel.publishIntro' | transloco }}</p>
 
   <mat-radio-group [ngModel]="visibility()" (ngModelChange)="visibility.set($event)">
+    <mat-radio-button value="private">{{ 'panel.private' | transloco }}</mat-radio-button>
     <mat-radio-button value="public">{{ 'panel.public' | transloco }}</mat-radio-button>
     <mat-radio-button value="club" [disabled]="!data.hasClubId">{{ 'panel.club' | transloco }}</mat-radio-button>
   </mat-radio-group>
@@ -11,5 +12,5 @@
 
 <mat-dialog-actions align="end">
   <button mat-button type="button" (click)="close()">{{ 'actions.cancel' | transloco }}</button>
-  <button mat-flat-button color="primary" type="button" (click)="submit()">{{ 'actions.publish' | transloco }}</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">{{ 'actions.save' | transloco }}</button>
 </mat-dialog-actions>

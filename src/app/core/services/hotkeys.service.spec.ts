@@ -179,6 +179,61 @@ describe('HotkeysService', () => {
     expect(handler).toHaveBeenCalled();
   });
 
+  it('rehydrates sequencer hotkeys from restored panel buttons', () => {
+    const eventHandler = jasmine.createSpy('eventHandler');
+    const labelHandler = jasmine.createSpy('labelHandler');
+    const statHandler = jasmine.createSpy('statHandler');
+
+    service.rehydrateSequencerHotkeys(
+      [
+        {
+          id: 'evt-restored',
+          name: 'Restored event',
+          type: 'event',
+          hotkeyNormalized: 'A',
+          eventProps: { kind: 'limited', preMs: 0, postMs: 0 },
+        },
+        {
+          id: 'lbl-restored',
+          name: 'Restored label',
+          type: 'label',
+          hotkeyNormalized: 'Shift+D',
+          labelProps: { mode: 'indefinite' },
+        },
+        {
+          id: 'stat-restored',
+          name: 'Restored stat',
+          type: 'stat',
+          hotkeyNormalized: 'S',
+          stat: {
+            mode: 'simple',
+            query: { eventIds: ['evt-restored'], labelIds: [], metric: 'count', labelMatch: 'all' },
+          },
+        },
+      ],
+      btn => {
+        if (btn.id === 'evt-restored') {
+          return eventHandler;
+        }
+        if (btn.id === 'lbl-restored') {
+          return labelHandler;
+        }
+        return statHandler;
+      },
+    );
+
+    expect(service.getSequencerHotkeys().map(entry => entry.actionId)).toEqual(['evt-restored', 'lbl-restored']);
+
+    service.enable();
+    dispatchKeydown({ key: 'a', code: 'KeyA' });
+    dispatchKeydown({ key: 'D', code: 'KeyD', shiftKey: true });
+    dispatchKeydown({ key: 's', code: 'KeyS' });
+
+    expect(eventHandler).toHaveBeenCalledTimes(1);
+    expect(labelHandler).toHaveBeenCalledTimes(1);
+    expect(statHandler).not.toHaveBeenCalled();
+  });
+
   it('stops handling hotkeys after disable', () => {
     service.initReservedVideoHotkeys();
     service.enable();

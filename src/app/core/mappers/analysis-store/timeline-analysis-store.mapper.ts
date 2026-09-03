@@ -27,11 +27,11 @@ export function mapTimelineStateToAnalysisTimelineV1(timelineState: TimelineStat
       name: definition.name,
       colorHex: definition.colorHex ?? null,
     })),
-    labelDefs: timelineState.definitions.labelDefs.map(definition => ({
-      id: definition.id,
-      name: definition.name,
-      colorHex: null,
-    })),
+	    labelDefs: timelineState.definitions.labelDefs.map(definition => ({
+	      id: definition.id,
+	      name: definition.name,
+	      colorHex: definition.colorHex ?? null,
+	    })),
     occurrences: timelineState.occurrences.map(occurrence => mapOccurrenceToV1(occurrence)),
     ui: {
       zoom: 1,
@@ -64,12 +64,13 @@ export function mapAnalysisTimelineV1ToTimelineDocument(payload: AnalysisTimelin
         preMs: TIMELINE_DEFAULT_PRE_MS,
         postMs: TIMELINE_DEFAULT_POST_MS,
       })),
-      labelDefs: payload.labelDefs.map(definition => ({
-        id: definition.id,
-        sourceSequencerBtnId: definition.id,
-        name: definition.name,
-        behavior: 'once',
-      })),
+	      labelDefs: payload.labelDefs.map(definition => ({
+	        id: definition.id,
+	        sourceSequencerBtnId: definition.id,
+	        name: definition.name,
+	        colorHex: definition.colorHex ?? undefined,
+	        behavior: 'once',
+	      })),
     },
     occurrences: payload.occurrences.map(occurrence => {
       const startMs = parseMsFromIso(occurrence.occurredAtIso);

@@ -18,7 +18,7 @@ export interface PanelFinderDialogData {
 }
 
 export interface PanelFinderDialogResult {
-  action: 'use' | 'copy';
+  action: 'use' | 'copy' | 'makePrivate' | 'delete';
   panel: PanelResourceResponse;
 }
 
@@ -114,6 +114,18 @@ export class PanelFinderDialogComponent {
 
   copyPanel(panel: PanelResourceResponse) {
     this.dialogRef.close({ action: 'copy', panel });
+  }
+
+  canMakePrivate(panel: PanelResourceResponse) {
+    return this.isOwner(panel) && panel.visibility !== 'private';
+  }
+
+  makePrivate(panel: PanelResourceResponse) {
+    this.dialogRef.close({ action: 'makePrivate', panel });
+  }
+
+  deletePanel(panel: PanelResourceResponse) {
+    this.dialogRef.close({ action: 'delete', panel });
   }
 
   close() {

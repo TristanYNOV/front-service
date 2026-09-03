@@ -12,7 +12,7 @@ export interface PanelPublishDialogData {
 }
 
 export interface PanelPublishDialogResult {
-  visibility: 'club' | 'public';
+  visibility: 'private' | 'club' | 'public';
 }
 
 @Component({
@@ -25,7 +25,7 @@ export class PanelPublishDialogComponent {
   readonly data = inject<PanelPublishDialogData>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<PanelPublishDialogComponent, PanelPublishDialogResult | null>);
 
-  readonly visibility = signal<'club' | 'public'>(this.data.currentVisibility === 'club' && this.data.hasClubId ? 'club' : 'public');
+  readonly visibility = signal<'private' | 'club' | 'public'>(this.getInitialVisibility());
 
   close() {
     this.dialogRef.close(null);
@@ -33,5 +33,13 @@ export class PanelPublishDialogComponent {
 
   submit() {
     this.dialogRef.close({ visibility: this.visibility() });
+  }
+
+  private getInitialVisibility(): 'private' | 'club' | 'public' {
+    if (this.data.currentVisibility === 'club' && !this.data.hasClubId) {
+      return 'private';
+    }
+
+    return this.data.currentVisibility;
   }
 }

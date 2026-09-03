@@ -5,12 +5,15 @@ import { Store } from '@ngrx/store';
 import { catchError, map, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import { AnalysisStoreApi } from '../../core/api/analysis-store.api';
 import { NotificationService } from '../../core/notifications/notification.service';
+import { HotkeysService } from '../../core/services/hotkeys.service';
 import {
   hasAnonymizedButtons,
   mapPanelStateToSequencerPanelV1,
   mapSequencerPanelV1ToPanelState,
+  normalizeSequencerPanelImportPayload,
 } from '../../core/mappers/analysis-store/panel-analysis-store.mapper';
 import { SequencerPanelService } from '../../core/service/sequencer-panel.service';
+import { SequencerRuntimeService } from '../../core/service/sequencer-runtime.service';
 import {
   mapAnalysisTimelineV1ToTimelineDocument,
   mapTimelineStateToAnalysisTimelineV1,
@@ -21,6 +24,9 @@ import {
   analysisStoreCopyRemotePanel,
   analysisStoreCopyRemotePanelFailure,
   analysisStoreCopyRemotePanelSuccess,
+  analysisStoreDeletePanel,
+  analysisStoreDeletePanelFailure,
+  analysisStoreDeletePanelSuccess,
   analysisStoreExportPanel,
   analysisStoreExportPanelFailure,
   analysisStoreExportPanelSuccess,
@@ -49,6 +55,9 @@ import {
   analysisStoreLoadTimelineList,
   analysisStoreLoadTimelineListFailure,
   analysisStoreLoadTimelineListSuccess,
+  analysisStoreMakePanelPrivate,
+  analysisStoreMakePanelPrivateFailure,
+  analysisStoreMakePanelPrivateSuccess,
   analysisStoreSavePanel,
   analysisStoreSavePanelFailure,
   analysisStoreSavePanelSuccess,
@@ -57,6 +66,7 @@ import {
   analysisStoreSaveTimelineSuccess,
 } from './analysis-store.actions';
 import { selectAnalysisStorePanelState, selectAnalysisStoreTimelineState } from './analysis-store.selectors';
+import { SequencerPanel } from '../../interfaces/sequencer-panel.interface';
 
 @Injectable()
 export class AnalysisStoreEffects {
@@ -64,6 +74,8 @@ export class AnalysisStoreEffects {
   private readonly store = inject(Store);
   private readonly analysisStoreApi = inject(AnalysisStoreApi);
   private readonly sequencerPanelService = inject(SequencerPanelService);
+  private readonly sequencerRuntimeService = inject(SequencerRuntimeService);
+  private readonly hotkeysService = inject(HotkeysService);
   private readonly document = inject(DOCUMENT);
   private readonly notifications = inject(NotificationService);
 
@@ -96,28 +108,22 @@ export class AnalysisStoreEffects {
     ),
   );
 
-  readonly importPanel$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(analysisStoreImportPanel),
-      switchMap(({ payload, context }) =>
-        this.analysisStoreApi.validatePanelImport(payload).pipe(
-          switchMap(response => {
-            if (!response.valid || !response.normalizedPayload) {
-              return of(analysisStoreImportPanelFailure({ error: 'Import panel invalide.' }));
-            }
+	  readonly importPanel$ = createEffect(() =>
+	    this.actions$.pipe(
+	      ofType(analysisStoreImportPanel),
+	      switchMap(({ payload, context }) => {
+	        const normalizedPayload = normalizeSequencerPanelImportPayload(payload);
+	        if (!normalizedPayload) {
+	          return of(analysisStoreImportPanelFailure({ error: 'Import panel invalide.' }));
+	        }
 
-            return of(
-              analysisStoreLoadPanelFromValidatedPayload({ payload: response.normalizedPayload, context }),
-              analysisStoreImportPanelSuccess(),
-            );
-          }),
-          catchError(error =>
-            of(analysisStoreImportPanelFailure({ error: error?.message ?? 'Panel import validation failed' })),
-          ),
-        ),
-      ),
-    ),
-  );
+	        return of(
+	          analysisStoreLoadPanelFromValidatedPayload({ payload: normalizedPayload, context }),
+	          analysisStoreImportPanelSuccess(),
+	        );
+	      }),
+	    ),
+	  );
 
   readonly exportPanel$ = createEffect(() =>
     this.actions$.pipe(
@@ -198,6 +204,32 @@ export class AnalysisStoreEffects {
     ),
   );
 
+  readonly makePanelPrivate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreMakePanelPrivate),
+      switchMap(({ resource }) =>
+        this.analysisStoreApi.updatePanel(resource.id, { visibility: 'private', clubId: null }).pipe(
+          map(updatedResource => analysisStoreMakePanelPrivateSuccess({ resource: updatedResource })),
+          catchError(error =>
+            of(analysisStoreMakePanelPrivateFailure({ error: error?.message ?? 'Panel visibility update failed' })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  readonly deletePanel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(analysisStoreDeletePanel),
+      switchMap(({ resource }) =>
+        this.analysisStoreApi.deletePanel(resource.id).pipe(
+          map(() => analysisStoreDeletePanelSuccess({ resourceId: resource.id })),
+          catchError(error => of(analysisStoreDeletePanelFailure({ error: error?.message ?? 'Panel delete failed' }))),
+        ),
+      ),
+    ),
+  );
+
   readonly saveTimeline$ = createEffect(() =>
     this.actions$.pipe(
       ofType(analysisStoreSaveTimeline),
@@ -233,13 +265,22 @@ export class AnalysisStoreEffects {
   );
 
   readonly syncHydratedPanelToSequencerService$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(analysisStoreHydratePanelFromValidatedPayload),
-        tap(({ panel }) => this.sequencerPanelService.setPanel(panel)),
-      ),
-    { dispatch: false },
-  );
+	    () =>
+	      this.actions$.pipe(
+	        ofType(analysisStoreHydratePanelFromValidatedPayload),
+	        tap(({ panel }) => this.hydrateSequencerPanel(panel)),
+	      ),
+	    { dispatch: false },
+	  );
+
+  private hydrateSequencerPanel(panel: SequencerPanel) {
+    this.sequencerRuntimeService.resetRuntimeState();
+    this.sequencerPanelService.setPanel(panel);
+    this.hotkeysService.rehydrateSequencerHotkeys(
+      panel.btnList,
+      btn => () => this.sequencerRuntimeService.trigger(btn.id, 'hotkey'),
+    );
+  }
 
   readonly loadTimelineFromValidatedPayload$ = createEffect(() =>
     this.actions$.pipe(
@@ -432,6 +473,42 @@ export class AnalysisStoreEffects {
       this.actions$.pipe(
         ofType(analysisStoreCopyRemotePanelFailure),
         tap(() => this.notifications.notifyError('errors.panelCopy')),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelMakePrivateSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreMakePanelPrivateSuccess),
+        tap(() => this.notifications.notifySuccess('notifications.panelMadePrivate')),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelMakePrivateFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreMakePanelPrivateFailure),
+        tap(() => this.notifications.notifyError('errors.panelMakePrivate')),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelDeleteSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreDeletePanelSuccess),
+        tap(() => this.notifications.notifySuccess('notifications.panelDeleted')),
+      ),
+    { dispatch: false },
+  );
+
+  readonly notifyPanelDeleteFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(analysisStoreDeletePanelFailure),
+        tap(() => this.notifications.notifyError('errors.panelDelete')),
       ),
     { dispatch: false },
   );

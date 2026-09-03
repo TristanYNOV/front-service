@@ -3,8 +3,9 @@ import { fromEvent, Subscription } from 'rxjs';
 import { VideoService } from './video.service';
 import { TimebaseService } from './timebase.service';
 import { HotkeyChord } from '../../interfaces/hotkey-chord.interface';
-import { SEQUENCER_BASE_KEYS } from '../../utils/sequencer/sequencer-hotkey-options.util';
+import { parseNormalizedHotkey, SEQUENCER_BASE_KEYS } from '../../utils/sequencer/sequencer-hotkey-options.util';
 import { SequencerPanelService } from '../service/sequencer-panel.service';
+import { SequencerBtn } from '../../interfaces/sequencer-btn.interface';
 
 export type HotkeySourceKind = 'reserved' | 'sequencer';
 
@@ -257,6 +258,31 @@ export class HotkeysService {
   clearSequencerHotkeys() {
     this.sequencerBindings.clear();
     this.actionBindings.clear();
+  }
+
+  rehydrateSequencerHotkeys(
+    btnList: SequencerBtn[],
+    handlerFactory: (btn: Exclude<SequencerBtn, { type: 'stat' }>) => () => void,
+  ) {
+    this.clearSequencerHotkeys();
+
+    btnList.forEach(btn => {
+      if (btn.type === 'stat' || !btn.hotkeyNormalized) {
+        return;
+      }
+
+      const chord = parseNormalizedHotkey(btn.hotkeyNormalized);
+      if (!chord) {
+        return;
+      }
+
+      this.registerSequencerHotkey(
+        chord,
+        btn.id,
+        handlerFactory(btn),
+        { label: btn.name },
+      );
+    });
   }
 
   getUsedHotkeys(): UsedHotkeyEntry[] {

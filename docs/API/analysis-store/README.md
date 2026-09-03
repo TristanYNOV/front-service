@@ -205,7 +205,13 @@ interface SequencerPanelV1 {
         hotkeyNormalized: string | null;
         deactivateIds: string[];
         activateIds: string[];
-        eventProps: { eventName: string; colorHex: string | null };
+        eventProps: {
+          eventName: string;
+          colorHex: string | null;
+          kind: "limited" | "indefinite";
+          preMs: number;
+          postMs: number;
+        };
       }
     | {
         type: 'label';
@@ -215,7 +221,11 @@ interface SequencerPanelV1 {
         hotkeyNormalized: string | null;
         deactivateIds: string[];
         activateIds: string[];
-        labelProps: { label: string; colorHex: string | null };
+        labelProps: {
+          label: string;
+          colorHex: string | null;
+          mode: "once" | "indefinite";
+        };
       }
     | {
         type: 'stat';
@@ -225,11 +235,18 @@ interface SequencerPanelV1 {
         hotkeyNormalized: string | null;
         deactivateIds: string[];
         activateIds: string[];
-        stat: { statName: string; value: number; colorHex: string | null };
+        stat: {
+          statName: string;
+          value: number;
+          colorHex: string | null;
+          definition: SequencerStatDefinition;
+        };
       }
   >;
 }
 ```
+
+Les anciens exports qui ne contiennent pas encore `eventProps.kind/preMs/postMs`, `labelProps.mode` ou `stat.definition` restent acceptés côté front avec des valeurs de compatibilité (`limited`, `0`, `once`, stat constante legacy). Les nouveaux exports doivent conserver ces champs pour garantir le round-trip complet du Sequencer.
 
 ## 4) Règles métier critiques (à ne pas rater)
 

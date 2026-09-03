@@ -72,6 +72,7 @@ export interface EventBtn extends SequencerBtnBase {
 
 export interface LabelBtn extends SequencerBtnBase {
   type: 'label';
+  colorHex?: string;
   labelProps: {
     mode: 'once' | 'indefinite';
   };

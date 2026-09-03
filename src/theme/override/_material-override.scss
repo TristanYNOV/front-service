@@ -227,6 +227,13 @@
   color: var(--text-default);
 }
 
+.analysis-panel-finder-dialog .mat-mdc-dialog-surface {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
 .analysis-panel-finder-dialog .mat-mdc-dialog-title,
 .analysis-panel-finder-preview-dialog .mat-mdc-dialog-title {
   color: var(--text-strong);
@@ -237,6 +244,26 @@
 .analysis-panel-finder-dialog .mat-mdc-dialog-actions,
 .analysis-panel-finder-preview-dialog .mat-mdc-dialog-actions {
   color: var(--text-default);
+}
+
+.analysis-panel-finder-dialog .mat-mdc-dialog-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+.analysis-panel-finder-dialog .mat-mdc-dialog-actions {
+  flex: 0 0 auto;
+}
+
+.analysis-panel-finder-dialog .panel-finder-table-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .analysis-panel-finder-dialog .mat-button-toggle-group {

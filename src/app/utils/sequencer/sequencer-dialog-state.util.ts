@@ -26,6 +26,9 @@ export const createSequencerDialogState = ({
   const formStatus = toSignal(form.statusChanges.pipe(startWith(form.status)), {
     initialValue: form.status,
   });
+  const formValue = toSignal(form.valueChanges.pipe(startWith(form.getRawValue())), {
+    initialValue: form.getRawValue(),
+  });
 
   const getHotkeyStatus = (chord: HotkeyChord) => {
     const status = hotkeysService.isHotkeyUsed(chord);
@@ -36,6 +39,7 @@ export const createSequencerDialogState = ({
   };
 
   const canSave = computed(() => {
+    formValue();
     if (formStatus() === 'INVALID') {
       return false;
     }

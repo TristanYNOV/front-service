@@ -48,9 +48,10 @@ export class SequencerCanvasComponent implements AfterViewInit, OnChanges, OnDes
   @ViewChild('canvasContainer', { static: false }) canvasContainerRef?: ElementRef<HTMLDivElement>;
   @ViewChild('canvasViewport', { static: false }) canvasViewportRef?: ElementRef<HTMLDivElement>;
 
-  private readonly minZoomContainerPx = 250;
-  private readonly defaultEventColor = THEME_COLOR_HEX.sequencerEventBg;
-  private readonly defaultStatColor = THEME_COLOR_HEX.sequencerStatBg;
+	  private readonly minZoomContainerPx = 250;
+	  private readonly defaultEventColor = THEME_COLOR_HEX.sequencerEventBg;
+	  private readonly defaultLabelColor = THEME_COLOR_HEX.sequencerLabelBg;
+	  private readonly defaultStatColor = THEME_COLOR_HEX.sequencerStatBg;
   private readonly panelService = inject(SequencerPanelService);
   readonly sequencerZoom = inject(SequencerZoomService);
   readonly statsService = inject(SequencerStatsService);
@@ -197,11 +198,18 @@ export class SequencerCanvasComponent implements AfterViewInit, OnChanges, OnDes
       zIndex: `${layout.z ?? 1}`,
     };
 
-    if (btn.type === 'event' || btn.type === 'stat') {
-      const background = btn.colorHex || (btn.type === 'event' ? this.defaultEventColor : this.defaultStatColor);
-      style['backgroundColor'] = background;
-      style['color'] = getReadableTextColor(background);
-    }
+	    if (btn.type === 'event' || btn.type === 'label' || btn.type === 'stat') {
+	      const background = btn.colorHex || this.getDefaultButtonColor(btn.type);
+	      const textColor = getReadableTextColor(background);
+	      style['backgroundColor'] = background;
+	      style['color'] = textColor;
+
+	      if (btn.type === 'label') {
+	        style['--sequencer-label-bg'] = background;
+	        style['--sequencer-label-border'] = background;
+	        style['--sequencer-label-text'] = textColor;
+	      }
+	    }
 
     return style;
   }
@@ -341,8 +349,18 @@ export class SequencerCanvasComponent implements AfterViewInit, OnChanges, OnDes
     return formatNormalizedHotkey(normalized) || '—';
   }
 
-  getStatDisplayValue(btnId: string) {
-    return this.statsService.getDisplayValue(btnId);
+	  getStatDisplayValue(btnId: string) {
+	    return this.statsService.getDisplayValue(btnId);
+	  }
+
+  private getDefaultButtonColor(type: SequencerBtn['type']) {
+    if (type === 'event') {
+      return this.defaultEventColor;
+    }
+    if (type === 'label') {
+      return this.defaultLabelColor;
+    }
+    return this.defaultStatColor;
   }
 
   private clampLayoutWithinCanvas(btnId: string, patch: { x?: number; y?: number; w?: number; h?: number }) {

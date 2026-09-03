@@ -5,6 +5,9 @@ import {
   analysisStoreCopyRemotePanel,
   analysisStoreCopyRemotePanelFailure,
   analysisStoreCopyRemotePanelSuccess,
+  analysisStoreDeletePanel,
+  analysisStoreDeletePanelFailure,
+  analysisStoreDeletePanelSuccess,
   analysisStoreExportPanel,
   analysisStoreExportPanelFailure,
   analysisStoreExportPanelSuccess,
@@ -31,6 +34,9 @@ import {
   analysisStoreLoadTimelineList,
   analysisStoreLoadTimelineListFailure,
   analysisStoreLoadTimelineListSuccess,
+  analysisStoreMakePanelPrivate,
+  analysisStoreMakePanelPrivateFailure,
+  analysisStoreMakePanelPrivateSuccess,
   analysisStoreSavePanel,
   analysisStoreSavePanelFailure,
   analysisStoreSavePanelSuccess,
@@ -60,6 +66,8 @@ export interface AnalysisStoreState {
     isImporting: boolean;
     isExporting: boolean;
     isCopying: boolean;
+    isDeleting: boolean;
+    isUpdatingVisibility: boolean;
     currentContent: SequencerPanel | null;
     isSaving: boolean;
     error: string | null;
@@ -95,6 +103,8 @@ export const initialAnalysisStoreState: AnalysisStoreState = {
     isImporting: false,
     isExporting: false,
     isCopying: false,
+    isDeleting: false,
+    isUpdatingVisibility: false,
     currentContent: null,
     isSaving: false,
     error: null,
@@ -301,6 +311,65 @@ export const analysisStoreReducer = createReducer(
     panel: {
       ...state.panel,
       isCopying: false,
+      error,
+    },
+  })),
+  on(analysisStoreMakePanelPrivate, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isUpdatingVisibility: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreMakePanelPrivateSuccess, (state, { resource }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      ...(state.panel.currentResourceId === resource.id ? toResourceMetaState(resource) : {}),
+      resources: state.panel.resources.map(item => item.id === resource.id ? resource : item),
+      isUpdatingVisibility: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreMakePanelPrivateFailure, (state, { error }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isUpdatingVisibility: false,
+      error,
+    },
+  })),
+  on(analysisStoreDeletePanel, state => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isDeleting: true,
+      error: null,
+    },
+  })),
+  on(analysisStoreDeletePanelSuccess, (state, { resourceId }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      ...(state.panel.currentResourceId === resourceId
+        ? {
+            currentResourceId: null,
+            visibility: 'private' as const,
+            clubId: null,
+            lastSavedAt: null,
+          }
+        : {}),
+      resources: state.panel.resources.filter(item => item.id !== resourceId),
+      isDeleting: false,
+      error: null,
+    },
+  })),
+  on(analysisStoreDeletePanelFailure, (state, { error }) => ({
+    ...state,
+    panel: {
+      ...state.panel,
+      isDeleting: false,
       error,
     },
   })),

@@ -52,8 +52,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests (CI)
-        run: npm run test:ci
+      - name: Run tests with coverage
+        run: npm run test:cov
 
       - name: Upload coverage artifact
         if: always()

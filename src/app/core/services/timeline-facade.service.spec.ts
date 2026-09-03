@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { TimelineFacadeService } from './timeline-facade.service';
@@ -89,9 +89,10 @@ describe('TimelineFacadeService', () => {
     expect(actionTypes).toContain(TimelineActions.undoLastShiftOrAlign.type);
   });
 
-  it('plays selection in sequence', () => {
+  it('plays selection in sequence', fakeAsync(() => {
     service.playSelection();
     expect(timebase.seekTo).toHaveBeenCalled();
     expect(timebase.play).toHaveBeenCalled();
-  });
+    service.stopSelectionPlayback();
+  }));
 });

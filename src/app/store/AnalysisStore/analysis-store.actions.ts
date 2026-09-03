@@ -122,6 +122,32 @@ export const analysisStoreCopyRemotePanelFailure = createAction(
   props<{ error: string }>(),
 );
 
+export const analysisStoreMakePanelPrivate = createAction(
+  '[Analysis Store] Make Panel Private',
+  props<{ resource: PanelResourceResponse }>(),
+);
+export const analysisStoreMakePanelPrivateSuccess = createAction(
+  '[Analysis Store] Make Panel Private Success',
+  props<{ resource: PanelResourceResponse }>(),
+);
+export const analysisStoreMakePanelPrivateFailure = createAction(
+  '[Analysis Store] Make Panel Private Failure',
+  props<{ error: string }>(),
+);
+
+export const analysisStoreDeletePanel = createAction(
+  '[Analysis Store] Delete Panel',
+  props<{ resource: PanelResourceResponse }>(),
+);
+export const analysisStoreDeletePanelSuccess = createAction(
+  '[Analysis Store] Delete Panel Success',
+  props<{ resourceId: string }>(),
+);
+export const analysisStoreDeletePanelFailure = createAction(
+  '[Analysis Store] Delete Panel Failure',
+  props<{ error: string }>(),
+);
+
 export const analysisStoreSaveTimeline = createAction(
   '[Analysis Store] Save Timeline',
   props<{ payload?: SaveAnalysisStoreTimelinePayload }>(),

@@ -1,4 +1,4 @@
-<div class="max-h-[85vh] w-[500px] h-fit bg-layer-2 rounded-lg light-text pt-8 p-4 overflow-hidden">
+<div class="bg-layer-2 light-text box-border max-h-[85vh] h-fit w-[calc(100vw-2rem)] max-w-[500px] overflow-y-auto rounded-lg p-4 pt-8">
   <h4 class="text-center font-bold text-3xl">{{ (modalType === 'login' ? 'auth.loginTitle' : 'auth.registerTitle') | transloco }}</h4>
   <div class="text-center mt-4">
     <button
@@ -88,15 +88,15 @@
       </div>
     }
 
-    <div class="flex justify-around mt-8">
+    <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-around">
       @if (isSubmitting) {
         <app-loading-dots />
       } @else {
-        <button class="btn-accent p-2" type="submit" [disabled]="form.invalid || isSubmitting">
+        <button class="btn-accent w-full p-2 sm:w-auto" type="submit" [disabled]="form.invalid || isSubmitting">
           {{ (modalType === 'login' ? 'actions.login' : 'actions.register') | transloco }}
         </button>
       }
-      <button type="button" (click)="closeModal()" class="btn-accent p-2">{{ 'actions.cancel' | transloco }}</button>
+      <button type="button" (click)="closeModal()" class="btn-accent w-full p-2 sm:w-auto">{{ 'actions.cancel' | transloco }}</button>
     </div>
   </form>
 </div>

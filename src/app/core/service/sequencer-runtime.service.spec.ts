@@ -17,6 +17,10 @@ describe('SequencerRuntimeService', () => {
     logSpy = spyOn(console, 'log');
   });
 
+  afterEach(() => {
+    runtime.resetRuntimeState();
+  });
+
   it('applies trigger own action first, then deactivates events-before-labels and activates labels-before-events', () => {
     panel.addEventBtn({ id: 'evt-main', name: 'main', eventProps: { kind: 'indefinite', preMs: 0, postMs: 0 }, deactivateIds: ['evt-old', 'lbl-old', 'missing'], activateIds: ['evt-next', 'lbl-next', 'evt-once'] });
     panel.addEventBtn({ id: 'evt-old', name: 'oldEvent', eventProps: { kind: 'indefinite', preMs: 0, postMs: 0 } });
@@ -79,8 +83,7 @@ describe('SequencerRuntimeService', () => {
     );
 
     expect(indefiniteEvents.length).toBe(2);
-    expect(indefiniteEvents[0].type).toBe('EVENT_INDEFINITE_END');
-    expect(indefiniteEvents[1].type).toBe('EVENT_INDEFINITE_START');
+    expect(indefiniteEvents.map(event => event.type)).toEqual(['EVENT_INDEFINITE_END', 'EVENT_INDEFINITE_START']);
     expect(indefiniteEvents[1].seq).toBeLessThan(indefiniteEvents[0].seq);
     expect(indefiniteEvents[0].btnId).toBe('evt-main');
     expect(indefiniteEvents[1].btnId).toBe('evt-main');
@@ -102,5 +105,4 @@ describe('SequencerRuntimeService', () => {
     expect(onceEvent).toBeDefined();
     expect(onceEvent?.seq).toBeGreaterThan(0);
   });
-
 });

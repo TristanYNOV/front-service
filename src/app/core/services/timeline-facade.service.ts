@@ -208,12 +208,13 @@ export class TimelineFacadeService {
       }));
     const labelDefs: TimelineDefinitions['labelDefs'] = btnList
       .filter(btn => btn.type === 'label')
-      .map(btn => ({
-        id: btn.id,
-        sourceSequencerBtnId: btn.id,
-        name: btn.name,
-        behavior: btn.labelProps.mode,
-      }));
+	      .map(btn => ({
+	        id: btn.id,
+	        sourceSequencerBtnId: btn.id,
+	        name: btn.name,
+	        colorHex: btn.colorHex,
+	        behavior: btn.labelProps.mode,
+	      }));
 
     return { eventDefs, labelDefs };
   }

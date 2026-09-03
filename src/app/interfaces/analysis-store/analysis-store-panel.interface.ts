@@ -5,6 +5,7 @@ import {
   AnalysisStoreValidationResponse,
   AnalysisStoreVisibility,
 } from './analysis-store-shared.interface';
+import { SequencerStatDefinition } from '../sequencer-btn.interface';
 
 export interface SequencerPanelLayoutV1 {
   x: number;
@@ -29,6 +30,9 @@ export interface SequencerPanelEventBtnV1 extends SequencerPanelBtnBaseV1 {
   eventProps: {
     eventName: string;
     colorHex: string | null;
+    kind?: 'limited' | 'indefinite';
+    preMs?: number;
+    postMs?: number;
   };
 }
 
@@ -37,6 +41,7 @@ export interface SequencerPanelLabelBtnV1 extends SequencerPanelBtnBaseV1 {
   labelProps: {
     label: string;
     colorHex: string | null;
+    mode?: 'once' | 'indefinite';
   };
 }
 
@@ -46,6 +51,7 @@ export interface SequencerPanelStatBtnV1 extends SequencerPanelBtnBaseV1 {
     statName: string;
     value: number;
     colorHex: string | null;
+    definition?: SequencerStatDefinition;
   };
 }
 
@@ -87,10 +93,10 @@ export interface CreatePanelResourceBody {
 export interface UpdatePanelResourceBody {
   title?: string;
   description?: string | null;
-  contentJson: Record<string, unknown>;
+  contentJson?: Record<string, unknown>;
   visibility?: AnalysisStoreVisibility;
   clubId?: string | null;
   hasAnonymizedContent?: boolean;
 }
 
-export type UpsertPanelResourceBody = (CreatePanelResourceBody | UpdatePanelResourceBody) & { id?: string };
+export type UpsertPanelResourceBody = CreatePanelResourceBody & { id?: string };

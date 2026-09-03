@@ -1,7 +1,7 @@
 # Codex
 
 ## 1) TL;DR
-- Front Angular 19 standalone + SSR, NgRx (store sous `src/app/store`), RxJS 7.8, TailwindCSS + quelques overrides Material. 
+- Front Angular 21 standalone + SSR, NgRx 21 (store sous `src/app/store`), RxJS 7.8, TailwindCSS + quelques overrides Material.
 - Navigation principale déclarée dans [`src/app/app.routes.ts`](src/app/app.routes.ts) (landing SEO, fonctionnalités, tarifs, FAQ, contact, CGU, confidentialité, welcome, analyse + placeholders club/teams/etc.).
 - Store : slices `dataState` et `userState` enregistrés dans [`app.config.ts`](src/app/app.config.ts) ; effets dans `src/app/store/Data` et `src/app/store/User`.
 - Auth mockée via [`AuthApi`](src/app/core/api/auth.api.ts) + stockage localStorage dans [`TokenService`](src/app/core/services/token.service.ts) ; guard licence en placeholder HTTP `/api/license/validate`.
@@ -38,8 +38,8 @@
 - Base URLs/environnements : aucun `environment.ts` ni config Angular dédiée → ⚠️ À confirmer avec l’équipe backend/gateway.
 
 ## 5) Dépendances
-- Angular 19, Angular Material ^19.0.5, Angular CDK, SSR (`@angular/ssr`).
-- NgRx 19 (`store`, `effects`, `entity`, `router-store`, `devtools`).
+- Angular 21, Angular Material ^21, Angular CDK, SSR (`@angular/ssr`).
+- NgRx 21 (`store`, `effects`, `entity`, `router-store`, `devtools`).
 - RxJS ~7.8.
 - TailwindCSS 3.4 + PostCSS/Autoprefixer ; SCSS theming custom.
 - Tests : Jasmine/Karma (`npm test`), Cypress présent (non scripté ici), ESLint 9 (`npm run lint`).
@@ -83,7 +83,7 @@
     - `unassignSequencerHotkey(chord)` / `unassignSequencerHotkeyByAction(actionId)` / `clearSequencerHotkeys()`.
     - `getUsedHotkeys()` / `getSequencerHotkeys()` / `isHotkeyUsed(chord)`.
 
-## 9) Conventions Angular 19
+## 9) Conventions Angular 21
 - Standalone components/directives partout, imports locaux.
 - `inject()` au lieu de constructeurs; `@if/@for/@switch` dans les templates.
 - Signals : `store.selectSignal` + `LayoutEditModeService` expose `isEditMode` signal readonly.
@@ -258,6 +258,15 @@ Checklist
 - Service dédié `SequencerStatsService` (signals/computed) :
   - centralise le calcul de stats à partir des occurrences d’analyse,
   - évalue les requêtes simples (`count`) et expressions complexes,
+  - les définitions de stats sont persistées comme définition complète (`mode`, `query`/`expression`, `editor`) et non comme simple valeur numérique.
+
+## 20) Sequencer Panel - Persistance complète
+- Le format `sequencer-panel` doit préserver le modèle complet des boutons :
+  - Event : `kind`, `preMs`, `postMs`, `colorHex`, `hotkeyNormalized`, `activateIds`, `deactivateIds`, `layout`, `isAnonymized`.
+  - Label : `mode`, `colorHex`, `hotkeyNormalized`, `activateIds`, `deactivateIds`, `layout`, `isAnonymized`.
+  - Stat : définition complète de `SequencerStatDefinition` en plus de la valeur legacy optionnelle.
+- Après import ou récupération distante, `AnalysisStoreEffects` réhydrate le `SequencerPanelService`, remet à zéro uniquement l’état runtime Sequencer, puis recrée les bindings de hotkeys à partir des `hotkeyNormalized` restaurés.
+- La timeline n’est pas réinitialisée par cette hydratation de panel.
   - renvoie les valeurs live + une sortie structurée (`exportRows`) pour futur export Excel.
 - Règles métier V1 :
   - matching simple = `eventDefId ∈ eventIds` AND tous les labels demandés sont présents,
@@ -292,4 +301,3 @@ Checklist
 - Les contenus reposent sur le registre centralisé `src/app/components/specialized-data/data-item-content.registry.ts`.
 - Les classes visuelles historiques `discover-*` restent utilisées pour conserver le thème sombre et la logique existante.
 - Les fichiers SEO/IA publics sont servis depuis `public/`: `robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `favicon.svg`.
-

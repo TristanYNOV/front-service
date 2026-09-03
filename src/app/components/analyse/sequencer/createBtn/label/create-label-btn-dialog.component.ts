@@ -17,6 +17,7 @@ import { SequencerRuntimeService } from '../../../../../core/service/sequencer-r
 import { parseNormalizedHotkey } from '../../../../../utils/sequencer/sequencer-hotkey-options.util';
 import { createSequencerDialogState } from '../../../../../utils/sequencer/sequencer-dialog-state.util';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { THEME_COLOR_HEX } from '../../../../../../theme/theme-colors';
 
 export interface LabelBtnDialogData {
   mode: 'create' | 'edit';
@@ -72,9 +73,10 @@ export class CreateLabelBtnDialogComponent {
       { value: this.data.btn?.id ?? '', disabled: this.isEdit },
       [Validators.required],
     ),
-    name: new FormControl(this.data.btn?.name ?? '', [Validators.required]),
-    mode: new FormControl<'once' | 'indefinite'>(this.data.btn?.labelProps.mode ?? 'once', {
-      nonNullable: true,
+	    name: new FormControl(this.data.btn?.name ?? '', [Validators.required]),
+	    colorHex: new FormControl(this.data.btn?.colorHex ?? THEME_COLOR_HEX.sequencerLabelBg, { nonNullable: true }),
+	    mode: new FormControl<'once' | 'indefinite'>(this.data.btn?.labelProps.mode ?? 'once', {
+	      nonNullable: true,
     }),
     isAnonymized: new FormControl<boolean>(this.data.btn?.isAnonymized ?? false, {
       nonNullable: true,
@@ -135,10 +137,11 @@ export class CreateLabelBtnDialogComponent {
       return;
     }
 
-    const id = (this.form.controls.id.value ?? '').trim();
-    const name = (this.form.controls.name.value ?? '').trim();
-    const mode = this.form.controls.mode.value ?? 'once';
-    const isAnonymized = this.form.controls.isAnonymized.value ?? false;
+	    const id = (this.form.controls.id.value ?? '').trim();
+	    const name = (this.form.controls.name.value ?? '').trim();
+	    const colorHex = this.form.controls.colorHex.value;
+	    const mode = this.form.controls.mode.value ?? 'once';
+	    const isAnonymized = this.form.controls.isAnonymized.value ?? false;
 
     const chord = this.selectedChord();
     let hotkeyNormalized: string | null = null;
@@ -164,18 +167,20 @@ export class CreateLabelBtnDialogComponent {
 
     if (this.isEdit) {
       this.panelService.updateBtn(id, {
-        name,
-        hotkeyNormalized,
-        isAnonymized,
+	        name,
+	        colorHex,
+	        hotkeyNormalized,
+	        isAnonymized,
         deactivateIds,
         activateIds,
         labelProps: { mode },
       });
     } else {
       const created = this.panelService.addLabelBtn({
-        id,
-        name,
-        hotkeyNormalized,
+	        id,
+	        name,
+	        colorHex,
+	        hotkeyNormalized,
         isAnonymized,
         deactivateIds,
         activateIds,

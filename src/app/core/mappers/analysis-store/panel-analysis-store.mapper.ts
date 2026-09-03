@@ -413,13 +413,7 @@ function cloneStatDefinition(definition: SequencerStatDefinition): SequencerStat
   if (definition.mode === 'simple') {
     return {
       mode: 'simple',
-      query: {
-        eventIds: [...definition.query.eventIds],
-        labelIds: [...definition.query.labelIds],
-        labelColorById: definition.query.labelColorById ? { ...definition.query.labelColorById } : undefined,
-        metric: definition.query.metric,
-        labelMatch: definition.query.labelMatch,
-      },
+      query: cloneStatQuery(definition.query),
     };
   }
 
@@ -435,13 +429,7 @@ function cloneStatDefinition(definition: SequencerStatDefinition): SequencerStat
                   displayName: term.displayName,
                   kind: 'query',
                   query: term.query
-                    ? {
-                        eventIds: [...term.query.eventIds],
-                        labelIds: [...term.query.labelIds],
-                        labelColorById: term.query.labelColorById ? { ...term.query.labelColorById } : undefined,
-                        metric: term.query.metric,
-                        labelMatch: term.query.labelMatch,
-                      }
+                    ? cloneStatQuery(term.query)
                     : undefined,
                 }
               : {
@@ -465,13 +453,7 @@ function cloneStatNode(node: SequencerStatNode): SequencerStatNode {
   if (node.kind === 'query') {
     return {
       kind: 'query',
-      query: {
-        eventIds: [...node.query.eventIds],
-        labelIds: [...node.query.labelIds],
-        labelColorById: node.query.labelColorById ? { ...node.query.labelColorById } : undefined,
-        metric: node.query.metric,
-        labelMatch: node.query.labelMatch,
-      },
+      query: cloneStatQuery(node.query),
     };
   }
 
@@ -480,5 +462,15 @@ function cloneStatNode(node: SequencerStatNode): SequencerStatNode {
     left: cloneStatNode(node.left),
     op: node.op,
     right: cloneStatNode(node.right),
+  };
+}
+
+function cloneStatQuery(query: SequencerStatQuery): SequencerStatQuery {
+  return {
+    eventIds: [...query.eventIds],
+    labelIds: [...query.labelIds],
+    ...(query.labelColorById ? { labelColorById: { ...query.labelColorById } } : {}),
+    metric: query.metric,
+    labelMatch: query.labelMatch,
   };
 }

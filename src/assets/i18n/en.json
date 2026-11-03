@@ -549,6 +549,7 @@
   "contact": {
     "eyebrow": "Contact",
     "title": "Contact Action Board",
+    "discord": "Contact via Discord",
     "intro": "Have a question about the sports video analysis platform, panels, timelines or a club workflow? You can use this temporary form.",
     "temporaryAddress": "Temporary address",
     "temporaryText": "This contact page is temporary. The address shown may later be replaced by an official address.",

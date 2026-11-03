@@ -549,6 +549,7 @@
   "contact": {
     "eyebrow": "Contact",
     "title": "Contacter Action Board",
+    "discord": "Contacter par Discord",
     "intro": "Une question sur la plateforme d’analyse vidéo sportive, les panneaux, les timelines ou un usage club ? Vous pouvez utiliser ce formulaire temporaire.",
     "temporaryAddress": "Adresse temporaire",
     "temporaryText": "Cette page de contact est temporaire. L’adresse indiquée pourra être remplacée ultérieurement par une adresse officielle.",

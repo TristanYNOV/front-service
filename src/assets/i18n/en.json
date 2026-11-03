@@ -92,6 +92,8 @@
     "en": "ENG"
   },
   "auth": {
+    "sessionExpired": "Your session has expired. Your analysis is preserved in this tab. Sign in again to save it.",
+    "reconnect": "Sign in again",
     "loginTitle": "Log in",
     "registerTitle": "Sign up",
     "createAccount": "Create an account",

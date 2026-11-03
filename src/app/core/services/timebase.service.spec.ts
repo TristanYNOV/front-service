@@ -42,9 +42,12 @@ describe('TimebaseService', () => {
   });
 
   it('runs chrono mode with play/pause/seek', fakeAsync(() => {
+    let nowMs = 0;
+    spyOn(performance, 'now').and.callFake(() => nowMs);
     service.seekTo(500);
     service.play();
 
+    nowMs = 120;
     tick(120);
     const afterTick = service.currentTimeMs();
     expect(afterTick).toBeGreaterThan(500);

@@ -21,6 +21,7 @@ describe('HeaderComponent', () => {
   let router: Router;
 
   const authSessionMock = {
+    requiresReauthentication: jasmine.createSpy('requiresReauthentication'),
     isAuthenticated: jasmine.createSpy('isAuthenticated'),
     logout: jasmine.createSpy('logout').and.returnValue({ subscribe: () => undefined }),
     deleteAccount: jasmine.createSpy('deleteAccount'),
@@ -32,6 +33,7 @@ describe('HeaderComponent', () => {
   };
 
   beforeEach(async () => {
+    authSessionMock.requiresReauthentication.and.returnValue(false);
     authSessionMock.isAuthenticated.and.returnValue(false);
 
     await TestBed.configureTestingModule({
@@ -59,6 +61,16 @@ describe('HeaderComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('offers reconnection without navigating away from the analysis', () => {
+    authSessionMock.requiresReauthentication.and.returnValue(true);
+    fixture.detectChanges();
+    const openAuth = spyOn(component, 'openAuthModal');
+    const banner = (fixture.nativeElement as HTMLElement).querySelector('[data-testid="session-expired"]');
+    expect(banner?.getAttribute('role')).toBe('status');
+    banner?.querySelector<HTMLButtonElement>('button')?.click();
+    expect(openAuth).toHaveBeenCalledWith('login');
   });
 
   it('keeps public navigation visible for crawlers', () => {

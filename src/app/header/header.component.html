@@ -1,3 +1,9 @@
+@if (authSession.requiresReauthentication()) {
+  <div role="status" class="bg-layer-2 text-default flex flex-wrap items-center justify-center gap-3 p-2" data-testid="session-expired">
+    <span>{{ 'auth.sessionExpired' | transloco }}</span>
+    <button type="button" class="btn-primary" (click)="openAuthModal('login')">{{ 'auth.reconnect' | transloco }}</button>
+  </div>
+}
 <header class="bg-layer-2 flex justify-between items-center h-16 px-3 gap-4">
   <a
     routerLink="/"

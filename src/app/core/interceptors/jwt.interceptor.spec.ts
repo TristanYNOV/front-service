@@ -50,4 +50,12 @@ describe('jwtInterceptor', () => {
     expect(req.request.headers.has('Authorization')).toBeFalse();
     req.flush({});
   });
+
+  it('injects the bearer for analysis API requests', () => {
+    authSessionMock.accessToken.and.returnValue('jwt-analysis');
+    http.get('/analysis/api/timelines').subscribe();
+    const req = httpMock.expectOne('/analysis/api/timelines');
+    expect(req.request.headers.get('Authorization')).toBe('Bearer jwt-analysis');
+    req.flush([]);
+  });
 });

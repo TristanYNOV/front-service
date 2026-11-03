@@ -4,10 +4,11 @@ import { signal } from '@angular/core';
 import { firstValueFrom, isObservable, of } from 'rxjs';
 import { authGuard } from './auth.guard';
 import { AuthSessionService } from '../auth/auth-session.service';
+import { AuthStatus } from '../auth/auth.models';
 
 describe('authGuard', () => {
   const state = signal({
-    status: 'anonymous' as 'anonymous' | 'restoring' | 'authenticated',
+    status: 'anonymous' as AuthStatus,
     user: null,
     accessToken: null,
     isRefreshing: false,
@@ -56,5 +57,10 @@ describe('authGuard', () => {
 
     expect(result).toBe(redirectTree);
     expect(routerSpy.parseUrl).toHaveBeenCalledWith('/');
+  });
+
+  it('does not grant a new private navigation while reauthentication is required', async () => {
+    state.set({ ...state(), status: 'reauthentication-required', bootstrapped: true });
+    expect(await resolveGuardResult()).toBe(redirectTree);
   });
 });

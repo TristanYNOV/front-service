@@ -11,6 +11,9 @@
     "lint": "ng lint",
     "test:watch": "ng test --watch",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCI --no-progress",
+    "test:runtime": "node --test scripts/runtime-entrypoint.test.mjs",
+    "test:auth-integration": "node --test scripts/auth-expiration.integration.test.cjs",
+    "test:session:e2e": "cypress run --spec cypress/e2e/session-expiration.cy.ts",
     "test:cov": "ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage --no-progress",
     "test:coverage": "ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage --no-progress"
   },

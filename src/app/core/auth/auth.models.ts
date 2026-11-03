@@ -1,4 +1,4 @@
-export type AuthStatus = 'anonymous' | 'restoring' | 'authenticated';
+export type AuthStatus = 'anonymous' | 'restoring' | 'authenticated' | 'reauthentication-required';
 
 export interface UserPublicDto {
   id: string;

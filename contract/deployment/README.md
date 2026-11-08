@@ -21,9 +21,10 @@ Voir aussi `ghcr-tags.md`.
 ## Démarrage local (image publiée)
 ```bash
 docker run --rm -p 4000:4000 \
-  -e AUTH_API_PREFIX=http://localhost:3000 \
   ghcr.io/<owner_lower>/front-service:prod
 ```
+
+Placer ce conteneur derrière une gateway exposant aussi `/auth`, `/users`, `/me` et `/analysis` sur la même origine. Les endpoints runtime sont lus par le navigateur : une URL Docker interne ou une autre origine ne convient pas à la politique JWT actuelle.
 
 ## Port exposé
 - Conteneur : `4000`
@@ -36,7 +37,7 @@ Variables les plus importantes :
 - `PORT` (optionnel, défaut `4000`)
 - `AUTH_API_PREFIX` (optionnel, préfixe commun pour générer les endpoints auth)
 - `AUTH_LOGIN_ENDPOINT`, `AUTH_REGISTER_ENDPOINT`, `AUTH_REFRESH_ENDPOINT`, `AUTH_LOGOUT_ENDPOINT`, `AUTH_ME_ENDPOINT` (optionnelles, priorité haute)
-- `API_ALLOWED_PREFIXES` (optionnel, CSV)
+- `API_ALLOWED_PREFIXES` (optionnel, CSV ; défaut `/auth,/analysis/api,/api,/me,/users`)
 
 ## Stratégie de démarrage
 Le conteneur exécute `/app/entrypoint.sh` qui :

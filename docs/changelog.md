@@ -5,6 +5,28 @@
 > Les premiers tags représentent une base de référence : le contenu antérieur n'est pas détaillé.
 > Les libellés synthétisent les messages de commits et fichiers modifiés ; ils ne constituent pas un procès-verbal de recette.
 
+## [v1.2.6](https://github.com/TristanYNOV/front-service/tree/v1.2.6) — 2026-11-08
+
+- **Authentification :** correction du renouvellement de session après un accès refusé (401), avec un seul renouvellement simultané par onglet et un rejeu unique de la requête (issue [#164](https://github.com/TristanYNOV/front-service/issues/164), PR [#165](https://github.com/TristanYNOV/front-service/pull/165) et [#166](https://github.com/TristanYNOV/front-service/pull/166)).
+- **Session expirée :** conservation en mémoire de la vidéo, du panneau et de la timeline pendant la reconnexion, avec bandeau dédié et export JSON local disponible ; protection contre les réponses tardives et les changements de compte.
+- **Déploiement :** ajout de `/analysis/api` aux préfixes API autorisés et ajustement des exemples Docker pour des endpoints navigateur sur la même origine.
+- **Tests et documentation :** extension des tests de session, ajout de scénarios Cypress d’expiration et de reconnexion, et documentation de l’intégration d’authentification et de sa validation.
+
+[Comparer v1.2.5 → v1.2.6](https://github.com/TristanYNOV/front-service/compare/v1.2.5...v1.2.6)
+
+## [v1.2.5](https://github.com/TristanYNOV/front-service/tree/v1.2.5) — 2026-11-03
+
+- **Contact :** ajout d’un bouton d’invitation Discord sur la page de contact, avec libellés français et anglais (PR [#163](https://github.com/TristanYNOV/front-service/pull/163)).
+
+[Comparer v1.2.4 → v1.2.5](https://github.com/TristanYNOV/front-service/compare/v1.2.4...v1.2.5)
+
+## [v1.2.4](https://github.com/TristanYNOV/front-service/tree/v1.2.4) — 2026-10-28
+
+- **Maintenance :** ajout et configuration de Dependabot pour npm.
+- **Documentation :** création du journal des versions à partir des tags et comparaisons GitHub.
+
+[Comparer v1.2.3 → v1.2.4](https://github.com/TristanYNOV/front-service/compare/v1.2.3...v1.2.4)
+
 ## [v1.2.3](https://github.com/TristanYNOV/front-service/tree/v1.2.3) — 2026-09-03
 
 - **Correction :** réactivation des liens et raccourcis du séquenceur lors de l’importation/chargement d’un panel (issue [#140](https://github.com/TristanYNOV/front-service/issues/140), PR [#141](https://github.com/TristanYNOV/front-service/pull/141) et [#142](https://github.com/TristanYNOV/front-service/pull/142)).
